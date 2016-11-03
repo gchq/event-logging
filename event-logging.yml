@@ -1,0 +1,13 @@
+#Tmuxinator config to fire up gitbook and vim for editing the docs
+# ~/.tmuxinator/event-logging-schema-docs.yml
+
+name: event-logging
+root: ~/git_work/event-logging/
+
+windows:
+  - shells:
+      layout: even-vertical
+      panes:
+        - 
+        - 
+  - vim: vim pom.xml README.md

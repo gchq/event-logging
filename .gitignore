@@ -1,0 +1,3 @@
+.idea
+*.iml
+event-logging/src/main/resources/event/logging/impl/schema.xsd
