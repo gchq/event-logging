@@ -115,6 +115,11 @@ public class GenClasses {
         // -episode <FILE> : generate the episode file for separate compilation
 
         File rootDir = new File(".").getCanonicalFile();
+        if (rootDir.toString().endsWith("generator")){
+            //running from within the generator module so go up one
+            rootDir = new File("..").getCanonicalFile();
+        }
+        System.out.println("Using root directory " + rootDir);
         processXSDFile(rootDir);
     }
 
@@ -176,10 +181,8 @@ public class GenClasses {
         final File mainResources = new File(mainDir, "resources");
 
         deleteAll(srcDir.toPath());
-        srcDir.mkdir();
-        mainDir.mkdir();
-        mainJava.mkdir();
-        mainResources.mkdir();
+        Files.createDirectories(mainJava.toPath());
+        Files.createDirectories(mainResources.toPath());
 
         final String command = XJC_PATH + " -xmlschema -extension -p " + packageName + " -d "
                 + mainJava.getCanonicalPath() + " " + modXsd.getCanonicalPath() + " -b " + bindingFile.getCanonicalPath();
@@ -285,23 +288,25 @@ public class GenClasses {
     }
 
     private void deleteAll(Path dir) throws IOException {
-        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                if (e == null) {
-                    Files.delete(dir);
+        if (Files.exists(dir)) {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.deleteIfExists(file);
                     return FileVisitResult.CONTINUE;
-                } else {
-                    // directory iteration failed
-                    throw e;
                 }
-            }
-        });
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
+                    if (e == null) {
+                            Files.deleteIfExists(dir);
+                        return FileVisitResult.CONTINUE;
+                    } else {
+                        // directory iteration failed
+                        throw e;
+                    }
+                }
+            });
+        }
     }
 
     private void copyAll(Path from, Path to) throws IOException {
