@@ -30,7 +30,7 @@
 
         <skip.surefire.tests>false</skip.surefire.tests>
         <skip.site.creation>true</skip.site.creation>
-        <skip.javadoc.creation>true</skip.javadoc.creation>
+        <skip.javadoc.creation>false</skip.javadoc.creation>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
