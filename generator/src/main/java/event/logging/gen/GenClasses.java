@@ -288,25 +288,15 @@ public class GenClasses {
     }
 
     private void deleteAll(Path dir) throws IOException {
-        if (Files.exists(dir)) {
-            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        Files.deleteIfExists(file);
-                    return FileVisitResult.CONTINUE;
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                if(!file.getFileName().toString().contains(".gitkeep")) {
+                    Files.delete(file);
                 }
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException e) throws IOException {
-                    if (e == null) {
-                            Files.deleteIfExists(dir);
-                        return FileVisitResult.CONTINUE;
-                    } else {
-                        // directory iteration failed
-                        throw e;
-                    }
-                }
-            });
-        }
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     private void copyAll(Path from, Path to) throws IOException {
