@@ -39,7 +39,7 @@ public class GenClasses {
 
     private static final String PUBLIC_CLASS = "public class ";
 
-    private static final String XJC_PATH = "/usr/bin/xjc";
+    private static final String XJC_PATH = "xjc";
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v([0-9]*\\.){3}xsd";
 
     private static class IOSink extends Thread {
