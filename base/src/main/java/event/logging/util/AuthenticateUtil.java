@@ -16,18 +16,14 @@
 package event.logging.util;
 
 import event.logging.AuthenticateAction;
-import event.logging.Event;
-import event.logging.AuthenticateAction;
 import event.logging.AuthenticateOutcome;
 import event.logging.AuthenticateOutcomeReason;
 import event.logging.Event;
-import org.apache.log4j.Logger;
-
-import event.logging.Event.EventDetail;
-import event.logging.Event.EventDetail.Authenticate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AuthenticateUtil {
-    private static final Logger LOGGER = Logger.getLogger(AuthenticateUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticateUtil.class);
 
     private static final String LOGON = "Logon";
     private static final String LOGOFF = "Logoff";
@@ -67,7 +63,7 @@ public final class AuthenticateUtil {
             event.setEventDetail(eventDetail);
 
         } catch (final Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -96,7 +92,7 @@ public final class AuthenticateUtil {
             event.setEventDetail(eventDetail);
 
         } catch (final Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

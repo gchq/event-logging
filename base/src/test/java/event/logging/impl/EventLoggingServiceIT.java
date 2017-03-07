@@ -15,11 +15,31 @@
  */
 package event.logging.impl;
 
-import event.logging.*;
+import event.logging.AuthenticateAction;
+import event.logging.BaseAntiMalware;
+import event.logging.Criteria;
+import event.logging.Data;
+import event.logging.Device;
+import event.logging.Document;
+import event.logging.Event;
+import event.logging.EventLoggingService;
+import event.logging.Export;
+import event.logging.File;
+import event.logging.Import;
+import event.logging.MultiObject;
+import event.logging.ObjectOutcome;
+import event.logging.Outcome;
+import event.logging.Payload;
+import event.logging.Query;
+import event.logging.Search;
+import event.logging.SendReceive;
+import event.logging.Software;
 import event.logging.System;
+import event.logging.Term;
+import event.logging.TermCondition;
+import event.logging.User;
 import event.logging.util.DeviceUtil;
 import event.logging.util.EventLoggingUtil;
-import org.apache.log4j.BasicConfigurator;
 import org.junit.Test;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,9 +58,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Tests the creation of event logging data.
  */
 public class EventLoggingServiceIT {
-    static {
-        BasicConfigurator.configure();
-    }
+//    static {
+//        BasicConfigurator.configure();
+//    }
 
     private static final int WAIT_BETWEEN_RECORDS = 0; // 1000 to test time roll
     private static final int NUM_OF_THREADS = 10;

@@ -15,30 +15,31 @@
  */
 package event.logging.impl;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 public class LoggingErrorHandler implements ErrorHandler {
-    private static final Logger LOGGER = Logger.getLogger(LoggingErrorHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingErrorHandler.class);
     private boolean ok = true;
 
     @Override
     public void warning(final SAXParseException exception) throws SAXException {
-        LOGGER.warn(exception, exception);
+        LOGGER.warn(exception.getMessage(), exception);
         ok = false;
     }
 
     @Override
     public void error(final SAXParseException exception) throws SAXException {
-        LOGGER.error(exception, exception);
+        LOGGER.error(exception.getMessage(), exception);
         ok = false;
     }
 
     @Override
     public void fatalError(final SAXParseException exception) throws SAXException {
-        LOGGER.fatal(exception, exception);
+        LOGGER.error(exception.getMessage(), exception);
         ok = false;
     }
 

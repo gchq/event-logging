@@ -15,56 +15,62 @@
  */
 package event.logging.impl;
 
-import event.logging.*;
+import event.logging.AuthenticateAction;
+import event.logging.Device;
+import event.logging.Event;
+import event.logging.EventLoggingService;
 import event.logging.System;
+import event.logging.User;
 import event.logging.util.DeviceUtil;
 import event.logging.util.EventLoggingUtil;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.WriterAppender;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.StringWriter;
 import java.util.Date;
 
 public class TestValidation {
 
-    static {
-        BasicConfigurator.configure();
-    }
+//    static {
+//        BasicConfigurator.configure();
+//    }
 
     private static final String VALIDATE_PROP_KEY = "event.logging.validate";
 
-    public static final String JUNIT_CONSOLE_APPENDER = "JUNIT_CONSOLE_APPENDER";
+    //    public static final String JUNIT_CONSOLE_APPENDER = "JUNIT_CONSOLE_APPENDER";
+//
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestValidation.class);
+//
+//    private WriterAppender appender = null;
+//    private StringWriter consoleWriter;
 
-    private static final Logger LOGGER = Logger.getLogger(TestValidation.class);
-
-    private WriterAppender appender = null;
-    private StringWriter consoleWriter;
 
     @Before
     public void setupCustomLogAppender() {
+        java.lang.System.setProperty("event.logging.logreceiver", "event.logging.impl.TestLogReceiver");
 
-        consoleWriter = new StringWriter();
-        appender = new WriterAppender(new PatternLayout("%d{ISO8601} %p - %m%n"), consoleWriter);
-        appender.setName(JUNIT_CONSOLE_APPENDER);
-        appender.setThreshold(org.apache.log4j.Level.ERROR);
 
-        Logger validatorLogger = Logger.getLogger(DefaultXMLValidator.class);
-        validatorLogger.addAppender(appender);
-
-        Logger errorHandlerLogger = Logger.getLogger(LoggingErrorHandler.class);
-        errorHandlerLogger.addAppender(appender);
+//        consoleWriter = new StringWriter();
+//        appender = new WriterAppender(new PatternLayout("%d{ISO8601} %p - %m%n"), consoleWriter);
+//        appender.setName(JUNIT_CONSOLE_APPENDER);
+//        appender.setThreshold(org.apache.logger.Level.ERROR);
+//
+//        Logger validatorLogger = LoggerFactory.getLogger(DefaultXMLValidator.class);
+//        validatorLogger.addAppender(appender);
+//
+//        Logger errorHandlerLogger = LoggerFactory.getLogger(LoggingErrorHandler.class);
+//        errorHandlerLogger.addAppender(appender);
 
     }
 
     @After
     public void removeCustomLogAppender() {
-        Logger.getLogger(DefaultXMLValidator.class).removeAppender(JUNIT_CONSOLE_APPENDER);
+//        LoggerFactory.getLogger(DefaultXMLValidator.class).removeAppender(JUNIT_CONSOLE_APPENDER);
+
+        java.lang.System.setProperty("event.logging.logreceiver", "event.logging.impl.LoggerLogReceiver");
     }
 
     @Test
@@ -73,21 +79,19 @@ public class TestValidation {
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
         // Error is logged if schema cannot be found on classpath
-        Assert.assertTrue(consoleWriter.getBuffer().toString().isEmpty());
+        Assert.assertTrue(TestLogReceiver.getCurrentMessage().isEmpty());
 
     }
 
     @Test
     public void testValidationOffBySystemProperty() {
-
         java.lang.System.setProperty(VALIDATE_PROP_KEY, Boolean.FALSE.toString());
 
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
-        Assert.assertTrue(consoleWriter.getBuffer().toString().isEmpty());
-
+        Assert.assertFalse(TestLogReceiver.getCurrentMessage().isEmpty());
     }
 
     @Test
@@ -100,13 +104,12 @@ public class TestValidation {
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
         LOGGER.info("Expecting an ERROR in the log for this test");
-        Assert.assertFalse(consoleWriter.getBuffer().toString().isEmpty());
+        Assert.assertFalse(TestLogReceiver.getCurrentMessage().isEmpty());
 
     }
 
     @Test
     public void testValidationOnByMethod() {
-
         java.lang.System.setProperty(VALIDATE_PROP_KEY, Boolean.FALSE.toString());
 
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
@@ -116,13 +119,12 @@ public class TestValidation {
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
         LOGGER.info("Expecting an ERROR in the log for this test");
-        Assert.assertFalse(consoleWriter.getBuffer().toString().isEmpty());
+        Assert.assertFalse(TestLogReceiver.getCurrentMessage().isEmpty());
 
     }
 
     @Test
     public void testValidationOffByMethod() {
-
         java.lang.System.setProperty(VALIDATE_PROP_KEY, Boolean.TRUE.toString());
 
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
@@ -131,21 +133,19 @@ public class TestValidation {
 
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
-        Assert.assertTrue(consoleWriter.getBuffer().toString().isEmpty());
+        Assert.assertFalse(TestLogReceiver.getCurrentMessage().isEmpty());
 
     }
 
     @Test
     public void testValidationPassed() {
-
         java.lang.System.setProperty(VALIDATE_PROP_KEY, Boolean.TRUE.toString());
 
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.VALID));
 
-        Assert.assertTrue(consoleWriter.getBuffer().toString().isEmpty());
-
+        Assert.assertFalse(TestLogReceiver.getCurrentMessage().isEmpty());
     }
 
     private Event createBasicEvent(final EventLoggingService eventLoggingService, final String typeId,

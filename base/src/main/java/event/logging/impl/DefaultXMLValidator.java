@@ -15,28 +15,25 @@
  */
 package event.logging.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
+import event.logging.XMLValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
-
-import event.logging.XMLValidator;
-import org.apache.log4j.Logger;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-
-import event.logging.XMLValidator;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
 public final class DefaultXMLValidator implements XMLValidator {
-
-    private static final Logger LOGGER = Logger.getLogger(DefaultXMLValidator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultXMLValidator.class);
 
     public static final String DEFAULT_CHARSET_NAME = "UTF-8";
     public static final Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_CHARSET_NAME);
@@ -59,7 +56,7 @@ public final class DefaultXMLValidator implements XMLValidator {
     }
 
     public DefaultXMLValidator(final String schemaLocation, final ErrorHandler validationErrorHandler,
-            final ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
+                               final ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
 
         if (validationErrorHandler == null) {
             throw new RuntimeException("Null errorHandler supplied");
@@ -92,9 +89,9 @@ public final class DefaultXMLValidator implements XMLValidator {
                 schema = null;
             }
         } catch (final FileNotFoundException e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         } catch (final SAXException e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return schema;
@@ -132,9 +129,9 @@ public final class DefaultXMLValidator implements XMLValidator {
             try {
                 doValidation(xml);
             } catch (final IOException e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             } catch (final SAXException e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package event.logging.log4j;
+package event.logging.impl;
 
 import event.logging.impl.LogReceiver;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default LogReceiver that uses the supplied serializer to create a string and
  * writes it to a log via Log4J.
  */
-public class Log4JLogReceiver implements LogReceiver {
-    private static final Logger LOGGER = Logger.getLogger("event-logger");
+public class LoggerLogReceiver implements LogReceiver {
+    private static final Logger LOGGER = LoggerFactory.getLogger("event-logger");
 
     /**
      * Logs the supplied event.
-     * 
-     * @param data
-     *            The event to log.
+     *
+     * @param data The event to log.
      */
     @Override
     public void log(final String data) {

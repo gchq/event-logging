@@ -19,7 +19,8 @@ import event.logging.Event;
 import event.logging.EventLoggingService;
 import event.logging.XMLValidator;
 import event.logging.Event;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 
 import event.logging.EventLoggingService;
@@ -29,7 +30,7 @@ import event.logging.XMLValidator;
  * This is the default implementation for creating an event that writes to Log4J when logged.
  */
 public class DefaultEventLoggingService implements EventLoggingService {
-    private static final Logger LOGGER = Logger.getLogger(DefaultEventLoggingService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEventLoggingService.class);
 
     private static final String SCHEMA_LOCATION = SchemaLocator.getSchemaLocation();
 

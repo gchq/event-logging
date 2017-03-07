@@ -15,16 +15,14 @@
  */
 package event.logging.impl;
 
-import event.logging.log4j.Log4JLogReceiver;
-import event.logging.log4j.Log4JLogReceiver;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LogReceiverFactory {
-    private static final Logger LOGGER = Logger
+    private static final Logger LOGGER = LoggerFactory
             .getLogger(LogReceiverFactory.class);
     private static final String PROP_LOG_RECEIVER = "event.logging.logreceiver";
-    private static final String DEFAULT_LOG_RECEIVER = "event.logging.log4j.Log4JLogReceiver";
+    private static final String DEFAULT_LOG_RECEIVER = "event.logging.impl.LoggerLogReceiver";
 
     private static LogReceiverFactory instance;
 
@@ -67,9 +65,9 @@ public final class LogReceiverFactory {
                     try {
                         logReceiver = (LogReceiver) clazz.newInstance();
                     } catch (final IllegalAccessException e) {
-                        LOGGER.error(e, e);
+                        LOGGER.error(e.getMessage(), e);
                     } catch (final InstantiationException e) {
-                        LOGGER.error(e, e);
+                        LOGGER.error(e.getMessage(), e);
                     }
 
                 } else {
@@ -78,12 +76,12 @@ public final class LogReceiverFactory {
                 }
 
             } catch (final ClassNotFoundException e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
         if (logReceiver == null) {
-            logReceiver = new Log4JLogReceiver();
+            logReceiver = new LoggerLogReceiver();
         }
 
         lastClassName = className;

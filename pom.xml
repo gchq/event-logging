@@ -7,12 +7,12 @@
     <packaging>pom</packaging>
     <name>event-logging</name>
     <description>Event Logging API POM</description>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
 
     <properties>
         <java.target.version>1.8</java.target.version>
         <java.source.version>1.8</java.source.version>
-        <log4j.version>1.2.17</log4j.version>
+        <slf4j.version>1.7.22</slf4j.version>
         <junit.version>4.12</junit.version>
         <Saxon-HE.version>9.6.0-6</Saxon-HE.version>
 
@@ -180,9 +180,9 @@
 
         <!-- Log4J -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
 

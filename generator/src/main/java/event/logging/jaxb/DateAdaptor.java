@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 package event.logging.jaxb;
+
 import event.logging.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 public class DateAdaptor {
-    private static final Logger LOGGER = Logger.getLogger(DateAdaptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DateAdaptor.class);
 
     public static Date parseDate(final String string) {
         try {
             return new Date(DateUtil.parseDateTimeString(string));
         } catch (final ParseException e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return null;

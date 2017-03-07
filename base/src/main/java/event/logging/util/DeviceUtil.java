@@ -15,20 +15,21 @@
  */
 package event.logging.util;
 
+import event.logging.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Locale;
 
-import event.logging.Device;
-import org.apache.log4j.Logger;
-
 public class DeviceUtil {
-    private static final Logger LOGGER = Logger.getLogger(DeviceUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeviceUtil.class);
     private static final String UNKNOWN_IP = "UNKNOWN";
 
     public static Device createDevice(final String hostName,
-            final String ipAddress) {
+                                      final String ipAddress) {
         final Device device = new Device();
         device.setHostName(hostName);
         device.setIPAddress(ipAddress);
@@ -37,9 +38,8 @@ public class DeviceUtil {
 
     /**
      * Creates a Device object from an InetAddress.
-     * 
-     * @param inetAddress
-     *            The InetAddress to create the Device object from.
+     *
+     * @param inetAddress The InetAddress to create the Device object from.
      * @return The newly created device object.
      */
     public static Device createDeviceFromInetAddress(
@@ -62,9 +62,8 @@ public class DeviceUtil {
 
     /**
      * Manipulates a string to ensure IP addresses are consistent.
-     * 
-     * @param ip
-     *            The IP string to check.
+     *
+     * @param ip The IP string to check.
      * @return The IP address string in upper case or null if invalid.
      */
     public static String getValidIP(final String ip) {
@@ -82,9 +81,8 @@ public class DeviceUtil {
 
     /**
      * Gets a canonical host name from an InetAddress.
-     * 
-     * @param inetAddress
-     *            The InetAddress to get the host name from.
+     *
+     * @param inetAddress The InetAddress to get the host name from.
      * @return The canonical host name.
      */
     private static String getFQDN(final InetAddress inetAddress) {
@@ -109,7 +107,7 @@ public class DeviceUtil {
 
     /**
      * Determines a MAC address using the java.net classes.
-     * 
+     *
      * @return String containing the MAC address.
      */
     private static String getMACAddress(final InetAddress inetAddress) {
