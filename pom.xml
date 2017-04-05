@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <name>event-logging</name>
     <description>Event Logging API POM</description>
-    <version>3.1.0</version>
+    <version>v3.1.0</version>
 
     <properties>
         <java.target.version>1.8</java.target.version>
