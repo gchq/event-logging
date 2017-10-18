@@ -6,7 +6,7 @@ classes/
 generated/
 libs/
 jars/
-/event-logging-api/schema
+/event-logging-generator/schema
 
 
 # IntelliJ
