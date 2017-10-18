@@ -125,10 +125,10 @@ public class GenClasses {
         // @javax.annotation.Generated
         // -episode <FILE> : generate the episode file for separate compilation
 
-        Path rootDir = Paths.get(".").toAbsolutePath();
+        Path rootDir = Paths.get(".").normalize().toAbsolutePath();
         if (rootDir.endsWith(GENERATOR_PROJECT_NAME)) {
             //running from within the generator module so go up one
-            rootDir = Paths.get("..").toAbsolutePath();
+            rootDir = Paths.get("..").normalize().toAbsolutePath();
         }
         System.out.println("Using root directory " + rootDir.toString());
         processXSDFile(rootDir);
@@ -139,18 +139,14 @@ public class GenClasses {
         final Path generatorProjectDir = rootDir.resolve(GENERATOR_PROJECT_NAME);
         final Path schemaDir = generatorProjectDir.resolve(SCHEMA_DIR_NAME);
 
-        final Path targetDir = generatorProjectDir.resolve("target");
-        final Path sourceXsd = targetDir.resolve("schema.xsd");
         final Path modXsd = schemaDir.resolve("schema.mod.xsd");
         final Path bindingFile = generatorProjectDir.resolve("simple-binding.xjb");
-
-//        final Path translationsDir = Paths.get(xsdDir.toString(), "src", "main", "resources", "translations");
 
         List<Path> sourceSchemas = Files.find(schemaDir, 1, (path, atts) ->
                 path.getFileName().toString().matches(SOURCE_SCHEMA_REGEX)
         ).collect(Collectors.toList());
-//
-         Path xsdFile = null;
+
+        Path xsdFile = null;
         if (sourceSchemas.size() == 0) {
             System.out.println(String.format("ERROR - No source schema found in %s matching '%s'",
                     schemaDir.toString(), SOURCE_SCHEMA_REGEX));
@@ -162,33 +158,18 @@ public class GenClasses {
         } else {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
         }
-//
-//        //Remove any existing schemas from the target dir
-//        Files.list(targetDir.toPath())
-//                .filter(path -> path.toString().endsWith(".xsd"))
-//                .forEach((path) -> {
-//                    try {
-//                        Files.delete(path);
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(String.format("Error deleting file %s", path.toString()),e);
-//                    }
-//                });
-
-        //make a copy of the source schema to work on
-        Files.copy(xsdFile, sourceXsd);
 
         String xsd = StreamUtil.fileToString(xsdFile.toFile());
         //Remove 'ComplexType' from the type names to make the class names cleaner
         xsd = xsd.replaceAll("ComplexType", "");
         //Remove 'SimpleType' from the type names to make the class names cleaner
         xsd = xsd.replaceAll("SimpleType", "");
-//        Path modifiedXsd = Paths.get(translatedXsdFile.toString().replace(".xsd",".mod.xsd"));
         StreamUtil.stringToFile(xsd, modXsd.toFile());
 
 
         // Delete existing output.
         final Path apiProjectDir = rootDir.resolve(API_PROJECT_NAME);
-        final Path srcDir = Paths.get("src");
+        final Path srcDir = apiProjectDir.resolve("src");
         final Path mainDir = srcDir.resolve("main");
         final Path mainJavaDir = mainDir.resolve("java");
         final Path mainResourcesDir = mainDir.resolve("resources");
@@ -238,7 +219,7 @@ public class GenClasses {
 
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
-        copyAll(baseProjectDir, apiProjectDir);
+        copyAll(baseProjectDir.resolve("src"), apiProjectDir.resolve("src"));
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");

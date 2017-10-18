@@ -96,10 +96,12 @@ subprojects {
         baseName = "${project.name}-test"
         from sourceSets.test.output
     }
+
     task sources(type: Jar) {
         baseName = "${project.name}-source"
         from sourceSets.main.allSource
     }
+
     artifacts {
         testArtifacts testJar
         sourceArtifacts sources
@@ -109,6 +111,7 @@ subprojects {
         from sourceSets.test.output
         classifier = 'tests'
     }
+
     artifacts.archives packageTests
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.

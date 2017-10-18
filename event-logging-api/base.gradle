@@ -15,7 +15,7 @@ dependencies {
     //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
     //runtime "ch.qos.logback:logback-classic:${versions.logback}"
 
-    //testCompile 'junit:junit:4.12'
+    testCompile "junit:junit:${versions.junit}"
 }
 
 
