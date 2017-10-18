@@ -35,12 +35,12 @@ dependencies {
 
     
     // The production code uses the SLF4J logging API at compile time
-    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    //compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
     //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
     //runtime "ch.qos.logback:logback-classic:${versions.logback}"
 
-    testCompile "junit:junit:${versions.junit}"
+    //testCompile "junit:junit:${versions.junit}"
 }
 
 run {

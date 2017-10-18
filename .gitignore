@@ -6,6 +6,7 @@ classes/
 generated/
 libs/
 jars/
+build/
 /event-logging-generator/schema
 
 
