@@ -7,8 +7,6 @@ dependencies {
     runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
 
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
-
-    //testCompile "junit:junit:${versions.junit}"
 }
 
 task clearSchemaDir(type: Delete) {

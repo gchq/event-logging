@@ -34,14 +34,14 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
 }
 
 def projectGroup = "event-logging"
-def projectVersion = "${version}"
+def projectVersion = getPropertyOrDefault('version', 'SNAPSHOT')
 def eventLoggingSchemaVer = "v3.1.1-TEST03"
 def eventLoggingSchemaMajorVer = "3"
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-jaxb.xsd"
 
 ext.versions = [
     //------event-logging--------------
-    eventLogging: getPropertyOrDefault('version', 'SNAPSHOT'),
+    eventLogging: projectVersion,
 
     //------------3rd-party------------
     jackson: '2.8.9',
@@ -55,26 +55,31 @@ ext.versions = [
 task wrapper(type: Wrapper) {
     gradleVersion = '4.2.1'
 }
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    group "$projectGroup"
+    version "$projectVersion"
+}
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
 
-    group "$projectGroup"
-    version "$projectVersion"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
     repositories {
-        jcenter()
         mavenLocal()
+        jcenter()
     }
 
     configurations {
-        testArtifacts
-        sourceArtifacts
+        //testArtifacts
+        //sourceArtifacts
 
         all {
             exclude group: "org.slf4j", module: "slf4j-log4j12"
@@ -92,27 +97,27 @@ subprojects {
         }
     }
 
-    task testJar(type: Jar) {
-        baseName = "${project.name}-test"
-        from sourceSets.test.output
-    }
+    //task testJar(type: Jar) {
+        //baseName = "${project.name}-test"
+        //from sourceSets.test.output
+    //}
 
-    task sources(type: Jar) {
-        baseName = "${project.name}-source"
-        from sourceSets.main.allSource
-    }
+    //task sources(type: Jar) {
+        //baseName = "${project.name}-source"
+        //from sourceSets.main.allSource
+    //}
 
-    artifacts {
-        testArtifacts testJar
-        sourceArtifacts sources
-    }
+    //artifacts {
+        //testArtifacts testJar
+        //sourceArtifacts sources
+    //}
 
-    task packageTests(type: Jar) {
-        from sourceSets.test.output
-        classifier = 'tests'
-    }
+    //task packageTests(type: Jar) {
+        //from sourceSets.test.output
+        //classifier = 'tests'
+    //}
 
-    artifacts.archives packageTests
+    //artifacts.archives packageTests
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
@@ -126,9 +131,44 @@ subprojects {
         }
     }
 
+    //configure classes and javadoc generation for each java project
+    //afterEvaluate { 
+        //if(tasks.findByName("classes")) {
+            //task sourcesJar(type: Jar, dependsOn: classes) {
+                //classifier = 'sources'
+                //from sourceSets.main.allSource
+            //}
+            //artifacts {
+                //archives sourcesJar
+            //}
+        //}
+
+        //if(tasks.findByName("javadoc")) {
+            //task javadocJar(type: Jar) {
+                //dependsOn javadoc
+                //classifier = 'javadoc'
+                //from javadoc.destinationDir
+            //}
+            //artifacts {
+                //archives javadocJar
+            //}
+        //}
+    //}
+
     clean{
         //clear out the 'out' dirs used by intelliJ
         delete "out"
     }
 }
+
+project(':event-logging-api') {
+    publishing.publications {
+        mavenJava(MavenPublication) {
+            artifactId "event-logging"
+            from components.java
+        }
+    }
+}
+
+
 

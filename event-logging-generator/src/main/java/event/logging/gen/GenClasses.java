@@ -78,6 +78,8 @@ public class GenClasses {
 
     public static void main(final String[] args) throws Exception {
         new GenClasses().run();
+
+        System.out.println("JAXB class generation complete");
     }
 
     public void run() throws Exception {

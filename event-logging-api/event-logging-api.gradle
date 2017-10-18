@@ -2,38 +2,16 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
-apply plugin: 'application'
+//apply plugin: 'application'
 apply plugin: 'ca.cutterslade.analyze'
 
-def jarName = "event-logging-api-${versions.eventLogging}.jar"
-def fatJarName = "event-logging-api-${versions.eventLogging}-all.jar"
+//def jarName = "event-logging-api-${versions.eventLogging}.jar"
+//def fatJarName = "event-logging-api-${versions.eventLogging}-all.jar"
 def schemaDir = project.file('schema')
-
-//required for application plugin
-mainClassName = "event.logging.transformation.SchemaGenerator"
-
-jar {
-    manifest {
-        attributes(
-                "Implementation-Title": "Event-Logging-Transformations",
-                "Implementation-Version": versions.eventLogging,
-                "Main-Class" : mainClassName
-        )
-    }
-    archiveName jarName
-}
-
-shadowJar {
-    // Allows us to build fat jars with lots of files
-    zip64 true
-
-    archiveName fatJarName
-}
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
 
-    
     // The production code uses the SLF4J logging API at compile time
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
@@ -43,13 +21,40 @@ dependencies {
     testCompile "junit:junit:${versions.junit}"
 }
 
-run {
-    args project.file('pipelines')
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "Event-Logging-Transformations",
+                "Implementation-Version": versions.eventLogging,
+        )
+    }
+    //archiveName jarName
 }
 
-runShadow {
-    args project.file('pipelines')
+shadowJar {
+    // Allows us to build fat jars with lots of files
+    zip64 true
+
+    //archiveName fatJarName
 }
+
+task javadocJar(type: Jar) {
+    dependsOn javadoc
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives sourcesJar
+}
+
 
 clean{
     //the contents of src is transient so clear it out
@@ -58,5 +63,4 @@ clean{
 }
 
 tasks.build.dependsOn shadowJar
-
 tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
