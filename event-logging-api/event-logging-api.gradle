@@ -1,0 +1,80 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+apply plugin: 'application'
+apply plugin: 'ca.cutterslade.analyze'
+
+def jarName = "event-logging-api-${versions.eventLogging}.jar"
+def fatJarName = "event-logging-api-${versions.eventLogging}-all.jar"
+def schemaDir = project.file('schema')
+
+//required for application plugin
+mainClassName = "event.logging.transformation.SchemaGenerator"
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "Event-Logging-Transformations",
+                "Implementation-Version": versions.eventLogging,
+                "Main-Class" : mainClassName
+        )
+    }
+    archiveName jarName
+}
+
+shadowJar {
+    // Allows us to build fat jars with lots of files
+    zip64 true
+
+    archiveName fatJarName
+}
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+
+    
+    // The production code uses the SLF4J logging API at compile time
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+
+    //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
+    //runtime "ch.qos.logback:logback-classic:${versions.logback}"
+
+    testCompile "junit:junit:${versions.junit}"
+}
+
+run {
+    args project.file('pipelines')
+}
+
+runShadow {
+    args project.file('pipelines')
+}
+
+task clearSchemaDir(type: Delete) {
+    //ensure the import directory exists
+    schemaDir.mkdirs()
+
+    //cleans out any zip files in the contentPackImportDir
+    delete fileTree(schemaDir) {
+        include '**/*.xsd'
+    }
+}
+
+task downloadSchema() {
+
+    dependsOn clearSchemaDir
+
+    doLast {
+        println "Downloading schema from ${eventLoggingSchemaUrl}"
+        //now get the visualisations pack from a different repo
+        download {
+            src eventLoggingSchemaUrl
+            dest schemaDir
+            overwrite true
+        }
+    }
+}
+
+tasks.processResources.dependsOn downloadSchema
+tasks.build.dependsOn shadowJar

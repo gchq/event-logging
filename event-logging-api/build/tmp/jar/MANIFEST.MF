@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: Event-Logging-Transformations
+Implementation-Version: SNAPSHOT
+Main-Class: event.logging.transformation.SchemaGenerator
+
