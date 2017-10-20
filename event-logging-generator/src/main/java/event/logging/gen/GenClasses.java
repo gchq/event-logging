@@ -151,11 +151,13 @@ public class GenClasses {
         Path xsdFile = null;
         if (sourceSchemas.size() == 0) {
             System.out.println(String.format("ERROR - No source schema found in %s matching '%s'",
-                    schemaDir.toString(), SOURCE_SCHEMA_REGEX));
+                    schemaDir.toAbsolutePath().toString(),
+                    SOURCE_SCHEMA_REGEX));
             System.exit(1);
         } else if (sourceSchemas.size() > 1) {
             System.out.println(String.format("ERROR - Too many source schemas found in %s matching '%s'",
-                    schemaDir.toString(), SOURCE_SCHEMA_REGEX));
+                    schemaDir.toAbsolutePath().toString(),
+                    SOURCE_SCHEMA_REGEX));
             System.exit(1);
         } else {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
