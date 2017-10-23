@@ -1,12 +1,6 @@
-plugins {
-    id 'com.github.johnrengelman.shadow' version '1.2.4'
-}
-
-//apply plugin: 'application'
 apply plugin: 'ca.cutterslade.analyze'
 
-//def jarName = "event-logging-api-${versions.eventLogging}.jar"
-//def fatJarName = "event-logging-api-${versions.eventLogging}-all.jar"
+archivesBaseName = "event-logging"
 def schemaDir = project.file('schema')
 
 // In this section you declare the dependencies for your production and test code
@@ -24,18 +18,10 @@ dependencies {
 jar {
     manifest {
         attributes(
-                "Implementation-Title": "Event-Logging-Transformations",
+                "Implementation-Title": "Event-Logging",
                 "Implementation-Version": versions.eventLogging,
         )
     }
-    //archiveName jarName
-}
-
-shadowJar {
-    // Allows us to build fat jars with lots of files
-    zip64 true
-
-    //archiveName fatJarName
 }
 
 task javadocJar(type: Jar) {
@@ -43,18 +29,20 @@ task javadocJar(type: Jar) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
-artifacts {
-    archives javadocJar
-}
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+task sourceJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
-artifacts {
-    archives sourcesJar
-}
 
+publishing.publications {
+    mavenJava(MavenPublication) {
+        artifactId "event-logging"
+        from components.java
+        artifact sourceJar
+        artifact javadocJar
+    }
+}
 
 clean{
     //the contents of src is transient so clear it out
@@ -62,5 +50,4 @@ clean{
     delete "src/test"
 }
 
-tasks.build.dependsOn shadowJar
 tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'

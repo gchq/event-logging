@@ -78,8 +78,6 @@ subprojects {
     }
 
     configurations {
-        //testArtifacts
-        //sourceArtifacts
 
         all {
             exclude group: "org.slf4j", module: "slf4j-log4j12"
@@ -97,28 +95,6 @@ subprojects {
         }
     }
 
-    //task testJar(type: Jar) {
-        //baseName = "${project.name}-test"
-        //from sourceSets.test.output
-    //}
-
-    //task sources(type: Jar) {
-        //baseName = "${project.name}-source"
-        //from sourceSets.main.allSource
-    //}
-
-    //artifacts {
-        //testArtifacts testJar
-        //sourceArtifacts sources
-    //}
-
-    //task packageTests(type: Jar) {
-        //from sourceSets.test.output
-        //classifier = 'tests'
-    //}
-
-    //artifacts.archives packageTests
-
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
         reports.html.destination = file("${reporting.baseDir}/${name}")
@@ -131,42 +107,9 @@ subprojects {
         }
     }
 
-    //configure classes and javadoc generation for each java project
-    //afterEvaluate { 
-        //if(tasks.findByName("classes")) {
-            //task sourcesJar(type: Jar, dependsOn: classes) {
-                //classifier = 'sources'
-                //from sourceSets.main.allSource
-            //}
-            //artifacts {
-                //archives sourcesJar
-            //}
-        //}
-
-        //if(tasks.findByName("javadoc")) {
-            //task javadocJar(type: Jar) {
-                //dependsOn javadoc
-                //classifier = 'javadoc'
-                //from javadoc.destinationDir
-            //}
-            //artifacts {
-                //archives javadocJar
-            //}
-        //}
-    //}
-
     clean{
         //clear out the 'out' dirs used by intelliJ
         delete "out"
-    }
-}
-
-project(':event-logging-api') {
-    publishing.publications {
-        mavenJava(MavenPublication) {
-            artifactId "event-logging"
-            from components.java
-        }
     }
 }
 
