@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'ca.cutterslade.analyze'
 
 archivesBaseName = "event-logging"
@@ -44,10 +46,49 @@ publishing.publications {
     }
 }
 
-clean{
+clean {
     //the contents of src is transient so clear it out
     delete "src/main"
     delete "src/test"
 }
 
 tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
+
+//task extractJar(jarFile, sourceName) {
+
+    //doLast {
+        //copy{
+            //from(zipTree(jarFile))
+            //into("${buildDir}/${sourceName}")
+        //}
+    //}
+//}
+
+//task getLatestReleasedJarUrl(type: Exec) {
+    //executable "bash" 
+    //args "-c", "\'curl -s ${githubApiLatestReleaseUrl} | sed -nr \'s/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+)\"/\\1/p\'\'"
+    ////commandLine "curl -s ${githubApiLatestReleaseUrl} | sed -nr 's/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p'"
+
+    ////store the output instead of printing to the console:
+    //standardOutput = new ByteArrayOutputStream()
+
+    //ext.output = {
+        //return standardOutput.toString()
+    //}
+//}
+
+//def getLatestReleasedJarUrl() {
+    //def url = ["bash", "-c", "curl -s ${githubApiLatestReleaseUrl} | sed -nr 's/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p']+jar)\"/\\1/p'"].execute().text
+    ////def url = ["bash", "-c" "curl", "-s", "${githubApiLatestReleaseUrl}", "|", "sed", "-nr", "'s/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p'"].execute().text
+    //return url
+//}
+
+//task diffAgainstLatest() {
+    //dependsOn getLatestReleasedJarUrl
+    //doLast {
+        //println getLatestReleasedJarUrl.output
+        ////println getLatestReleasedJarUrl()
+    //}
+//}
+
+
