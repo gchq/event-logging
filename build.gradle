@@ -35,9 +35,9 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
 
 def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', 'SNAPSHOT')
-def eventLoggingSchemaVer = "v3.1.1-TEST03"
+def eventLoggingSchemaVer = "v3.1.1-TEST05"
 def eventLoggingSchemaMajorVer = "3"
-ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-jaxb.xsd"
+ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
 
 ext.versions = [
     //------event-logging--------------
