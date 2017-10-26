@@ -46,6 +46,11 @@ publishing.publications {
     }
 }
 
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+
 clean {
     //the contents of src is transient so clear it out
     delete "src/main"
@@ -83,12 +88,9 @@ tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
     //return url
 //}
 
-//task diffAgainstLatest() {
-    //dependsOn getLatestReleasedJarUrl
-    //doLast {
-        //println getLatestReleasedJarUrl.output
-        ////println getLatestReleasedJarUrl()
-    //}
-//}
+task diffAgainstLatest(type: Exec) {
+    executable "../diffAgainstLatestRelease.sh"
+    args "build"
+}
 
 
