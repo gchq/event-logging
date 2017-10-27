@@ -26,6 +26,14 @@ jar {
     }
 }
 
+//The xjc generated javadoc will be failed by xdoclint so we have to
+//disable it for this module
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addBooleanOption('Xdoclint:none', false)
+    }
+}
+
 task javadocJar(type: Jar) {
     dependsOn javadoc
     classifier = 'javadoc'

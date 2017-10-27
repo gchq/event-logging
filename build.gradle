@@ -57,6 +57,7 @@ ext.versions = [
 task wrapper(type: Wrapper) {
     gradleVersion = '4.2.1'
 }
+
 allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
