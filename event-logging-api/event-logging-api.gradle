@@ -67,35 +67,8 @@ clean {
 
 tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
 
-//task extractJar(jarFile, sourceName) {
-
-    //doLast {
-        //copy{
-            //from(zipTree(jarFile))
-            //into("${buildDir}/${sourceName}")
-        //}
-    //}
-//}
-
-//task getLatestReleasedJarUrl(type: Exec) {
-    //executable "bash" 
-    //args "-c", "\'curl -s ${githubApiLatestReleaseUrl} | sed -nr \'s/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+)\"/\\1/p\'\'"
-    ////commandLine "curl -s ${githubApiLatestReleaseUrl} | sed -nr 's/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p'"
-
-    ////store the output instead of printing to the console:
-    //standardOutput = new ByteArrayOutputStream()
-
-    //ext.output = {
-        //return standardOutput.toString()
-    //}
-//}
-
-//def getLatestReleasedJarUrl() {
-    //def url = ["bash", "-c", "curl -s ${githubApiLatestReleaseUrl} | sed -nr 's/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p']+jar)\"/\\1/p'"].execute().text
-    ////def url = ["bash", "-c" "curl", "-s", "${githubApiLatestReleaseUrl}", "|", "sed", "-nr", "'s/\"browser_download_url\":\\s*\"(.*\\/event-logging-v[0-9\\.]+jar)\"/\\1/p'"].execute().text
-    //return url
-//}
-
+//Run a bash script to compare the currennt jaxb source with the latest released version so
+//we can see what impact schema changes have had on the library
 task diffAgainstLatest(type: Exec) {
     executable "../diffAgainstLatestRelease.sh"
     args "build"

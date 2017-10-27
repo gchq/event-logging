@@ -188,7 +188,8 @@ public class GenClasses {
                 " -p " + PACKAGE_NAME +
                 " -d " + mainJavaDir.toAbsolutePath() +
                 "    " + modXsd.toAbsolutePath() + //the source schema to gen classes from
-                " -b " + bindingFile.toAbsolutePath();
+                " -b " + bindingFile.toAbsolutePath() +
+                " -quiet ";
 
         System.out.println("Executing: " + command);
 
