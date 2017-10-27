@@ -30,7 +30,7 @@ jar {
 //disable it for this module
 if (JavaVersion.current().isJava8Compatible()) {
     tasks.withType(Javadoc) {
-        options.addBooleanOption('Xdoclint:none', false)
+        options.addStringOption 'Xdoclint:none', '-quiet'
     }
 }
 
