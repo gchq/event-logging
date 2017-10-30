@@ -21,9 +21,10 @@ jar {
     manifest {
         attributes(
                 "Implementation-Title": "Event-Logging",
-                "Implementation-Version": versions.eventLogging,
+                "Implementation-Version": versions.eventLoggingAndSchema,
         )
     }
+    version versions.eventLoggingAndSchema
 }
 
 //The xjc generated javadoc will be failed by xdoclint so we have to
@@ -38,11 +39,13 @@ task javadocJar(type: Jar) {
     dependsOn javadoc
     classifier = 'javadoc'
     from javadoc.destinationDir
+    version versions.eventLoggingAndSchema
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
+    version versions.eventLoggingAndSchema
 }
 
 publishing.publications {
@@ -73,5 +76,7 @@ task diffAgainstLatest(type: Exec) {
     executable "../diffAgainstLatestRelease.sh"
     args "build"
 }
+
+tasks.build.dependsOn diffAgainstLatest
 
 

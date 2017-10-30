@@ -44,16 +44,20 @@ def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', 'SNAPSHOT')
 def eventLoggingSchemaVer = "v3.1.1-TEST05"
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
+def combinedVersion = "${projectVersion}_schema-${eventLoggingSchemaVer}"
 
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
 
+println "Using project version:   $projectVersion"
 println "Using schema version:    $eventLoggingSchemaVer"
+println "Using combined version:  $combinedVersion"
 println "Using namespace version: $eventLoggingSchemaMajorVer"
 println "Using schema url:        $eventLoggingSchemaUrl"
 
 ext.versions = [
     //------event-logging--------------
     eventLogging: projectVersion,
+    eventLoggingAndSchema: combinedVersion,
 
     //------------3rd-party------------
     jackson: '2.8.9',
