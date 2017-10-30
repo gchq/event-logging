@@ -71,11 +71,10 @@ echo -e "${BLUE}Comparing the source to the latested released version${NC}"
 diff -r old/ new/ > source.diff || true
 
 if [ $(cat source.diff | wc -l) -gt 0 ]; then
-    echo -e "\n${RED}Source code is different (see $PWD/source.diff)${NC}"
     cat source.diff
+    echo -e "\n${RED}Source code is different (see $PWD/source.diff)${NC}"
 else 
     echo -e "\n ${GREEN}Source is identical${NC}"
 fi
 
-echo -e "${BLUE}Finished diff-ing source code${NC}"
 exit 0
