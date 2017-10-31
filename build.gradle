@@ -1,0 +1,134 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.0'
+    }
+}
+
+plugins {
+    //plugin for downloading content from the 'net
+    id "de.undercouch.download" version "3.2.0"
+
+    //plugin for producing a tree of task dependencies, run task 'taskTree'
+    id "com.dorongold.task-tree" version "1.3"
+}
+
+//must be applied to all projects including root
+apply plugin: 'ca.cutterslade.analyze'
+
+//if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
+//use that, else use a default value
+ext.getPropertyOrDefault = { propName, defaultValue -> 
+    def val;
+    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified") {
+        val = project.getProperty(propName)
+        println "Using propery $propName with value $val"
+    } else {
+        val = defaultValue
+        println "Propery $propName has no value, using default value $val"
+    }
+    return val;
+}
+
+//Extract the major version from a version str
+ext.getMajorVersion = { versionStr  ->
+    def groups = (versionStr =~ /v([0-9]+)\..*/)
+    def majorVer = groups[0][1]
+    return majorVer
+}
+
+def projectGroup = "event-logging"
+def projectVersion = getPropertyOrDefault('version', 'SNAPSHOT')
+def eventLoggingSchemaVer = "v3.1.1-TEST05"
+def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
+def combinedVersion = "${projectVersion}_schema-${eventLoggingSchemaVer}"
+
+ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
+
+println "Using project version:   $projectVersion"
+println "Using schema version:    $eventLoggingSchemaVer"
+println "Using combined version:  $combinedVersion"
+println "Using namespace version: $eventLoggingSchemaMajorVer"
+println "Using schema url:        $eventLoggingSchemaUrl"
+
+ext.versions = [
+    //------event-logging--------------
+    eventLogging: projectVersion,
+    eventLoggingAndSchema: combinedVersion,
+
+    //------------3rd-party------------
+    jackson: '2.8.9',
+    junit: '4.12',
+    logback: '1.2.3',
+    saxon: '9.6.0-6',
+    slf4j: '1.7.22',
+    zzDUMMYzz: 'makes sorting easier'
+]
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2.1'
+}
+
+allprojects {
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+
+    group "$projectGroup"
+    version "$projectVersion"
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'ca.cutterslade.analyze'
+    apply plugin: 'idea'
+
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+
+    configurations {
+
+        all {
+            exclude group: "org.slf4j", module: "slf4j-log4j12"
+            exclude group: "log4j", module: "log4j"
+
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.name == 'log4j') {
+                    details.useTarget "org.slf4j:log4j-over-slf4j:$versions.slf4j"
+                }
+            }
+            resolutionStrategy {
+                forcedModules = [
+                ]
+            }
+        }
+    }
+
+    // This means the reports from our integration tests won't over-write the reports from our unit tests.
+    tasks.withType(Test) {
+        reports.html.destination = file("${reporting.baseDir}/${name}")
+
+        //Use full logging for test exceptions so we can see where the failure occurred 
+        testLogging {
+            events "failed"
+            exceptionFormat = 'full'
+            showStackTraces = true
+        }
+    }
+
+    clean{
+        //clear out the 'out' dirs used by intelliJ
+        delete "out"
+    }
+}
+
+
+

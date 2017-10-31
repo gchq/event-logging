@@ -1,0 +1,13 @@
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+
+    compile project(':event-logging-api')
+    
+     //The production code uses the SLF4J logging API at compile time
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+
+    testCompile "junit:junit:${versions.junit}"
+}
+
+

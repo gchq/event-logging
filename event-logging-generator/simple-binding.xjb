@@ -7,7 +7,7 @@
    jaxb:extensionBindingPreferences="xjc"
    jaxb:version="2.0">
    
-   <jaxb:bindings schemaLocation="schema.mod.xsd" node="/xs:schema">
+   <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
       <jaxb:globalBindings generateElementProperty="false" >
          <!-- <xjc:simple /> -->
          <jaxb:javaType name="java.util.Date" xmlType="xs:date" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />

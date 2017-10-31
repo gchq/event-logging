@@ -18,7 +18,6 @@ package event.logging.gen;
 import event.logging.util.TransformerFactoryFactory;
 
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -26,7 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +43,14 @@ public class GenClasses {
     private static final String PUBLIC_CLASS = "public class ";
 
     private static final String XJC_PATH = "/usr/bin/xjc";
-    private static final String SOURCE_SCHEMA_REGEX = "event-logging-v([0-9]*\\.){3}xsd";
+    private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\-client.xsd";
+
+    private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
+    private static final String API_PROJECT_NAME = "event-logging-api";
+    private static final String BASE_PROJECT_NAME = "event-logging-base";
+
+    public static final String SCHEMA_DIR_NAME = "schema";
+    private static final String PACKAGE_NAME = "event.logging";
 
     private static class IOSink extends Thread {
         private final InputStream inputStream;
@@ -67,6 +77,8 @@ public class GenClasses {
 
     public static void main(final String[] args) throws Exception {
         new GenClasses().run();
+
+        System.out.println("JAXB class generation complete");
     }
 
     public void run() throws Exception {
@@ -114,78 +126,70 @@ public class GenClasses {
         // @javax.annotation.Generated
         // -episode <FILE> : generate the episode file for separate compilation
 
-        File rootDir = new File(".").getCanonicalFile();
-        if (rootDir.toString().endsWith("generator")){
+        Path rootDir = Paths.get(".").normalize().toAbsolutePath();
+        if (rootDir.endsWith(GENERATOR_PROJECT_NAME)) {
             //running from within the generator module so go up one
-            rootDir = new File("..").getCanonicalFile();
+            rootDir = Paths.get("..").normalize().toAbsolutePath();
         }
-        System.out.println("Using root directory " + rootDir);
+        System.out.println("Using root directory " + rootDir.toString());
         processXSDFile(rootDir);
     }
 
-    private void processXSDFile(final File rootDir) throws Exception {
+    private void processXSDFile(final Path rootDir) throws Exception {
         // Modify XSD file.
-        final File xsdDir = new File(rootDir, "generator");
-        final File targetDir = new File(xsdDir, "target");
-        final File sourceXsd = new File(targetDir, "schema.xsd");
-        final File modXsd = new File(xsdDir, "schema.mod.xsd");
-        final File bindingFile = new File(xsdDir, "simple-binding.xjb");
-        final Path translationsDir = Paths.get(xsdDir.toString(), "src", "main", "resources", "translations");
+        final Path generatorProjectDir = rootDir.resolve(GENERATOR_PROJECT_NAME);
+        final Path schemaDir = generatorProjectDir.resolve(SCHEMA_DIR_NAME);
 
-        List<Path> sourceSchemas = Files.find(xsdDir.toPath(), 1, (path, atts) -> {
-            return path.getFileName().toString().matches(SOURCE_SCHEMA_REGEX);
-        }).collect(Collectors.toList());
+        final Path modXsd = schemaDir.resolve("schema.mod.xsd");
+        final Path bindingFile = generatorProjectDir.resolve("simple-binding.xjb");
 
-         File xsdFile = null;
+        List<Path> sourceSchemas = Files.find(schemaDir, 1, (path, atts) ->
+                path.getFileName().toString().matches(SOURCE_SCHEMA_REGEX)
+        ).collect(Collectors.toList());
+
+        Path xsdFile = null;
         if (sourceSchemas.size() == 0) {
-            System.out.println(String.format("ERROR - No source schema found in %s matching '%s'", xsdDir.toString(), SOURCE_SCHEMA_REGEX));
+            System.out.println(String.format("ERROR - No source schema found in %s matching '%s'",
+                    schemaDir.toAbsolutePath().toString(),
+                    SOURCE_SCHEMA_REGEX));
             System.exit(1);
         } else if (sourceSchemas.size() > 1) {
-            System.out.println(String.format("ERROR - Too many source schemas found in %s matching '%s'", xsdDir.toString(), SOURCE_SCHEMA_REGEX));
+            System.out.println(String.format("ERROR - Too many source schemas found in %s matching '%s'",
+                    schemaDir.toAbsolutePath().toString(),
+                    SOURCE_SCHEMA_REGEX));
             System.exit(1);
         } else {
-            xsdFile = new File(xsdDir, sourceSchemas.get(0).getFileName().toString());
+            xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
         }
 
-        //Remove any existing schemas from the target dir
-        Files.list(targetDir.toPath())
-                .filter(path -> path.toString().endsWith(".xsd"))
-                .forEach((path) -> {
-                    try {
-                        Files.delete(path);
-                    } catch (IOException e) {
-                        throw new RuntimeException(String.format("Error deleting file %s", path.toString()),e);
-                    }
-                });
-
-        //make a copy of the source schema to work on
-        Files.copy(xsdFile.toPath(), sourceXsd.toPath());
-
-        Path translatedXsdFile = doTransformations(sourceXsd.toPath(), translationsDir);
-
-        String xsd = StreamUtil.fileToString(translatedXsdFile.toFile());
+        String xsd = StreamUtil.fileToString(xsdFile.toFile());
         //Remove 'ComplexType' from the type names to make the class names cleaner
         xsd = xsd.replaceAll("ComplexType", "");
         //Remove 'SimpleType' from the type names to make the class names cleaner
         xsd = xsd.replaceAll("SimpleType", "");
-//        Path modifiedXsd = Paths.get(translatedXsdFile.toString().replace(".xsd",".mod.xsd"));
-        StreamUtil.stringToFile(xsd, modXsd);
+        StreamUtil.stringToFile(xsd, modXsd.toFile());
 
-        final String packageName = "event.logging";
 
         // Delete existing output.
-        final File outputDir = new File(rootDir, "event-logging");
-        final File srcDir = new File(outputDir, "src");
-        final File mainDir = new File(srcDir, "main");
-        final File mainJava = new File(mainDir, "java");
-        final File mainResources = new File(mainDir, "resources");
+        final Path apiProjectDir = rootDir.resolve(API_PROJECT_NAME);
+        final Path srcDir = apiProjectDir.resolve("src");
+        final Path mainDir = srcDir.resolve("main");
+        final Path mainJavaDir = mainDir.resolve("java");
+        final Path mainResourcesDir = mainDir.resolve("resources");
 
-        deleteAll(srcDir.toPath());
-        Files.createDirectories(mainJava.toPath());
-        Files.createDirectories(mainResources.toPath());
+        //src dir in the api project is transient so delete everything ready to re-generate it
+        deleteAll(srcDir);
+        Files.createDirectories(mainJavaDir);
+        Files.createDirectories(mainResourcesDir);
 
-        final String command = XJC_PATH + " -xmlschema -extension -p " + packageName + " -d "
-                + mainJava.getCanonicalPath() + " " + modXsd.getCanonicalPath() + " -b " + bindingFile.getCanonicalPath();
+        final String command = XJC_PATH +
+                " -xmlschema" +
+                " -extension" +
+                " -p " + PACKAGE_NAME +
+                " -d " + mainJavaDir.toAbsolutePath() +
+                "    " + modXsd.toAbsolutePath() + //the source schema to gen classes from
+                " -b " + bindingFile.toAbsolutePath() +
+                " -quiet ";
 
         System.out.println("Executing: " + command);
 
@@ -204,9 +208,9 @@ public class GenClasses {
         }
 
         // Now modify the generated classes.
-        if (mainJava.isDirectory()) {
+        if (Files.isDirectory(mainJavaDir)) {
             // Modify Java files.
-            Files.walkFileTree(mainJava.toPath(), new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(mainJavaDir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     if (path.toFile().getName().endsWith(".java")) {
@@ -218,23 +222,24 @@ public class GenClasses {
         }
 
         // Copy other classes that make up the API.
-        final File baseDir = new File(rootDir, "base");
-        copyAll(baseDir.toPath(), outputDir.toPath());
+        final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
+        copyAll(baseProjectDir.resolve("src"), apiProjectDir.resolve("src"));
 
         // Copy the schema for validation purposes.
-        Path schemaPath = mainResources.toPath().resolve("event/logging/impl");
+        Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
-        Files.copy(modXsd.toPath(), schemaPath.resolve("schema.xsd"));
+        Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
     }
 
     /**
      * Applies all .xsl files in translationsDir (in alphanumeric order) to
      * the passed xsdFile
+     *
      * @param xsdFile
      * @param translationsDir
      * @return The path of the final output
      */
-    private Path doTransformations(final Path xsdFile, final Path translationsDir){
+    private Path doTransformations(final Path xsdFile, final Path translationsDir) {
         AtomicReference<Path> workingXsd = new AtomicReference<>(xsdFile);
 
         try {
@@ -254,15 +259,16 @@ public class GenClasses {
 
     /**
      * Transform xsdFile using the stylesheet xsltFile
+     *
      * @param xsdFile
      * @param xsltFile Stylesheet with a name conforming to nnn_someName.xsl where nnn is
      *                 a number to control the priority of this stylesheet
      * @return The path of the output file
      */
-    private Path transformFile(final Path xsdFile, final Path xsltFile){
+    private Path transformFile(final Path xsdFile, final Path xsltFile) {
 
         String xsltFilename = xsltFile.getFileName().toString();
-        String prefix = xsltFilename.substring(0, xsltFilename.indexOf("_") );
+        String prefix = xsltFilename.substring(0, xsltFilename.indexOf("_"));
 
         String outFilename = xsdFile.getFileName().toString().replace(".xsd", "_" + prefix + ".xsd");
 
@@ -291,7 +297,7 @@ public class GenClasses {
         Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if(!file.getFileName().toString().contains(".gitkeep")) {
+                if (!file.getFileName().toString().contains(".gitkeep")) {
                     Files.delete(file);
                 }
                 return FileVisitResult.CONTINUE;

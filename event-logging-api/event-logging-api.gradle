@@ -1,0 +1,82 @@
+import groovy.json.JsonSlurper
+
+apply plugin: 'ca.cutterslade.analyze'
+
+archivesBaseName = "event-logging"
+def schemaDir = project.file('schema')
+
+// In this section you declare the dependencies for your production and test code
+dependencies {
+
+    // The production code uses the SLF4J logging API at compile time
+    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+
+    //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
+    //runtime "ch.qos.logback:logback-classic:${versions.logback}"
+
+    testCompile "junit:junit:${versions.junit}"
+}
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "Event-Logging",
+                "Implementation-Version": versions.eventLoggingAndSchema,
+        )
+    }
+    version versions.eventLoggingAndSchema
+}
+
+//The xjc generated javadoc will be failed by xdoclint so we have to
+//disable it for this module
+if (JavaVersion.current().isJava8Compatible()) {
+    tasks.withType(Javadoc) {
+        options.addStringOption 'Xdoclint:none', '-quiet'
+    }
+}
+
+task javadocJar(type: Jar) {
+    dependsOn javadoc
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    version versions.eventLoggingAndSchema
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    version versions.eventLoggingAndSchema
+}
+
+publishing.publications {
+    mavenJava(MavenPublication) {
+        artifactId "event-logging"
+        from components.java
+        artifact sourceJar
+        artifact javadocJar
+    }
+}
+
+artifacts {
+    archives sourceJar
+    archives javadocJar
+}
+
+clean {
+    //the contents of src is transient so clear it out
+    delete "src/main"
+    delete "src/test"
+}
+
+tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
+
+//Run a bash script to compare the currennt jaxb source with the latest released version so
+//we can see what impact schema changes have had on the library
+task diffAgainstLatest(type: Exec) {
+    executable "../diffAgainstLatestRelease.sh"
+    args "build"
+}
+
+tasks.build.dependsOn diffAgainstLatest
+
+
