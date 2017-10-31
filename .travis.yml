@@ -9,7 +9,7 @@ sudo: false
     #packages:
     #- oracle-java8-installer
 
-install: true
+install: echo "skip 'gradle assemble' step to speed up build"
 
 script: ./travis.script.sh
 
