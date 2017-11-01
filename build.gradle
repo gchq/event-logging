@@ -23,12 +23,12 @@ apply plugin: 'ca.cutterslade.analyze'
 //use that, else use a default value
 ext.getPropertyOrDefault = { propName, defaultValue -> 
     def val;
-    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified") {
+    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName).length > 0) {
         val = project.getProperty(propName)
-        println "Using propery $propName with value $val"
+        println "Using propery $propName with value [$val]"
     } else {
         val = defaultValue
-        println "Propery $propName has no value, using default value $val"
+        println "Propery $propName has no value, using default value [$val]"
     }
     return val;
 }
