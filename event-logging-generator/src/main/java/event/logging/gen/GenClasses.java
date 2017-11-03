@@ -43,7 +43,7 @@ public class GenClasses {
     private static final String PUBLIC_CLASS = "public class ";
 
     private static final String XJC_PATH = "/usr/bin/xjc";
-    private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\-client.xsd";
+    private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
 
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
     private static final String API_PROJECT_NAME = "event-logging-api";
