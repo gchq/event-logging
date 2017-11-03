@@ -30,15 +30,18 @@ fi
 workingDir=$1
 
 #Call the github API to git the json for the latest release, then extract the sources jar binary url from it
-#latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url": "\(http.*event-logging-v.*\sources.jar\)/\1/p' | sed 's/".*$//')
-latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url": "\(http.*event-logging-v.*\.jar\)/\1/p' | sed 's/".*$//')
+latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url":.*"\(http.*event-logging-v.*sources\.jar\)"/\1/p')
+#latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url": "\(http.*event-logging-v.*\.jar\)/\1/p' | sed 's/".*$//')
 
 echo "latestUrl=${latestUrl}"
 echo "workingDir=${workingDir}"
 echo "PWD=${PWD}"
 
-if [ "$latestUrlx" = "x" ]; then 
-    echo -e "${RED}ERROR${NC} Latest sources file could not be found"
+if [ "${latestUrl}x" = "x" ]; then 
+    echo
+    echo -e "${RED}ERROR${NC} Latest sources file url could not be found from ${API_URL} json content:"
+    #dump out all the download urls
+    curl -s ${API_URL} | grep "\"browser_download_url\""
     exit 1
 fi
 
@@ -56,7 +59,7 @@ pushd old
 #Need -L to follow re-directs as github will redirect the request
 echo -e "${BLUE}Downloading latest source jar from ${YELLOW}${latestUrl}${NC}"
 curl -s -L -O ${latestUrl} 
-unzip -q *.jar "event/logging/*.class"
+unzip -q *.jar "event/logging/*.java"
 rm event-logging*.jar
 popd
 
@@ -72,9 +75,10 @@ diff -r old/ new/ > source.diff || true
 
 if [ $(cat source.diff | wc -l) -gt 0 ]; then
     cat source.diff
-    echo -e "\n${RED}Source code is different (see $PWD/source.diff)${NC}"
+    echo -e "\n${RED}Source code differs from ${latestUrl} (see changes above or in $PWD/source.diff)${NC}"
+    echo "The nature of the changes will determine whether the next release is major/minor/patch or may indicate a bad change to the schema"
 else 
-    echo -e "\n ${GREEN}Source is identical${NC}"
+    echo -e "\n${GREEN}Source is identical to ${latestUrl}${NC}"
 fi
 
 exit 0
