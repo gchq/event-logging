@@ -30,8 +30,14 @@ fi
 workingDir=$1
 
 #Call the github API to git the json for the latest release, then extract the sources jar binary url from it
-latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url":.*"\(http.*event-logging-v.*sources\.jar\)"/\1/p')
-#latestUrl=$(curl -s ${API_URL} | sed -ne 's/"browser_download_url": "\(http.*event-logging-v.*\.jar\)/\1/p' | sed 's/".*$//')
+#GH_USER_AND_TOKEN decalred in .travis.yml env:/global/:secure
+sedScript='s/"browser_download_url":.*"\(http.*event-logging-v.*sources\.jar\)"/\1/p'
+if [ "${GH_USER_AND_TOKEN}x" = "x" ]; then 
+    #running locally so do it unauthenticated
+    latestUrl=$(curl -s ${API_URL} | sed -ne ${sedScript})
+else
+    latestUrl=$(curl -s --user "${GH_USER_AND_TOKEN}" ${API_URL} | sed -ne ${sedScript})
+fi
 
 echo "latestUrl=${latestUrl}"
 echo "workingDir=${workingDir}"
@@ -78,7 +84,7 @@ if [ $(cat source.diff | wc -l) -gt 0 ]; then
     echo -e "\n${RED}Source code differs from ${latestUrl} (see changes above or in $PWD/source.diff)${NC}"
     echo "The nature of the changes will determine whether the next release is major/minor/patch or may indicate a bad change to the schema"
 else 
-    echo -e "\n${GREEN}Source is identical to ${latestUrl}${NC}"
+    echo -e "\n${GREEN}Source is identical to ${YELLOW}${latestUrl}${NC}"
 fi
 
 exit 0
