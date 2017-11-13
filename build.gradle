@@ -25,10 +25,10 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
     def val;
     if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName).length() > 0) {
         val = project.getProperty(propName)
-        println "Using propery $propName with value [$val]"
+        println "Using propery [${propName}] with value [${val}]"
     } else {
         val = defaultValue
-        println "Propery $propName has no value, using default value [$val]"
+        println "Propery [${propName}] has no value, using default value [${val}]"
     }
     return val;
 }
@@ -43,10 +43,20 @@ ext.getMajorVersion = { versionStr  ->
 //Set this to the desired release version of the event-logging schema on github
 def eventLoggingSchemaVer = "v3.1.1-TEST07"
 
+def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-v[0-9a-zA-Z\.-]+$/ 
 def projectGroup = "event-logging"
-def projectVersion = getPropertyOrDefault('version', 'SNAPSHOT')
+def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
-def combinedVersion = "${projectVersion}_schema-${eventLoggingSchemaVer}"
+def combinedVersion = "${projectVersion}"
+
+if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
+    if (!(projectVersion =~ VERSION_PATTERN)) {
+        println "not match"
+        throw new GradleException("Version [${projectVersion}] does not match pattern [${VERSION_PATTERN}]")
+    } else {
+        println "match"
+    }
+}
 
 //The XML Schema to use as the basis for generating the event-logging jacb library code
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
