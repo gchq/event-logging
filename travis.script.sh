@@ -19,9 +19,6 @@ echo -e "TRAVIS_TAG:          [${GREEN}${TRAVIS_TAG}${NC}]"
 echo -e "TRAVIS_PULL_REQUEST: [${GREEN}${TRAVIS_PULL_REQUEST}${NC}]"
 echo -e "TRAVIS_EVENT_TYPE:   [${GREEN}${TRAVIS_EVENT_TYPE}${NC}]"
 
-sed --version
-curl --version
-
 ./gradlew -Pversion=$TRAVIS_TAG clean build
 
 exit 0
