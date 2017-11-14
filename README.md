@@ -1,6 +1,6 @@
 # Event Logging
 
-_Event Logging_ is a Java JAXB implementation of the _Event Logging XML Schema_ and an API for logging events conforming to the _Event Logging XML Schema_. _Event Logging_ can be incorporated into your java application to provide a means of recording and outputting audit events.
+_Event Logging_ is a Java JAXB implementation of the _Event Logging XML Schema_ and an API for logging events conforming to the _Event Logging XML Schema_. _Event Logging_ can be incorporated into your Java application to provide a means of recording and outputting audit events.
 
 ## Generation of the JAXB artefacts
 
@@ -26,7 +26,7 @@ The build is run as follows:
 
 `./gradlew clean build`
 
-Towards the end of the build process, it will download the sources jar for the latest release of _event-logging_ from GitHub and compare the java source files in it to those just built. This provies a quick way of seeing the impact on the API from any chnages in the shema.  For example some schema changes that would not be a breaking change as far as an XML document is concerned (e.g. a rename of a complex type), would become a breaking change in the JAXB classes.
+Towards the end of the build process, it will download the sources jar for the latest release of _event-logging_ from GitHub and compare the Java source files in it to those just built. This provides a quick way of seeing the impact on the API from any changes in the schema.  For example some schema changes that would not be a breaking change as far as an XML document is concerned (e.g. a rename of a complex type), would become a breaking change in the JAXB classes.
 
 ## Using the _Event Logging_ API
 
