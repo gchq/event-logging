@@ -32,7 +32,9 @@ import java.util.stream.Collectors;
 
 /**
  * Class for generating the JAXB classes from a source schema. The schema is first
- * altered to improve the resulting java classes.
+ * altered to improve the resulting java classes. The generated classes plus those
+ * from event-logging-base are copied into event-logging-api and the jar is built from
+ * event-logging-api
  */
 public class GenClasses {
     private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
