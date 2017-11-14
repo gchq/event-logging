@@ -15,12 +15,6 @@
  */
 package event.logging.gen;
 
-import event.logging.util.TransformerFactoryFactory;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,9 +28,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * Class for generating the JAXB classes from a source schema. The schema is first
+ * altered to improve the resulting java classes.
+ */
 public class GenClasses {
     private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
 
@@ -231,68 +228,6 @@ public class GenClasses {
         Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
     }
 
-    /**
-     * Applies all .xsl files in translationsDir (in alphanumeric order) to
-     * the passed xsdFile
-     *
-     * @param xsdFile
-     * @param translationsDir
-     * @return The path of the final output
-     */
-    private Path doTransformations(final Path xsdFile, final Path translationsDir) {
-        AtomicReference<Path> workingXsd = new AtomicReference<>(xsdFile);
-
-        try {
-            Files.list(translationsDir)
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".xsl"))
-                    .sorted()
-                    .forEachOrdered(xsltFile -> {
-                        workingXsd.set(transformFile(workingXsd.get(), xsltFile));
-                    });
-        } catch (IOException e) {
-            throw new RuntimeException(
-                    String.format("Error reading directory %s", translationsDir.toString()), e);
-        }
-        return workingXsd.get();
-    }
-
-    /**
-     * Transform xsdFile using the stylesheet xsltFile
-     *
-     * @param xsdFile
-     * @param xsltFile Stylesheet with a name conforming to nnn_someName.xsl where nnn is
-     *                 a number to control the priority of this stylesheet
-     * @return The path of the output file
-     */
-    private Path transformFile(final Path xsdFile, final Path xsltFile) {
-
-        String xsltFilename = xsltFile.getFileName().toString();
-        String prefix = xsltFilename.substring(0, xsltFilename.indexOf("_"));
-
-        String outFilename = xsdFile.getFileName().toString().replace(".xsd", "_" + prefix + ".xsd");
-
-        Path outFile = Paths.get(xsdFile.getParent().toString(), outFilename);
-
-        System.out.println(
-                String.format("Transforming %s into %s using stylesheet %s",
-                        xsdFile.getFileName().toString(),
-                        outFile.getFileName().toString(),
-                        xsltFile.getFileName().toString()));
-
-        final TransformerFactory transformerFactory = TransformerFactoryFactory.newInstance();
-        try {
-            final Transformer transformer = transformerFactory.newTransformer(new StreamSource(xsltFile.toFile()));
-            transformer.transform(new StreamSource(xsdFile.toFile()), new StreamResult(outFile.toFile()));
-        } catch (Exception e) {
-            throw new RuntimeException(
-                    String.format("Error transforming %s using stylesheet %s",
-                            xsdFile.toString(),
-                            xsltFile.toString()), e);
-        }
-        return outFile;
-    }
-
     private void deleteAll(Path dir) throws IOException {
         Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
             @Override
@@ -338,44 +273,6 @@ public class GenClasses {
 
         // Sort comments.
         java = sortLines(java, "* {@link", false);
-
-        // java = addInheritance(javaFile, java, eventObjectTypes,
-        // "EventObject");
-        // if (java.contains("bannersAndChatsAndConfigurations")) {
-        // // Add import if it doesn't already exist.
-        // java = addImport(java, "EventObject");
-        // java = java.replaceAll(
-        // "List<java.lang.Object> bannersAndChatsAndConfigurations",
-        // "List<EventObject> objects");
-        // java = java
-        // .replaceAll(
-        // "List<java.lang.Object> getBannersAndChatsAndConfigurations",
-        // "List<EventObject> getObjects");
-        // java = java
-        // .replaceAll(
-        // "bannersAndChatsAndConfigurations = new ArrayList<java.lang.Object>",
-        // "objects = new ArrayList<EventObject>");
-        // java = java.replaceAll("bannersAndChatsAndConfigurations",
-        // "objects");
-        // }
-        //
-        // java = addInheritance(javaFile, java, advancedElementTypes,
-        // "AdvancedElement");
-        // java = addInheritance(javaFile, java, operatorElementTypes,
-        // "Operator");
-        // if (java.contains("termsAndAndsAndOrs")) {
-        // // Add import if it doesn't already exist.
-        // java = addImport(java, "AdvancedElement");
-        // java = java.replaceAll("List<java.lang.Object> termsAndAndsAndOrs",
-        // "List<AdvancedElement> objects");
-        // java = java.replaceAll(
-        // "List<java.lang.Object> getTermsAndAndsAndOrs",
-        // "List<AdvancedElement> getObjects");
-        // java = java.replaceAll(
-        // "termsAndAndsAndOrs = new ArrayList<java.lang.Object>",
-        // "objects = new ArrayList<AdvancedElement>");
-        // java = java.replaceAll("termsAndAndsAndOrs", "objects");
-        // }
 
         // Sort out object factory.
         if (javaFile.getName().contains("ObjectFactory")) {
@@ -484,51 +381,4 @@ public class GenClasses {
         }
         return java;
     }
-
-//	private String addInheritance(final File javaFile, String java, final String[] changeTypes, final String inherit) {
-//		for (final String type : changeTypes) {
-//			int index = type.lastIndexOf(".");
-//			if (index != -1) {
-//				// This is an inner type.
-//				String parentType = type.substring(0, index);
-//				final String innerType = type.substring(index + 1);
-//				index = parentType.lastIndexOf(".");
-//				if (index != -1) {
-//					parentType = parentType.substring(index + 1);
-//				}
-//
-//				if (javaFile.getName().equals(parentType + ".java")) {
-//					java = inherit(java, innerType, inherit);
-//				}
-//
-//			} else {
-//				if (javaFile.getName().equals(type + ".java")) {
-//					java = inherit(java, type, inherit);
-//				}
-//
-//			}
-//		}
-//		return java;
-//	}
-//
-//	private String addImport(String java, final String type) {
-//		if (!java.contains("import event.logging." + type + ";")) {
-//			final int classIndex = java.indexOf("class ");
-//			int importIndex = java.substring(0, classIndex).lastIndexOf("import ");
-//			importIndex = java.indexOf("\n", importIndex);
-//			java = java.substring(0, importIndex + 1) + "import event.logging." + type + ";\n"
-//					+ java.substring(importIndex + 1);
-//		}
-//		return java;
-//	}
-//
-//	private String inherit(String java, final String className, final String inherit) {
-//		// Add import if it doesn't already exist.
-//		java = addImport(java, inherit);
-//
-//		// Inherit
-//		java = java.replaceAll("class " + className + " \\{", "class " + className + " implements " + inherit + " {");
-//
-//		return java;
-//	}
 }
