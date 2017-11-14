@@ -41,20 +41,26 @@ ext.getMajorVersion = { versionStr  ->
 }
 
 //Set this to the desired release version of the event-logging schema on github
-def eventLoggingSchemaVer = "v3.1.1-TEST07"
+def eventLoggingSchemaVer = "v3.1.2"
 
-def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-v[0-9a-zA-Z\.-]+$/ 
+def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/ 
 def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
 def combinedVersion = "${projectVersion}"
 
 if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
+    //Ensure the version string looks a bit like v1.2.3_schema-v4.5.6
     if (!(projectVersion =~ VERSION_PATTERN)) {
-        println "not match"
         throw new GradleException("Version [${projectVersion}] does not match pattern [${VERSION_PATTERN}]")
-    } else {
-        println "match"
+    } 
+
+    //Ensure the schema part of the combined version string matches eventLoggingSchemaVer
+    //This makes sure we don't tag as schema vX when the jar is built with schema vY
+    def matcher = (combinedVersion =~ VERSION_PATTERN)
+    def schemaVerFromProjectVer = matcher[0][1]
+    if (schemaVerFromProjectVer != eventLoggingSchemaVer) {
+        throw new GradleException("eventLoggingSchemaVer [${eventLoggingSchemaVer}] does not match schema version part [${schemaVerFromProjectVer}] of [${combinedVersion}]")
     }
 }
 
