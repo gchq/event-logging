@@ -26,7 +26,21 @@ The build is run as follows:
 
 `./gradlew clean build`
 
+To run the build with specific version number do something like:
+
+`./gradlew clean build -Pversion=v1.2.3_schema-v4.5.6`
+
 Towards the end of the build process, it will download the sources jar for the latest release of _event-logging_ from GitHub and compare the Java source files in it to those just built. This provides a quick way of seeing the impact on the API from any changes in the schema.  For example some schema changes that would not be a breaking change as far as an XML document is concerned (e.g. a rename of a complex type), would become a breaking change in the JAXB classes.
+
+## Rleasing the _Event Logging_ API jar
+
+To perform a release simply tag the _master_ branch as follows:
+
+`git tag -a vX.Y.Z_schema-vA.B.C`
+
+Where `X.Y.Z` is the version of the _event-logging_ api library and `A.B.C` is the version of the event-logging XMLSchema. The build process will validate the tag when it is used as the version property in Travis.
+
+When prompted to enter the commit message set the first line to `event-logging-vX.Y.Z_schema-vA.B.C` and lines 3+ to be the changes made, as extracted from the CHANGELOG.md file. Once the tag is picked up by Travis, the build will be run and the build artefacts published to [GitHub releases](https://github.com/gchq/event-logging/releases).
 
 ## Using the _Event Logging_ API
 
