@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [v3.1.2_schema-v3.1.2] - 2017-11-28
+
+### Added
+
+* Add Bintray deployment
+
 ## [v3.1.1_schema-v3.1.2] - 2017-11-14
 
 ### Added
@@ -25,5 +31,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v3.1.1_schema-v3.1.2...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...HEAD
+[v3.1.2_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.1_schema-v3.1.2...v3.1.2_schema-v3.1.2
 [v3.1.1_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.0...v3.1.1_schema-v3.1.2
