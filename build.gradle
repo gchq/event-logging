@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
@@ -23,12 +24,12 @@ apply plugin: 'ca.cutterslade.analyze'
 //use that, else use a default value
 ext.getPropertyOrDefault = { propName, defaultValue -> 
     def val;
-    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName).length() > 0) {
+    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName) != "") {
         val = project.getProperty(propName)
-        println "Using propery [${propName}] with value [${val}]"
+        println "Using property [$propName] with value [$val]"
     } else {
         val = defaultValue
-        println "Propery [${propName}] has no value, using default value [${val}]"
+        println "Property [$propName] has no value, using default value [$val]"
     }
     return val;
 }
@@ -52,7 +53,7 @@ def combinedVersion = "${projectVersion}"
 if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     //Ensure the version string looks a bit like v1.2.3_schema-v4.5.6
     if (!(projectVersion =~ VERSION_PATTERN)) {
-        throw new GradleException("Version [${projectVersion}] does not match pattern [${VERSION_PATTERN}]")
+        throw new GradleException("Version [${projectVersion}] does not match pattern [${VERSION_PATTERN}], e.g. v1.2.3_schema-v4.5.6")
     } 
 
     //Ensure the schema part of the combined version string matches eventLoggingSchemaVer
@@ -93,7 +94,6 @@ task wrapper(type: Wrapper) {
 
 allprojects {
     apply plugin: 'maven'
-    apply plugin: 'maven-publish'
 
     group "$projectGroup"
     version "$projectVersion"
