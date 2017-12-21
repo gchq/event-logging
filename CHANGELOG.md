@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [v3.2.0_schema-v3.2.0] - 2017-12-21
+
+### Added
+
+* Issue **gchq/event-logging-schema#23** : Add optional `Coordinates` object to the `Location` class to capture latitude/longitude
+
+### Changed
+
+* Uplifted schema to v3.2.0
+
 ## [v3.1.2_schema-v3.1.2] - 2017-11-28
 
 ### Added
@@ -31,6 +41,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v3.2.0_schema-v3.2.0...HEAD
+[v3.2.0_schema-v3.2.0]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...v3.2.0_schema-v3.2.0
 [v3.1.2_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.1_schema-v3.1.2...v3.1.2_schema-v3.1.2
 [v3.1.1_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.0...v3.1.1_schema-v3.1.2

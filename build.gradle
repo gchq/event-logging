@@ -1,3 +1,5 @@
+import java.util.regex.Pattern
+
 buildscript {
     repositories {
         mavenLocal()
@@ -42,9 +44,10 @@ ext.getMajorVersion = { versionStr  ->
 }
 
 //Set this to the desired release version of the event-logging schema on github
-def eventLoggingSchemaVer = "v3.1.2"
+def eventLoggingSchemaVer = "v3.2.0"
 
 def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/ 
+def CHANGE_LOG_FILENAME = "CHANGELOG.md"
 def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
@@ -62,6 +65,14 @@ if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     def schemaVerFromProjectVer = matcher[0][1]
     if (schemaVerFromProjectVer != eventLoggingSchemaVer) {
         throw new GradleException("eventLoggingSchemaVer [${eventLoggingSchemaVer}] does not match schema version part [${schemaVerFromProjectVer}] of [${combinedVersion}]")
+    }
+
+    //This is versioned build so ensure the version is in the CHANGELOG
+    def changeLogFile = new File(CHANGE_LOG_FILENAME)
+    def pattern = Pattern.compile(combinedVersion, Pattern.LITERAL)
+
+    if (!changeLogFile.getText("UTF-8").find(pattern)) {
+        throw new GradleException("This is a versioned build, cannot find string \"${pattern.toString()}\" in file ${CHANGE_LOG_FILENAME}, add the new version to the change log")
     }
 }
 
