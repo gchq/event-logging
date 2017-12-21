@@ -39,9 +39,9 @@ else
     latestUrl=$(curl -s --user "${GH_USER_AND_TOKEN}" ${API_URL} | sed -ne ${sedScript})
 fi
 
-echo "latestUrl=${latestUrl}"
-echo "workingDir=${workingDir}"
-echo "PWD=${PWD}"
+#echo "latestUrl=${latestUrl}"
+#echo "workingDir=${workingDir}"
+#echo "PWD=${PWD}"
 
 if [ "${latestUrl}x" = "x" ]; then 
     echo
