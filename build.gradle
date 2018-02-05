@@ -44,7 +44,10 @@ ext.getMajorVersion = { versionStr  ->
 }
 
 //Set this to the desired release version of the event-logging schema on github
+//*****************************************************************************
 def eventLoggingSchemaVer = "v3.2.0"
+//*****************************************************************************
+
 
 def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/ 
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
