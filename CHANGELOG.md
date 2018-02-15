@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [v3.2.1_schema-v3.2.4] - 2018-02-15
+
+### Changed
+
+* Uplifted schema to v3.2.4
+
+* Add _-client_ to the end of the `id` attribute value on the `schema` element.
+
 ## [v3.2.0_schema-v3.2.0] - 2017-12-21
 
 ### Added
