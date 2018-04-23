@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jaxb:bindings
-   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-   xmlns:evt="event-logging:3"
-   jaxb:extensionBindingPreferences="xjc"
-   jaxb:version="2.0">
-   
-   <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
-      <jaxb:globalBindings generateElementProperty="false" >
-         <!-- <xjc:simple /> -->
-         <jaxb:javaType name="java.util.Date" xmlType="xs:date" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-         <jaxb:javaType name="java.util.Date" xmlType="evt:DateTime" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-      </jaxb:globalBindings>
-   
-      <jaxb:bindings node="xs:complexType[@name='BaseMultiObject']/xs:choice">
-         <jaxb:property name="Objects" />
-      </jaxb:bindings>
-      <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
-         <jaxb:property name="AdvancedQueryItems" />
-      </jaxb:bindings>
-      <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
-         <jaxb:property name="AdvancedQueryItems" />
-      </jaxb:bindings>      
-   </jaxb:bindings>
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:evt="event-logging:3"
+    jaxb:extensionBindingPreferences="xjc"
+    jaxb:version="2.0">
+
+    <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
+        <!-- No nested classes -->
+        <jaxb:globalBindings generateElementProperty="false" localScoping="toplevel" >
+            <!-- <xjc:simple /> -->
+            <jaxb:javaType name="java.util.Date" xmlType="xs:date" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+            <jaxb:javaType name="java.util.Date" xmlType="evt:DateTime" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+        </jaxb:globalBindings>
+
+        <jaxb:bindings node="xs:complexType[@name='BaseMultiObject']/xs:choice">
+            <jaxb:property name="Objects" />
+        </jaxb:bindings>
+        <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
+            <jaxb:property name="AdvancedQueryItems" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
+            <jaxb:property name="AdvancedQueryItems" />
+        </jaxb:bindings>      
+    </jaxb:bindings>
 </jaxb:bindings>
