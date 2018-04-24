@@ -8,21 +8,59 @@
     jaxb:version="2.0">
 
     <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
-        <!-- No nested classes -->
-        <jaxb:globalBindings generateElementProperty="false" localScoping="toplevel" >
+        <!-- localScoping to prevent nested classes -->
+        <jaxb:globalBindings 
+            generateElementProperty="false" 
+            localScoping="toplevel" >
+
             <!-- <xjc:simple /> -->
-            <jaxb:javaType name="java.util.Date" xmlType="xs:date" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-            <jaxb:javaType name="java.util.Date" xmlType="evt:DateTime" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+            <jaxb:javaType 
+                name="java.util.Date" 
+                xmlType="xs:date" 
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+            <jaxb:javaType 
+                name="java.util.Date" 
+                xmlType="evt:DateTime" 
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
         </jaxb:globalBindings>
 
         <jaxb:bindings node="xs:complexType[@name='BaseMultiObject']/xs:choice">
             <jaxb:property name="Objects" />
         </jaxb:bindings>
+
         <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
             <jaxb:property name="AdvancedQueryItems" />
         </jaxb:bindings>
+
         <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
             <jaxb:property name="AdvancedQueryItems" />
         </jaxb:bindings>      
+
+        <!-- prevent the class between the Network schema action and the Network complexType -->
+        <jaxb:bindings node="//xs:choice/xs:element[@name='Network']/xs:complexType">
+            <!--<jaxb:factoryMethod name="NetworkAction"/>-->
+            <jaxb:class name="NetworkEvent" />
+        </jaxb:bindings>
+
+        <!-- prevent the class between the AntiMalware schema action and the AntiMalware complexType -->
+        <jaxb:bindings node="//xs:choice/xs:element[@name='AntiMalware']/xs:complexType">
+            <!--<jaxb:factoryMethod name="AntiMalwareAction"/>-->
+            <jaxb:class name="AntiMalwareEvent" />
+        </jaxb:bindings>
+
+        <!-- Improve the name of the Advanced Query type-->
+        <jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Advanced']/xs:complexType">
+            <!--<jaxb:factoryMethod name="AdvancedQuery"/>-->
+            <jaxb:class name="AdvancedQuery" />
+        </jaxb:bindings>
+
+        <!-- Improve the name of the Simple Query type-->
+        <jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Simple']/xs:complexType">
+            <!--<jaxb:factoryMethod name="SimpleQuery"/>-->
+            <jaxb:class name="SimpleQuery" />
+        </jaxb:bindings>
+
     </jaxb:bindings>
 </jaxb:bindings>

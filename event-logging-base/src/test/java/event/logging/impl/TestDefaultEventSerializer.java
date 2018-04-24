@@ -17,12 +17,11 @@ package event.logging.impl;
 
 import event.logging.Data;
 import event.logging.Event;
+import event.logging.EventDetail;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import org.junit.Assert;
 import org.junit.Test;
-
-import event.logging.Event.EventDetail;
 
 public class TestDefaultEventSerializer {
 

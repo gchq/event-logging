@@ -15,14 +15,21 @@
  */
 package event.logging.impl;
 
+import event.logging.AdvancedQuery;
+import event.logging.AntiMalware;
+import event.logging.AntiMalwareEvent;
+import event.logging.Authenticate;
 import event.logging.AuthenticateAction;
-import event.logging.BaseAntiMalware;
 import event.logging.Criteria;
 import event.logging.Data;
+import event.logging.Destination;
 import event.logging.Device;
 import event.logging.Document;
 import event.logging.Event;
+import event.logging.EventDetail;
 import event.logging.EventLoggingService;
+import event.logging.EventSource;
+import event.logging.EventTime;
 import event.logging.Export;
 import event.logging.File;
 import event.logging.Import;
@@ -33,7 +40,9 @@ import event.logging.Payload;
 import event.logging.Query;
 import event.logging.Search;
 import event.logging.SendReceive;
+import event.logging.Signature;
 import event.logging.Software;
+import event.logging.Source;
 import event.logging.System;
 import event.logging.Term;
 import event.logging.TermCondition;
@@ -84,7 +93,7 @@ public class EventLoggingServiceIT {
         final User user = new User();
         user.setId("someuser");
 
-        final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
+        final Authenticate authenticate = new Authenticate();
         authenticate.setAction(AuthenticateAction.LOGON);
         authenticate.setUser(user);
 
@@ -130,7 +139,7 @@ public class EventLoggingServiceIT {
                             final User user = new User();
                             user.setId("someuser");
 
-                            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
+                            final Authenticate authenticate = new Authenticate();
                             authenticate.setAction(AuthenticateAction.LOGON);
                             authenticate.setUser(user);
 
@@ -156,7 +165,7 @@ public class EventLoggingServiceIT {
     }
 
     private Event createBasicEvent(final String typeId, final String description) {
-        final Event.EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
@@ -164,13 +173,13 @@ public class EventLoggingServiceIT {
         system.setName("Test System");
         system.setEnvironment("Test");
 
-        final Event.EventSource eventSource = new Event.EventSource();
+        final EventSource eventSource = new EventSource();
         eventSource.setSystem(system);
         eventSource.setGenerator("JUnit");
         eventSource.setDevice(device);
         eventSource.setUser(user);
 
-        final Event.EventDetail eventDetail = new Event.EventDetail();
+        final EventDetail eventDetail = new EventDetail();
         eventDetail.setTypeId(typeId);
         eventDetail.setDescription(description);
 
@@ -193,7 +202,7 @@ public class EventLoggingServiceIT {
 
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
+        final Authenticate authenticate = new Authenticate();
         authenticate.setAction(AuthenticateAction.LOGON);
         authenticate.setUser(user);
 
@@ -272,15 +281,15 @@ public class EventLoggingServiceIT {
         software.setManufacturer("AVToolsInc.");
         software.setName("Anti-virus");
 
-        final BaseAntiMalware.Signature signature = new BaseAntiMalware.Signature();
+        final Signature signature = new Signature();
         signature.setUpdated(new Date());
         signature.setVersion("1.5");
 
-        final event.logging.AntiMalware value = new event.logging.AntiMalware();
+        final AntiMalware value = new AntiMalware();
         value.setProduct(software);
         value.setSignature(signature);
 
-        final Event.EventDetail.AntiMalware antiMalware = new Event.EventDetail.AntiMalware();
+        final AntiMalwareEvent antiMalware = new AntiMalwareEvent();
         antiMalware.setScanEngineUpdated(value);
 
         final Event event = createBasicEvent("Create", "Create object");
@@ -379,11 +388,11 @@ public class EventLoggingServiceIT {
         final Device destDevice = new Device();
         destDevice.setHostName("destHost");
 
-        final SendReceive.Source source = new SendReceive.Source();
+        final Source source = new Source();
         source.getUserOrDevice().add(sourceUser);
         source.getUserOrDevice().add(sourceDevice);
 
-        final SendReceive.Destination destination = new SendReceive.Destination();
+        final Destination destination = new Destination();
         destination.getUserOrDevice().add(destUser);
         destination.getUserOrDevice().add(destDevice);
 
@@ -471,7 +480,7 @@ public class EventLoggingServiceIT {
         term.setCondition(TermCondition.GREATER_THAN);
         term.setValue("56789");
 
-        final Query.Advanced advancedQuery = new Query.Advanced();
+        final AdvancedQuery advancedQuery = new AdvancedQuery();
         advancedQuery.getAdvancedQueryItems().add(term);
 
         final Query query = new Query();

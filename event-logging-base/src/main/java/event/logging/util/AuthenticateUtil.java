@@ -15,10 +15,12 @@
  */
 package event.logging.util;
 
+import event.logging.Authenticate;
 import event.logging.AuthenticateAction;
 import event.logging.AuthenticateOutcome;
 import event.logging.AuthenticateOutcomeReason;
 import event.logging.Event;
+import event.logging.EventDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,7 @@ public final class AuthenticateUtil {
                              final Boolean interactive, final AuthenticateOutcomeReason reason) {
         try {
             // Create authenticate object.
-            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
+            final Authenticate authenticate = new Authenticate();
             authenticate.setAction(AuthenticateAction.LOGON);
             if (userId != null) {
                 authenticate.setUser(EventLoggingUtil.createUser(userId));
@@ -54,7 +56,7 @@ public final class AuthenticateUtil {
             }
 
             // Create event detail.
-            final Event.EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGON, LOGON);
+            final EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGON, LOGON);
             eventDetail.setAuthenticate(authenticate);
 
             if (userId != null) {
@@ -70,7 +72,7 @@ public final class AuthenticateUtil {
     public static void logoff(final Event event, final String userId, final Boolean successful) {
         try {
             // Create authenticate object.
-            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
+            final Authenticate authenticate = new Authenticate();
             authenticate.setAction(AuthenticateAction.LOGOFF);
             if (userId != null) {
                 authenticate.setUser(EventLoggingUtil.createUser(userId));
@@ -83,7 +85,7 @@ public final class AuthenticateUtil {
             }
 
             // Create event detail.
-            final Event.EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGOFF, LOGOFF);
+            final EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGOFF, LOGOFF);
             eventDetail.setAuthenticate(authenticate);
 
             if (userId != null) {
