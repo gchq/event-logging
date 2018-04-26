@@ -25,13 +25,24 @@ task downloadSchema() {
 
     doLast {
         schemaDir.mkdirs()
+        if (!eventLoggingSchemaFilePath.isEmpty()) {
+            println "\nWARNING: Using local schema instead of released version from GitHub\n"
+            println "Reading schema from local file ${eventLoggingSchemaFilePath}"
 
-        println "Downloading schema from ${eventLoggingSchemaUrl}"
-        //now get the visualisations pack from a different repo
-        download {
-            src eventLoggingSchemaUrl
-            dest schemaDir
-            overwrite true
+            def schemaFile = new File(eventLoggingSchemaFilePath)
+
+            copy {
+                from schemaFile
+                into schemaDir
+            } 
+        } else {
+            println "Downloading schema from ${eventLoggingSchemaUrl}"
+            //now get the visualisations pack from a different repo
+            download {
+                src eventLoggingSchemaUrl
+                dest schemaDir
+                overwrite true
+            }
         }
     }
 }
