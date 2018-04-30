@@ -256,7 +256,7 @@
                            </xs:annotation>
                         </xs:element>
                         <xs:element name="Copy"
-                                    type="evt:CopyMoveComplexType"
+                                    type="evt:CopyComplexType"
                                     minOccurs="1"
                                     maxOccurs="1">
                            <xs:annotation>
@@ -264,7 +264,7 @@
                            </xs:annotation>
                         </xs:element>
                         <xs:element name="Move"
-                                    type="evt:CopyMoveComplexType"
+                                    type="evt:MoveComplexType"
                                     minOccurs="1"
                                     maxOccurs="1">
                            <xs:annotation>
@@ -1541,11 +1541,8 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
-   <xs:complexType name="CopyMoveComplexType">
-      <xs:annotation>
-         <xs:documentation>Captures data relevant to both copy and move data events.</xs:documentation>
-      </xs:annotation>
-      <xs:sequence minOccurs="1" maxOccurs="1">
+
+   <xs:group name="CopyMoveGroup">
          <xs:element name="Source"
                      type="evt:MultiObjectComplexType"
                      minOccurs="1"
@@ -1578,8 +1575,35 @@
                <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
             </xs:annotation>
          </xs:element>
-      </xs:sequence>
+
+   </xs:group>
+
+   <xs:complexType name="CopyComplexType">
+       <xs:annotation>
+           <xs:documentation>Captures copy events.</xs:documentation>
+       </xs:annotation>
+       <xs:complexContent>
+           <xs:extension base="EventAction">
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                   <xs:group ref="evt:CopyMoveGroup" minOccurs="1" maxOccurs="1"/>
+               </xs:sequence>
+           </xs:extension>
+       </xs:complexContent>
    </xs:complexType>
+
+   <xs:complexType name="MoveComplexType">
+       <xs:annotation>
+           <xs:documentation>Captures move events.</xs:documentation>
+       </xs:annotation>
+       <xs:complexContent>
+           <xs:extension base="EventAction">
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                   <xs:group ref="evt:CopyMoveGroup" minOccurs="1" maxOccurs="1"/>
+               </xs:sequence>
+           </xs:extension>
+       </xs:complexContent>
+   </xs:complexType>
+
    <xs:complexType name="CopyMoveOutcomeComplexType">
       <xs:complexContent>
          <xs:extension base="evt:BaseOutcomeComplexType">
@@ -2426,29 +2450,33 @@
       </xs:complexContent>
    </xs:complexType>
    <xs:complexType name="SearchComplexType">
-      <xs:annotation>
-         <xs:documentation>Contains a criteria and describes the outcome of the event.</xs:documentation>
-      </xs:annotation>
-      <xs:sequence minOccurs="1" maxOccurs="1">
-         <xs:group ref="evt:BaseObjectGroup" minOccurs="1" maxOccurs="1"/>
-         <xs:group ref="evt:CriteriaExtensionGroup" minOccurs="1" maxOccurs="1"/>
-         <xs:element name="Outcome"
-                     type="evt:OutcomeComplexType"
-                     minOccurs="0"
-                     maxOccurs="1">
-            <xs:annotation>
-               <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
-            </xs:annotation>
-         </xs:element>
-         <xs:element name="Data"
-                     type="evt:DataComplexType"
-                     minOccurs="0"
-                     maxOccurs="unbounded">
-            <xs:annotation>
-               <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
-            </xs:annotation>
-         </xs:element>
-      </xs:sequence>
+       <xs:annotation>
+           <xs:documentation>Contains a criteria and describes the outcome of the event.</xs:documentation>
+       </xs:annotation>
+       <xs:complexContent>
+           <xs:extension base="EventAction">
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                   <xs:group ref="evt:BaseObjectGroup" minOccurs="1" maxOccurs="1"/>
+                   <xs:group ref="evt:CriteriaExtensionGroup" minOccurs="1" maxOccurs="1"/>
+                   <xs:element name="Outcome"
+                       type="evt:OutcomeComplexType"
+                       minOccurs="0"
+                       maxOccurs="1">
+                       <xs:annotation>
+                           <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
+                       </xs:annotation>
+                   </xs:element>
+                   <xs:element name="Data"
+                       type="evt:DataComplexType"
+                       minOccurs="0"
+                       maxOccurs="unbounded">
+                       <xs:annotation>
+                           <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
+                       </xs:annotation>
+                   </xs:element>
+               </xs:sequence>
+           </xs:extension>
+       </xs:complexContent>
    </xs:complexType>
    <xs:complexType name="SearchResultComplexType">
       <xs:annotation>
@@ -3074,13 +3102,92 @@
    </xs:complexType>
 
 
+   <!-- Added -->
+   <xs:group name="MultiObjectGroup">
+       <!--<xs:choice minOccurs="1" maxOccurs="unbounded">-->
+       <xs:choice>
+           <xs:element name="Banner"
+               type="evt:BannerComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Chat"
+               type="evt:ChatComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Configuration"
+               type="evt:ConfigurationComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Criteria"
+               type="evt:CriteriaComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Document"
+               type="evt:DocumentComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Email"
+               type="evt:EmailComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="File"
+               type="evt:FileComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Folder"
+               type="evt:FolderComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Group"
+               type="evt:GroupComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="GroupChat"
+               type="evt:GroupChatComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Object"
+               type="evt:ObjectComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="SearchResult"
+               type="evt:SearchResultComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Shortcut"
+               type="evt:ShortcutComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="User"
+               type="evt:UserComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="VirtualSession"
+               type="evt:VirtualSessionComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="VOIP"
+               type="evt:VOIPComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Resource"
+               type="evt:ResourceComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+           <xs:element name="Association"
+               type="evt:AssociationComplexType"
+               minOccurs="1"
+               maxOccurs="1"/>
+       </xs:choice>
+   </xs:group>
 
 
    <!-- Added -->
-   <xs:complexType name="AuthorisationType">
+   <xs:complexType name="AuthoriseType">
        <xs:complexContent>
-           <xs:extension base="evt:BaseMultiObjectComplexType">
+           <xs:extension base="EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
+                   <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
                    <xs:element name="Action"
                        type="evt:AuthorisationSimpleType"
                        minOccurs="0"
@@ -3136,9 +3243,15 @@
                        </xs:annotation>
                    </xs:element>
                </xs:sequence>
+               <!--<xs:complexContent>-->
+                   <!--<xs:extension base="evt:BaseMultiObjectComplexType">-->
+
+                       <!--</xs:extension>-->
+                   <!--</xs:complexContent>-->
            </xs:extension>
        </xs:complexContent>
    </xs:complexType>
 
+   <!-- https://stackoverflow.com/questions/5020313/polymorphism-in-xsd-schema-and-jaxb-classes -->
 
 </xs:schema>

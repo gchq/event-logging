@@ -64,6 +64,8 @@
 
         <!-- Add '...Event' suffix to all the schema actions for better clarity in the java code -->
         <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice">
+            <jaxb:property name="eventType" />
+
             <jaxb:bindings node="xs:element[@name='Authenticate']">
                 <jaxb:property name="authenticateEvent" />
                 <jaxb:bindings node="xs:complexType">
