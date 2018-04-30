@@ -15,7 +15,7 @@
  */
 package event.logging.impl;
 
-import event.logging.Authenticate;
+import event.logging.AuthenticateEvent;
 import event.logging.AuthenticateAction;
 import event.logging.Device;
 import event.logging.Event;
@@ -183,11 +183,11 @@ public class TestValidation {
             final User authUser = new User();
             authUser.setId("someuser");
 
-            final Authenticate authenticate = new Authenticate();
-            authenticate.setAction(AuthenticateAction.LOGON);
-            authenticate.setUser(authUser);
+            final AuthenticateEvent authenticateEvent = new AuthenticateEvent();
+            authenticateEvent.setAction(AuthenticateAction.LOGON);
+            authenticateEvent.setUser(authUser);
 
-            event.getEventDetail().setAuthenticate(authenticate);
+            event.getEventDetail().setAuthenticateEvent(authenticateEvent);
             event.getEventTime().setTimeCreated(new Date());
         }
 

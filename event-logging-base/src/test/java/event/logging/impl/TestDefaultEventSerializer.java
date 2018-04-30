@@ -59,7 +59,7 @@ public class TestDefaultEventSerializer {
         outcome.getData().add(data);
         objectOutcome.setOutcome(outcome);
 
-        eventDetail.setCreate(objectOutcome);
+        eventDetail.setCreateEvent(objectOutcome);
         event.setEventDetail(eventDetail);
 
         return event;
