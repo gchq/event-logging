@@ -122,11 +122,13 @@ bintray {
     }
 }
 
-//clean {
-//    //the contents of src is transient so clear it out
-//    delete "src/main"
-//    delete "src/test"
-//}
+clean {
+    //the contents of src is transient so clear it out
+    delete "src/main/java/event"
+    delete "src/main/resources/event"
+    delete "src/test/java/event"
+    delete "src/test/resources/event"
+}
 
 tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
 
