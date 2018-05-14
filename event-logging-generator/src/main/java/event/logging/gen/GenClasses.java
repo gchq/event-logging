@@ -15,10 +15,11 @@
  */
 package event.logging.gen;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
  * event-logging-api
  */
 public class GenClasses {
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+
     private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
 
     private static final String PUBLIC_CLASS = "public class ";
@@ -170,13 +173,12 @@ public class GenClasses {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
         }
 
-        String xsd = StreamUtil.fileToString(xsdFile.toFile());
+        String xsd = new String(Files.readAllBytes(xsdFile), UTF8);
         //Remove 'ComplexType' from the type names to make the class names cleaner
         xsd = COMPLEX_TYPE_PATTERN.matcher(xsd).replaceAll("");
         //Remove 'SimpleType' from the type names to make the class names cleaner
         xsd = SIMPLE_TYPE_PATTERN.matcher(xsd).replaceAll("");
-        StreamUtil.stringToFile(xsd, modXsd.toFile());
-
+        Files.write(modXsd, xsd.getBytes(UTF8));
 
         // Delete existing output.
         final Path apiProjectDir = rootDir.resolve(API_PROJECT_NAME);
@@ -222,7 +224,7 @@ public class GenClasses {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                     if (path.toFile().getName().endsWith(".java")) {
-                        modifyFile(path.toFile());
+                        modifyFile(path);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -281,9 +283,9 @@ public class GenClasses {
 
                         // CHANGE OUTPUT PACKAGES.
                         byte[] data = Files.readAllBytes(dest);
-                        String content = new String(data, "UTF-8");
+                        String content = new String(data, UTF8);
                         content = EVENT_LOGGING_BASE_PATTERN.matcher(content).replaceAll("event.logging");
-                        Files.write(dest, content.getBytes("UTF-8"));
+                        Files.write(dest, content.getBytes(UTF8));
 
                     }
                     return FileVisitResult.CONTINUE;
@@ -292,29 +294,33 @@ public class GenClasses {
         }
     }
 
-    private void modifyFile(final File javaFile) {
-        String java = StreamUtil.fileToString(javaFile);
+    private void modifyFile(final Path javaFile) {
+        try {
+            String java = new String(Files.readAllBytes(javaFile), UTF8);
 
-        // Remove top JAXB comments.
-        java = removeComments(java);
+            // Remove top JAXB comments.
+            java = removeComments(java);
 
-        // Sort annotations to ensure consistency
-        java = sortLines(java, "@XmlElement(name = ", true);
+            // Sort annotations to ensure consistency
+            java = sortLines(java, "@XmlElement(name = ", true);
 
-        // Sort comments.
-        java = sortLines(java, "* {@link", false);
+            // Sort comments.
+            java = sortLines(java, "* {@link", false);
 
-        // Sort out object factory.
-        if (javaFile.getName().contains("ObjectFactory")) {
-            java = fixObjectFactory(java);
+            // Sort out object factory.
+            if (javaFile.getFileName().toString().contains("ObjectFactory")) {
+                java = fixObjectFactory(java);
+            }
+
+            // Make Base objects abstract.
+            if (javaFile.getFileName().toString().contains("Base")) {
+                java = makeAbstract(java);
+            }
+
+            Files.write(javaFile, java.getBytes(UTF8));
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         }
-
-        // Make Base objects abstract.
-        if (javaFile.getName().contains("Base")) {
-            java = makeAbstract(java);
-        }
-
-        StreamUtil.stringToFile(java, javaFile);
     }
 
     private String removeComments(String java) {
