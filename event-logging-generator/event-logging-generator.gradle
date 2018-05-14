@@ -1,3 +1,4 @@
+ext.moduleName = 'event.logging.generator'
 
 def schemaDir = project.file('schema')
 

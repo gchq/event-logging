@@ -1,14 +1,15 @@
-import groovy.json.JsonSlurper
-
 apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
+
+ext.moduleName = 'event.logging.api'
 
 archivesBaseName = "event-logging"
 def schemaDir = project.file('schema')
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
+    compile "javax.xml.bind:jaxb-api:${versions.jaxb_api}"
 
     // The production code uses the SLF4J logging API at compile time
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
@@ -16,7 +17,8 @@ dependencies {
     //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
     //runtime "ch.qos.logback:logback-classic:${versions.logback}"
 
-    testCompile "junit:junit:${versions.junit}"
+    testCompile "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testCompile "org.assertj:assertj-core:${versions.assertj}"
 }
 
 jar {
@@ -64,7 +66,7 @@ def pomConfig = {
         }
     }
     scm {
-       url "https://github.com/stroom/event-logging"
+        url "https://github.com/stroom/event-logging"
     }
 }
 
@@ -81,7 +83,6 @@ publishing.publications {
         }
     }
 }
-
 
 //configuration for the bintray plugin for uploading maven artefacts to bintray
 //see https://github.com/bintray/gradle-bintray-plugin
@@ -106,7 +107,7 @@ bintray {
         version {
             name = "${versions.eventLoggingAndSchema}"
             desc = "stroom-query-${versions.eventLoggingAndSchema}"
-            released  = new Date()
+            released = new Date()
             vcsTag = "${versions.eventLoggingAndSchema}"
             gpg {
                 //Bintray will self-sign the files

@@ -94,11 +94,13 @@ ext.versions = [
     eventLoggingAndSchema: combinedVersion,
 
     //------------3rd-party------------
-    jackson: '2.8.9',
-    junit: '4.12',
+    assertj: '3.10.0',
+    jackson: '2.9.0',
+    jaxb_api: '2.3.0',
+    junit: '5.2.0',
     logback: '1.2.3',
-    saxon: '9.6.0-6',
-    slf4j: '1.7.22',
+    saxon: '9.7.0-18',
+    slf4j: '1.7.25',
     zzDUMMYzz: 'makes sorting easier'
 ]
 
@@ -119,8 +121,8 @@ subprojects {
     apply plugin: 'idea'
 
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 1.10
+    targetCompatibility = 1.10
 
     repositories {
         mavenLocal()
@@ -144,6 +146,56 @@ subprojects {
             }
         }
     }
+
+
+
+
+
+    afterEvaluate {
+        repositories {
+            jcenter()
+        }
+
+        compileJava {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        compileTestJava {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+//                        '--add-modules', 'junit',
+//                        '--add-reads', "$moduleName=junit",
+                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        test {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                jvmArgs = [
+                        '--module-path', classpath.asPath,
+                        '--add-modules', 'ALL-MODULE-PATH',
+//                        '--add-reads', "$moduleName=junit",
+                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+                ]
+                classpath = files()
+            }
+        }
+    }
+
+
+
+
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {

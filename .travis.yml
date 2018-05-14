@@ -1,8 +1,7 @@
 language: java
-dist: trusty
-group: edge
-jdk: oraclejdk8
-sudo: false
+#dist: trusty
+#group: edge
+#sudo: false
 
 env:
   global:
@@ -15,6 +14,14 @@ env:
   #apt:
     #packages:
     #- oracle-java8-installer
+
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+
+matrix:
+  include:
+      - env: JDK='OpenJDK 10'
+        install: . ./install-jdk.sh -F 10 -L GPL
 
 install: echo "skip 'gradle assemble' step to speed up build"
 
