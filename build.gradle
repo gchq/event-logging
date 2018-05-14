@@ -6,14 +6,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
 }
 
 plugins {
     //plugin for downloading content from the 'net
-    id "de.undercouch.download" version "3.2.0"
+    id "de.undercouch.download" version "3.4.3"
 
     //plugin for producing a tree of task dependencies, run task 'taskTree'
     id "com.dorongold.task-tree" version "1.3"
