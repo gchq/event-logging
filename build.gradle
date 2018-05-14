@@ -191,6 +191,11 @@ subprojects {
                 classpath = files()
             }
         }
+
+        javadoc {
+            options.addStringOption('-module-path', classpath.asPath)
+            options.addStringOption('Xdoclint:all,-missing', '-html5')
+        }
     }
 
 

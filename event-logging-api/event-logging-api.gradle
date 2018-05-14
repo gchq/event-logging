@@ -39,11 +39,6 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-javadoc {
-    options.addStringOption('-module-path', classpath.asPath)
-    options.addStringOption('Xdoclint:all,-missing', '-html5')
-}
-
 task javadocJar(type: Jar) {
     dependsOn javadoc
     classifier = 'javadoc'
