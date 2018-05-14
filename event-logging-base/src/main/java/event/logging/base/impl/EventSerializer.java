@@ -16,7 +16,6 @@
 package event.logging.base.impl;
 
 import event.logging.Event;
-import event.logging.Event;
 
 /**
  * This interface is used to define a method that will turn an event into a String representation.
@@ -24,9 +23,8 @@ import event.logging.Event;
 public interface EventSerializer {
     /**
      * This method will turn the supplied event into a String.
-     * 
-     * @param event
-     *            The event to serialise.
+     *
+     * @param event The event to serialise.
      * @return A serialised representation of the supplied event.
      */
     String serialize(Event event);

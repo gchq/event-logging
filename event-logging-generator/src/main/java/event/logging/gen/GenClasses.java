@@ -183,23 +183,12 @@ public class GenClasses {
         final Path srcDir = apiProjectDir.resolve("src");
         final Path mainDir = srcDir.resolve("main");
         final Path mainJavaDir = mainDir.resolve("java");
-        final Path eventLoggingir = mainJavaDir.resolve("event/logging");
         final Path mainResourcesDir = mainDir.resolve("resources");
 
-        final Path testDir = srcDir.resolve("test");
-        final Path testJavaDir = testDir.resolve("java");
-        final Path testResourcesDir = testJavaDir.resolve("resources");
-
         //src dir in the api project is transient so delete everything ready to re-generate it
-        deleteAll(eventLoggingir);
-        Files.createDirectories(eventLoggingir);
-        deleteAll(mainResourcesDir);
-        Files.createDirectories(mainResourcesDir);
-
-        deleteAll(testJavaDir);
-        Files.createDirectories(testJavaDir);
-        deleteAll(testResourcesDir);
-        Files.createDirectories(testResourcesDir);
+        clean(srcDir.resolve("main/java/event/logging"));
+        clean(srcDir.resolve("main/resources/event/logging"));
+        clean(srcDir.resolve("test/java/event/logging"));
 
         final String command = XJC_PATH +
                 " -xmlschema" +
@@ -251,6 +240,11 @@ public class GenClasses {
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
         Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
+    }
+
+    private void clean(Path path) throws IOException {
+        deleteAll(path);
+        Files.createDirectories(path);
     }
 
     private void deleteAll(Path dir) throws IOException {
