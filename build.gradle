@@ -24,7 +24,7 @@ plugins {
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
-ext.getPropertyOrDefault = { propName, defaultValue -> 
+ext.getPropertyOrDefault = { propName, defaultValue ->
     def val;
     if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName) != "") {
         val = project.getProperty(propName)
@@ -37,7 +37,7 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
 }
 
 //Extract the major version from a version str
-ext.getMajorVersion = { versionStr  ->
+ext.getMajorVersion = { versionStr ->
     def groups = (versionStr =~ /v([0-9]+)\..*/)
     def majorVer = groups[0][1]
     return majorVer
@@ -49,7 +49,7 @@ def eventLoggingSchemaVer = "v3.2.4"
 //*****************************************************************************
 
 
-def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/ 
+def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
 def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
@@ -60,7 +60,7 @@ if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     //Ensure the version string looks a bit like v1.2.3_schema-v4.5.6
     if (!(projectVersion =~ VERSION_PATTERN)) {
         throw new GradleException("Version [${projectVersion}] does not match pattern [${VERSION_PATTERN}], e.g. v1.2.3_schema-v4.5.6")
-    } 
+    }
 
     //Ensure the schema part of the combined version string matches eventLoggingSchemaVer
     //This makes sure we don't tag as schema vX when the jar is built with schema vY
@@ -89,19 +89,19 @@ println "Using namespace version: $eventLoggingSchemaMajorVer"
 println "Using schema url:        $eventLoggingSchemaUrl"
 
 ext.versions = [
-    //------event-logging--------------
-    eventLogging: projectVersion,
-    eventLoggingAndSchema: combinedVersion,
+        //------event-logging--------------
+        eventLogging         : projectVersion,
+        eventLoggingAndSchema: combinedVersion,
 
-    //------------3rd-party------------
-    assertj: '3.10.0',
-    jackson: '2.9.0',
-    jaxb_api: '2.3.0',
-    junit: '5.2.0',
-    logback: '1.2.3',
-    saxon: '9.7.0-18',
-    slf4j: '1.7.25',
-    zzDUMMYzz: 'makes sorting easier'
+        //------------3rd-party------------
+        assertj              : '3.10.0',
+        jackson              : '2.9.0',
+        jaxb_api             : '2.3.0',
+        junit                : '5.2.0',
+        logback              : '1.2.3',
+        saxon                : '9.7.0-18',
+        slf4j                : '1.7.25',
+        zzDUMMYzz            : 'makes sorting easier'
 ]
 
 task wrapper(type: Wrapper) {
@@ -196,11 +196,19 @@ subprojects {
             options.addStringOption('-module-path', classpath.asPath)
             options.addStringOption('Xdoclint:all,-missing', '-html5')
         }
+
+        jar {
+            inputs.property("moduleName", moduleName)
+            manifest {
+                attributes(
+                        "Automatic-Module-Name": moduleName,
+                        "Implementation-Title": "Event-Logging",
+                        "Implementation-Version": versions.eventLoggingAndSchema,
+                )
+            }
+            version versions.eventLoggingAndSchema
+        }
     }
-
-
-
-
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
@@ -214,7 +222,7 @@ subprojects {
         }
     }
 
-    clean{
+    clean {
         //clear out the 'out' dirs used by intelliJ
         delete "out"
     }

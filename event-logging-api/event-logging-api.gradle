@@ -22,8 +22,10 @@ dependencies {
 }
 
 jar {
+    inputs.property("moduleName", moduleName)
     manifest {
         attributes(
+                "Automatic-Module-Name": moduleName,
                 "Implementation-Title": "Event-Logging",
                 "Implementation-Version": versions.eventLoggingAndSchema,
         )
