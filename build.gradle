@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-//        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
 }
@@ -20,7 +20,7 @@ plugins {
 }
 
 //must be applied to all projects including root
-//apply plugin: 'ca.cutterslade.analyze'
+apply plugin: 'ca.cutterslade.analyze'
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
