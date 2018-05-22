@@ -15,13 +15,14 @@ env:
     #packages:
     #- oracle-java8-installer
 
-before_install:
-  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-
-matrix:
-  include:
-      - env: JDK='OpenJDK 10'
-        install: . ./install-jdk.sh -F 10 -L GPL
+jdk: oraclejdk8
+#before_install:
+#  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+#
+#matrix:
+#  include:
+#      - env: JDK='OpenJDK 10'
+#        install: . ./install-jdk.sh -F 10 -L GPL
 
 install: echo "skip 'gradle assemble' step to speed up build"
 

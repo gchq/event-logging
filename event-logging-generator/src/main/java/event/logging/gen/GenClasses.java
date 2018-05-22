@@ -220,7 +220,7 @@ public class GenClasses {
         // Now modify the generated classes.
         if (Files.isDirectory(mainJavaDir)) {
             // Modify Java files.
-            Files.walkFileTree(mainJavaDir, new SimpleFileVisitor<>() {
+            Files.walkFileTree(mainJavaDir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                     if (path.toFile().getName().endsWith(".java")) {
@@ -251,7 +251,7 @@ public class GenClasses {
 
     private void deleteAll(Path dir) throws IOException {
         if (Files.exists(dir)) {
-            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (!file.getFileName().toString().contains(".gitkeep")) {
@@ -265,7 +265,7 @@ public class GenClasses {
 
     private void copyAll(Path from, Path to) throws IOException {
         if (Files.exists(from)) {
-            Files.walkFileTree(from, new SimpleFileVisitor<>() {
+            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
                     Path rel = from.relativize(dir);
