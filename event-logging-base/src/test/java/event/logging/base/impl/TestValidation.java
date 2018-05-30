@@ -71,7 +71,7 @@ public class TestValidation {
     public void removeCustomLogAppender() {
 //        LoggerFactory.getLogger(DefaultXMLValidator.class).removeAppender(JUNIT_CONSOLE_APPENDER);
 
-        java.lang.System.setProperty("event.logging.logreceiver", "LoggerLogReceiver");
+        java.lang.System.setProperty("event.logging.logreceiver", "event.logging.impl.LoggerLogReceiver");
     }
 
     @Test

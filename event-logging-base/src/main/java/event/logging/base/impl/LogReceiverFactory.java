@@ -24,7 +24,7 @@ public final class LogReceiverFactory {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(LogReceiverFactory.class);
     private static final String PROP_LOG_RECEIVER = "event.logging.logreceiver";
-    private static final String DEFAULT_LOG_RECEIVER = "LoggerLogReceiver";
+    private static final String DEFAULT_LOG_RECEIVER = "event.logging.impl.LoggerLogReceiver";
 
     private static LogReceiverFactory instance;
 
