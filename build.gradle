@@ -217,7 +217,6 @@ subprojects {
                         "Automatic-Module-Name": moduleName,
                 )
             }
-            version projectVersion
         }
     }
 }
