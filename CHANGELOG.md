@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [v4.0.2_schema-v3.2.4] - 2018-09-05
+
+* Added automatic module name for Java 9 builds.
+
 ## [v3.2.4_schema-v3.2.4] - 2018-05-30
 
 * Fix for log receiver class name.
@@ -55,7 +59,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v4.0.1_schema-v3.2.4...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v4.0.2_schema-v3.2.4...HEAD
+[v4.0.2_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v4.0.1...v4.0.2_schema-v3.2.4
+[v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
 [v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
 [v3.2.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.0_schema-v3.2.0...v3.2.1_schema-v3.2.4
 [v3.2.0_schema-v3.2.0]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...v3.2.0_schema-v3.2.0

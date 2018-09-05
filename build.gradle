@@ -105,7 +105,7 @@ ext.versions = [
 ]
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.7'
+    gradleVersion = '4.10'
 }
 
 allprojects {
@@ -162,6 +162,63 @@ subprojects {
     clean {
         //clear out the 'out' dirs used by intelliJ
         delete "out"
+    }
+
+    afterEvaluate {
+        repositories {
+            jcenter()
+        }
+
+//        compileJava {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                options.compilerArgs = [
+//                        '--module-path', classpath.asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        compileTestJava {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                options.compilerArgs = [
+//                        '--module-path', classpath.asPath,
+////                        '--add-modules', 'junit',
+////                        '--add-reads', "$moduleName=junit",
+//                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        test {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                jvmArgs = [
+//                        '--module-path', classpath.asPath,
+//                        '--add-modules', 'ALL-MODULE-PATH',
+////                        '--add-reads', "$moduleName=junit",
+//                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        javadoc {
+//            options.addStringOption('-module-path', classpath.asPath)
+//            options.addStringOption('Xdoclint:all,-missing', '-html5')
+//        }
+
+        jar {
+            inputs.property("moduleName", moduleName)
+            manifest {
+                attributes(
+                        "Automatic-Module-Name": moduleName,
+                )
+            }
+            version projectVersion
+        }
     }
 }
 
