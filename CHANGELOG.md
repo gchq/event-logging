@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## [v4.0.2_schema-v3.2.4] - 2018-09-05
+## [v4.0.5_schema-v3.2.4] - 2018-09-05
 
 * Added automatic module name for Java 9 builds.
 
@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 Intial open source release
 
 [Unreleased]: https://github.com/gchq/event-logging/compare/v4.0.2_schema-v3.2.4...HEAD
-[v4.0.2_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v4.0.1...v4.0.2_schema-v3.2.4
+[v4.0.5_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v4.0.1...v4.0.5_schema-v3.2.4
 [v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
 [v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
 [v3.2.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.0_schema-v3.2.0...v3.2.1_schema-v3.2.4
