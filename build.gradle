@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
     }
 }
 
