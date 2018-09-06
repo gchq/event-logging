@@ -79,7 +79,7 @@ public final class EventLoggingUtil {
     public static Outcome createOutcome(final Boolean success,
             final String description) {
         final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.FALSE);
+        outcome.setSuccess(success);
         outcome.setDescription(description);
         return outcome;
     }
