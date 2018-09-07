@@ -4,10 +4,8 @@ def schemaDir = project.file('schema')
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    
-    runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
-
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
 }
 
 task clearSchemaDir(type: Delete) {
