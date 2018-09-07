@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## [v4.0.6_schema-v3.2.4] - 2018-09-07
+## [v4.0.7_schema-v3.2.4] - 2018-09-07
 
 * Update to Java 10
 
