@@ -4,5 +4,6 @@ module event.logging.api {
     requires slf4j.api;
 
     exports event.logging;
+    exports event.logging.impl;
     exports event.logging.util;
 }
