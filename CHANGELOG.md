@@ -10,7 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## [v4.0.6_schema-v3.2.4] - 2018-09-05
+## [v4.0.6_schema-v3.2.4] - 2018-09-07
+
+* Update to Java 10
+
+* Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+
+## [v4.0.5_schema-v3.2.4] - 2018-09-05
 
 * Added automatic module name for Java 9 builds.
 
