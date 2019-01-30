@@ -15,10 +15,11 @@
  */
 package event.logging.gen;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -37,25 +39,35 @@ import java.util.stream.Collectors;
  * event-logging-api
  */
 public class GenClasses {
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+
     private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
 
     private static final String PUBLIC_CLASS = "public class ";
 
     private static final String XJC_PATH = "/usr/bin/xjc";
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
+    private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
 
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
     private static final String API_PROJECT_NAME = "event-logging-api";
     private static final String BASE_PROJECT_NAME = "event-logging-base";
 
-    public static final String SCHEMA_DIR_NAME = "schema";
+    private static final String SCHEMA_DIR_NAME = "schema";
     private static final String PACKAGE_NAME = "event.logging";
+
+    private static final Pattern EVENT_LOGGING_BASE_PATTERN = Pattern.compile("event\\.logging\\.base");
+
+    private static final Pattern COMPLEX_TYPE_PATTERN = Pattern.compile("ComplexType");
+    private static final Pattern SIMPLE_TYPE_PATTERN = Pattern.compile("SimpleType");
+    private static final Pattern COMMENT_PATTERN = Pattern.compile("/\\*\\*");
+    private static final Pattern BASE_PATTERN = Pattern.compile("public Base[^ .]+ [^\n]+\n[^\n]+\n[^\n]+\n");
 
     private static class IOSink extends Thread {
         private final InputStream inputStream;
         private final PrintStream printStream;
 
-        public IOSink(final InputStream inputStream, final PrintStream printStream) {
+        IOSink(final InputStream inputStream, final PrintStream printStream) {
             this.inputStream = inputStream;
             this.printStream = printStream;
         }
@@ -80,7 +92,7 @@ public class GenClasses {
         System.out.println("JAXB class generation complete");
     }
 
-    public void run() throws Exception {
+    private void run() throws Exception {
         // Options:
         // -nv : do not perform strict validation of the input schema(s)
         // -extension : allow vendor extensions - do not strictly follow the
@@ -143,7 +155,7 @@ public class GenClasses {
         final Path bindingFile = generatorProjectDir.resolve("simple-binding.xjb");
 
         List<Path> sourceSchemas = Files.find(schemaDir, 1, (path, atts) ->
-                path.getFileName().toString().matches(SOURCE_SCHEMA_REGEX)
+                SOURCE_SCHEMA_PATTERN.matcher(path.getFileName().toString()).matches()
         ).collect(Collectors.toList());
 
         Path xsdFile = null;
@@ -161,13 +173,12 @@ public class GenClasses {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
         }
 
-        String xsd = StreamUtil.fileToString(xsdFile.toFile());
+        String xsd = new String(Files.readAllBytes(xsdFile), UTF8);
         //Remove 'ComplexType' from the type names to make the class names cleaner
-        xsd = xsd.replaceAll("ComplexType", "");
+        xsd = COMPLEX_TYPE_PATTERN.matcher(xsd).replaceAll("");
         //Remove 'SimpleType' from the type names to make the class names cleaner
-        xsd = xsd.replaceAll("SimpleType", "");
-        StreamUtil.stringToFile(xsd, modXsd.toFile());
-
+        xsd = SIMPLE_TYPE_PATTERN.matcher(xsd).replaceAll("");
+        Files.write(modXsd, xsd.getBytes(UTF8));
 
         // Delete existing output.
         final Path apiProjectDir = rootDir.resolve(API_PROJECT_NAME);
@@ -177,9 +188,9 @@ public class GenClasses {
         final Path mainResourcesDir = mainDir.resolve("resources");
 
         //src dir in the api project is transient so delete everything ready to re-generate it
-        deleteAll(srcDir);
-        Files.createDirectories(mainJavaDir);
-        Files.createDirectories(mainResourcesDir);
+        clean(srcDir.resolve("main/java/event/logging"));
+        clean(srcDir.resolve("main/resources/event/logging"));
+        clean(srcDir.resolve("test/java/event/logging"));
 
         final String command = XJC_PATH +
                 " -xmlschema" +
@@ -202,7 +213,7 @@ public class GenClasses {
         final int exitStatus = process.waitFor();
 
         if (exitStatus != 0) {
-            System.out.printf("Executing xjc failed");
+            System.out.print("Executing xjc failed");
             System.exit(1);
         }
 
@@ -211,9 +222,9 @@ public class GenClasses {
             // Modify Java files.
             Files.walkFileTree(mainJavaDir, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                     if (path.toFile().getName().endsWith(".java")) {
-                        modifyFile(path.toFile());
+                        modifyFile(path);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -222,7 +233,10 @@ public class GenClasses {
 
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
-        copyAll(baseProjectDir.resolve("src"), apiProjectDir.resolve("src"));
+        copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"), apiProjectDir.resolve("src/main/java/event/logging"));
+        copyAll(baseProjectDir.resolve("src/main/resources"), apiProjectDir.resolve("src/main/resources"));
+        copyAll(baseProjectDir.resolve("src/test/java/event/logging/base"), apiProjectDir.resolve("src/test/java/event/logging"));
+        copyAll(baseProjectDir.resolve("src/test/resources"), apiProjectDir.resolve("src/test/resources"));
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
@@ -230,63 +244,83 @@ public class GenClasses {
         Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
     }
 
+    private void clean(Path path) throws IOException {
+        deleteAll(path);
+        Files.createDirectories(path);
+    }
+
     private void deleteAll(Path dir) throws IOException {
-        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (!file.getFileName().toString().contains(".gitkeep")) {
-                    Files.delete(file);
+        if (Files.exists(dir)) {
+            Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (!file.getFileName().toString().contains(".gitkeep")) {
+                        Files.delete(file);
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+            });
+        }
     }
 
     private void copyAll(Path from, Path to) throws IOException {
-        Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                Path rel = from.relativize(dir);
-                Path dest = to.resolve(rel);
-                Files.createDirectories(dest);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Path rel = from.relativize(file);
-                Path dest = to.resolve(rel);
-                if (!Files.exists(dest)) {
-                    Files.copy(file, dest);
+        if (Files.exists(from)) {
+            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    Path rel = from.relativize(dir);
+                    Path dest = to.resolve(rel);
+                    Files.createDirectories(dest);
+                    return FileVisitResult.CONTINUE;
                 }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path rel = from.relativize(file);
+                    Path dest = to.resolve(rel);
+                    if (!Files.exists(dest)) {
+                        Files.copy(file, dest);
+
+                        // CHANGE OUTPUT PACKAGES.
+                        byte[] data = Files.readAllBytes(dest);
+                        String content = new String(data, UTF8);
+                        content = EVENT_LOGGING_BASE_PATTERN.matcher(content).replaceAll("event.logging");
+                        Files.write(dest, content.getBytes(UTF8));
+
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
     }
 
-    private void modifyFile(final File javaFile) {
-        String java = StreamUtil.fileToString(javaFile);
+    private void modifyFile(final Path javaFile) {
+        try {
+            String java = new String(Files.readAllBytes(javaFile), UTF8);
 
-        // Remove top JAXB comments.
-        java = removeComments(java);
+            // Remove top JAXB comments.
+            java = removeComments(java);
 
-        // Sort annotations to ensure consistency
-        java = sortLines(java, "@XmlElement(name = ", true);
+            // Sort annotations to ensure consistency
+            java = sortLines(java, "@XmlElement(name = ", true);
 
-        // Sort comments.
-        java = sortLines(java, "* {@link", false);
+            // Sort comments.
+            java = sortLines(java, "* {@link", false);
 
-        // Sort out object factory.
-        if (javaFile.getName().contains("ObjectFactory")) {
-            java = fixObjectFactory(java);
+            // Sort out object factory.
+            if (javaFile.getFileName().toString().contains("ObjectFactory")) {
+                java = fixObjectFactory(java);
+            }
+
+            // Make Base objects abstract.
+            if (javaFile.getFileName().toString().contains("Base")) {
+                java = makeAbstract(java);
+            }
+
+            Files.write(javaFile, java.getBytes(UTF8));
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
         }
-
-        // Make Base objects abstract.
-        if (javaFile.getName().contains("Base")) {
-            java = makeAbstract(java);
-        }
-
-        StreamUtil.stringToFile(java, javaFile);
     }
 
     private String removeComments(String java) {
@@ -347,7 +381,7 @@ public class GenClasses {
         final String after = java.substring(index + "* Create an".length(), java.length() - 3);
         final String[] parts = after.split("\\* Create an");
         for (int i = 0; i < parts.length; i++) {
-            parts[i] = "    /**\n     * Create an" + parts[i].replaceAll("/\\*\\*", "");
+            parts[i] = "    /**\n     * Create an" + COMMENT_PATTERN.matcher(parts[i]).replaceAll("");
             parts[i] = "    " + parts[i].trim() + "\n\n";
         }
 
@@ -365,14 +399,14 @@ public class GenClasses {
 
         final StringBuilder sb = new StringBuilder();
         sb.append(before);
-        nonDecls.stream().forEach(sb::append);
-        decls.stream().forEach(sb::append);
+        nonDecls.forEach(sb::append);
+        decls.forEach(sb::append);
         sb.append("}\n");
 
         String str = sb.toString();
 
         // Replace Base Object creation.
-        str = str.replaceAll("public Base[^ .]+ [^\n]+\n[^\n]+\n[^\n]+\n", "");
+        str = BASE_PATTERN.matcher(str).replaceAll("");
         return str;
     }
 

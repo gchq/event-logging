@@ -1,8 +1,8 @@
 language: java
 dist: trusty
 group: edge
-jdk: oraclejdk8
-sudo: false
+jdk: openjdk10
+#sudo: false
 
 env:
   global:
@@ -10,11 +10,6 @@ env:
       #where ***** is '<github username>:<github personal access token>'
       #Required for curling the gh api to get the source of the latest event-logging release
     - secure: "Dj0AtkItxitrOijaZc/STz/3oUyGBNaB6k3yhgZI3Fw2MDHqqV073nr5xWPawrP2AyQmRE8zRgrvLH7ZpjBcQiJnC2qYBho8Ap5ZpwtQJ6XMpPvKhlG9mXl8CQ31n0gukxJj3jSJn/+R3MPNYPxCUcQ87wOMnveY+0bJhWpfbsJKN/2OMpIc2yie2MUcJ9OpzeSfx/LekxZsTsNai6gMwB6l4l44gB2sBRPL5I3a6UFQHNS1+Z5qrlYraS2KvL2X20nfGG2SpbVfaJneNqISjPUKIsNfR1LYre/nJDSWxCpYjZfuqt6OoH9yUg/jmmKt6Y3+mF4x8/GavOs76ImBeaqBWX/esuyAQEOCfW2pcv2r6EdpGA9BQMCOi1SoEAiJC2kND4Sy+HtEkZ0xVBrAvFT/2v1F5BPu9POzsfw55R5RbwDrBO+N4zMaPtxlo7eUEJ+vPKxOgVJrU9qEIR/GEnwv3z5FXT1YxkmksWjxuXLxZlCO0NHYfB4uwdogmhD9B8dk+ZeF1fee7U088ytsvAk89cQde0CZm9n4by98gwmcopUzyQSuYaxhQHoI9sV9hCaFNwlMXwd39vO8Zbi6Wvf2upAzkgDBwG0SWMDFXppcfT7zxcYQMlouDsFpDLXqnEYTdqEJtSgSLoMCq+LXITzc+FaKu8I127USQIcikwY="
-
-#addons:
-  #apt:
-    #packages:
-    #- oracle-java8-installer
 
 install: echo "skip 'gradle assemble' step to speed up build"
 
