@@ -15,6 +15,8 @@
  */
 package event.logging.gen;
 
+import com.sun.tools.xjc.Driver;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -102,6 +104,7 @@ public class GenClasses {
     }
 
     private void run() throws Exception {
+
         // Options:
         // -nv : do not perform strict validation of the input schema(s)
         // -extension : allow vendor extensions - do not strictly follow the
@@ -203,25 +206,38 @@ public class GenClasses {
 
         final String xjcBinary = getXjcPath().toAbsolutePath().toString();
 
-        final String command = xjcBinary +
-                " -xmlschema" +
-                " -extension" +
-                " -p " + PACKAGE_NAME +
-                " -d " + mainJavaDir.toAbsolutePath() +
-                "    " + modXsd.toAbsolutePath() + //the source schema to gen classes from
-                " -b " + bindingFile.toAbsolutePath() +
-                " -quiet ";
+//        final String command = xjcBinary +
+//                " -xmlschema" +
+//                " -extension" +
+//                " -p " + PACKAGE_NAME +
+//                " -d " + mainJavaDir.toAbsolutePath() +
+//                "    " + modXsd.toAbsolutePath() + //the source schema to gen classes from
+//                " -b " + bindingFile.toAbsolutePath() +
+//                " -quiet ";
+//        System.out.println("Executing: " + command);
+//
+//        final Process process = Runtime.getRuntime().exec(command);
+//        final InputStream inputStream = process.getInputStream();
+//        final InputStream errorStream = process.getErrorStream();
+//
+//        new IOSink(inputStream, System.out).start();
+//        new IOSink(errorStream, System.err).start();
+//
+//        final int exitStatus = process.waitFor();
 
-        System.out.println("Executing: " + command);
+        String[] xjcOptions = new String[]{
+                "-xmlschema",
+                "-extension",
+                "-p", PACKAGE_NAME,
+                "-d", mainJavaDir.toAbsolutePath().toString(),
+                modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
+                "-b", bindingFile.toAbsolutePath().toString(),
+                "-quiet",
+                "-Xfluent-builder"
+        };
 
-        final Process process = Runtime.getRuntime().exec(command);
-        final InputStream inputStream = process.getInputStream();
-        final InputStream errorStream = process.getErrorStream();
-
-        new IOSink(inputStream, System.out).start();
-        new IOSink(errorStream, System.err).start();
-
-        final int exitStatus = process.waitFor();
+        System.out.println("Running XJC");
+        final int exitStatus = Driver.run(xjcOptions, System.out, System.out);
 
         if (exitStatus != 0) {
             System.out.print("Executing xjc failed");
@@ -334,10 +350,15 @@ public class GenClasses {
                 java = fixObjectFactory(java);
             }
 
+            // TODO we need to change the schema so all Base... types are made abstract="true"
+            // which should mean xjc makes the classes abstract.
+            // Commented out at the moment as making them abstract manually breaks compilation
+            // due to the builder methods in them.
+
             // Make Base objects abstract.
-            if (javaFile.getFileName().toString().contains("Base")) {
-                java = makeAbstract(java);
-            }
+//            if (javaFile.getFileName().toString().contains("Base")) {
+//                java = makeAbstract(java);
+//            }
 
             Files.write(javaFile, java.getBytes(UTF8));
         } catch (final IOException e) {

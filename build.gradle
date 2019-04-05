@@ -45,7 +45,7 @@ ext.getMajorVersion = { versionStr ->
 
 //Set this to the desired release version of the event-logging schema on github
 //*****************************************************************************
-def eventLoggingSchemaVer = "v3.4.0"
+def eventLoggingSchemaVer = "v3.4.1"
 //*****************************************************************************
 
 
@@ -79,7 +79,7 @@ if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     }
 }
 
-//The XML Schema to use as the basis for generating the event-logging jacb library code
+//The XML Schema to use as the basis for generating the event-logging jaxb library code
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
 
 println "Using project version:   $projectVersion"
@@ -96,7 +96,9 @@ ext.versions = [
         //------------3rd-party------------
         assertj              : '3.10.0',
         jackson              : '2.9.0',
-        jaxb_api             : '2.3.0',
+        jaxb_xjc             : '2.3.2',
+        jaxb_api             : '2.3.1',
+        jaxb_rich_contract   : '2.0.1',
         junit                : '5.2.0',
         logback              : '1.2.3',
         saxon                : '9.7.0-18',
