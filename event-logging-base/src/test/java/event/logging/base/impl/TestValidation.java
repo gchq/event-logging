@@ -15,9 +15,13 @@
  */
 package event.logging.base.impl;
 
+import event.logging.AuthenticateEvent;
 import event.logging.AuthenticateAction;
 import event.logging.Device;
 import event.logging.Event;
+import event.logging.EventDetail;
+import event.logging.EventSource;
+import event.logging.EventTime;
 import event.logging.System;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
@@ -147,7 +151,7 @@ public class TestValidation {
     private Event createBasicEvent(final EventLoggingService eventLoggingService, final String typeId,
                                    final String description, final EventValidity eventValidState) {
 
-        final Event.EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
@@ -155,13 +159,13 @@ public class TestValidation {
         system.setName("Test System");
         system.setEnvironment("Test");
 
-        final Event.EventSource eventSource = new Event.EventSource();
+        final EventSource eventSource = new EventSource();
         eventSource.setSystem(system);
         eventSource.setGenerator("JUnit");
         eventSource.setDevice(device);
         eventSource.setUser(user);
 
-        final Event.EventDetail eventDetail = new Event.EventDetail();
+        final EventDetail eventDetail = new EventDetail();
         eventDetail.setTypeId(typeId);
         eventDetail.setDescription(description);
 
@@ -175,11 +179,11 @@ public class TestValidation {
             final User authUser = new User();
             authUser.setId("someuser");
 
-            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-            authenticate.setAction(AuthenticateAction.LOGON);
-            authenticate.setUser(authUser);
+            final AuthenticateEvent authenticateEvent = new AuthenticateEvent();
+            authenticateEvent.setAction(AuthenticateAction.LOGON);
+            authenticateEvent.setUser(authUser);
 
-            event.getEventDetail().setAuthenticate(authenticate);
+            event.getEventDetail().setAuthenticateEvent(authenticateEvent);
             event.getEventTime().setTimeCreated(new Date());
         }
 

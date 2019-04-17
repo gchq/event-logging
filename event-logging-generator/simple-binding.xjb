@@ -1,27 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jaxb:bindings
-   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
-   xmlns:evt="event-logging:3"
-   jaxb:extensionBindingPreferences="xjc"
-   jaxb:version="2.0">
-   
-   <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
-      <jaxb:globalBindings generateElementProperty="false" >
-         <!-- <xjc:simple /> -->
-         <jaxb:javaType name="java.util.Date" xmlType="xs:date" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-         <jaxb:javaType name="java.util.Date" xmlType="evt:DateTime" parseMethod="event.logging.jaxb.DateAdaptor.parseDate" printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-      </jaxb:globalBindings>
-   
-      <jaxb:bindings node="xs:complexType[@name='BaseMultiObject']/xs:choice">
-         <jaxb:property name="Objects" />
-      </jaxb:bindings>
-      <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
-         <jaxb:property name="AdvancedQueryItems" />
-      </jaxb:bindings>
-      <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
-         <jaxb:property name="AdvancedQueryItems" />
-      </jaxb:bindings>      
-   </jaxb:bindings>
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+    xmlns:evt="event-logging:3"
+    jaxb:extensionBindingPreferences="xjc"
+    jaxb:version="2.0">
+
+    <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
+        <!-- localScoping to prevent nested classes -->
+        <jaxb:globalBindings 
+            generateElementProperty="false" 
+            localScoping="toplevel" >
+
+            <!-- <xjc:simple /> -->
+            <jaxb:javaType 
+                name="java.util.Date" 
+                xmlType="xs:date" 
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+            <jaxb:javaType 
+                name="java.util.Date" 
+                xmlType="evt:DateTime" 
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+        </jaxb:globalBindings>
+
+        <jaxb:bindings node="xs:complexType[@name='BaseMultiObject']/xs:choice">
+            <jaxb:property name="Objects" />
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
+            <jaxb:property name="AdvancedQueryItems" />
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
+            <jaxb:property name="AdvancedQueryItems" />
+        </jaxb:bindings>      
+
+        <!-- prevent the class between the Network schema action and the Network complexType -->
+        <jaxb:bindings node="//xs:choice/xs:element[@name='Network']/xs:complexType">
+            <!--<jaxb:factoryMethod name="NetworkAction"/>-->
+            <jaxb:class name="NetworkEvent" />
+        </jaxb:bindings>
+
+        <!-- prevent the class between the AntiMalware schema action and the AntiMalware complexType -->
+        <jaxb:bindings node="//xs:choice/xs:element[@name='AntiMalware']/xs:complexType">
+            <!--<jaxb:factoryMethod name="AntiMalwareAction"/>-->
+            <jaxb:class name="AntiMalwareEvent" />
+        </jaxb:bindings>
+
+        <!-- Improve the name of the Advanced Query type-->
+        <jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Advanced']/xs:complexType">
+            <!--<jaxb:factoryMethod name="AdvancedQuery"/>-->
+            <jaxb:class name="AdvancedQuery" />
+        </jaxb:bindings>
+
+        <!-- Improve the name of the Simple Query type-->
+        <jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Simple']/xs:complexType">
+            <!--<jaxb:factoryMethod name="SimpleQuery"/>-->
+            <jaxb:class name="SimpleQuery" />
+        </jaxb:bindings>
+
+        <!-- Add '...Event' suffix to all the schema actions for better clarity in the java code -->
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice">
+            <jaxb:property name="eventType" />
+
+            <jaxb:bindings node="xs:element[@name='Authenticate']">
+                <jaxb:property name="authenticateEvent" />
+                <jaxb:bindings node="xs:complexType">
+                    <jaxb:class name="AuthenticateEvent" />
+                </jaxb:bindings>
+            </jaxb:bindings>
+            <!--<jaxb:bindings node="xs:element[@name='Authenticate']">-->
+            <!--</jaxb:bindings>-->
+            <jaxb:bindings node="xs:element[@name='Authorise']">
+                <jaxb:property name="authoriseEvent" />
+                <jaxb:bindings node="xs:complexType">
+                    <jaxb:class name="AuthoriseEvent" />
+                </jaxb:bindings>
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Search']">
+                <jaxb:property name="searchEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Copy']">
+                <jaxb:property name="copyEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Move']">
+                <jaxb:property name="moveEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Create']">
+                <jaxb:property name="createEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='View']">
+                <jaxb:property name="viewEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Import']">
+                <jaxb:property name="importEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Export']">
+                <jaxb:property name="exportEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Update']/xs:complexType">
+                <jaxb:class name="UpdateEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Update']">
+                <jaxb:property name="updateEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Delete']">
+                <jaxb:property name="deleteEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Process']/xs:complexType">
+                <jaxb:class name="ProcessEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Process']">
+                <jaxb:property name="ProcessEvent" />
+            </jaxb:bindings>
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='Search']">
+            <jaxb:class name="SearchEvent" />
+        </jaxb:bindings>
+
+        <jaxb:bindings node="//xs:complexType[@name='CopyMove']">
+            <jaxb:property name="CopyMoveEvent" />
+        </jaxb:bindings>
+        <!--
+
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Update']/xs:complexType">
+            <jaxb:class name="UpdateEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Delete']/xs:complexType">
+            <jaxb:class name="DeleteEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Process']/xs:complexType">
+            <jaxb:class name="ProcessEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Print']/xs:complexType">
+            <jaxb:class name="PrintEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Install']/xs:complexType">
+            <jaxb:class name="InstallEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Uninstall']/xs:complexType">
+            <jaxb:class name="UninstallEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Network']/xs:complexType">
+            <jaxb:class name="NetworkEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='AntiMalware']/xs:complexType">
+            <jaxb:class name="AntiMalwareEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Alert']/xs:complexType">
+            <jaxb:class name="AlertEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Send']/xs:complexType">
+            <jaxb:class name="SendEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Receive']/xs:complexType">
+            <jaxb:class name="ReceiveEvent" />
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice/xs:element[@name='Unknown']/xs:complexType">
+            <jaxb:class name="UnknownEvent" />
+        </jaxb:bindings>
+-->
+    </jaxb:bindings>
 </jaxb:bindings>

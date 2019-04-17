@@ -82,11 +82,18 @@ if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
 //The XML Schema to use as the basis for generating the event-logging jaxb library code
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
 
+// For development purposes (e.g. you want to trial jaxb generation on a modified but
+// u-released schema) you can do something like:
+// ./gradlw clean build -PschemaFilePath=/tmp/myModifiedSchema.xsd
+// This will then use this file instead of downloading the schema from github
+ext.eventLoggingSchemaFilePath = getPropertyOrDefault("schemaFilePath", "")
+
 println "Using project version:   $projectVersion"
 println "Using schema version:    $eventLoggingSchemaVer"
 println "Using combined version:  $combinedVersion"
 println "Using namespace version: $eventLoggingSchemaMajorVer"
 println "Using schema url:        $eventLoggingSchemaUrl"
+println "Using schema file path:  $eventLoggingSchemaFilePath"
 
 ext.versions = [
         //------event-logging--------------

@@ -17,7 +17,7 @@ package event.logging.base.impl;
 
 import event.logging.Data;
 import event.logging.Event;
-import event.logging.Event.EventDetail;
+import event.logging.EventDetail;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ public class TestDefaultEventSerializer {
         outcome.getData().add(data);
         objectOutcome.setOutcome(outcome);
 
-        eventDetail.setCreate(objectOutcome);
+        eventDetail.setCreateEvent(objectOutcome);
         event.setEventDetail(eventDetail);
 
         return event;
