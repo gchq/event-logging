@@ -1543,6 +1543,7 @@
    </xs:complexType>
 
    <xs:group name="CopyMoveGroup">
+      <xs:sequence>
          <xs:element name="Source"
                      type="evt:MultiObjectComplexType"
                      minOccurs="1"
@@ -1575,7 +1576,7 @@
                <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
             </xs:annotation>
          </xs:element>
-
+       </xs:sequence>
    </xs:group>
 
    <xs:complexType name="CopyComplexType">
@@ -1583,7 +1584,7 @@
            <xs:documentation>Captures copy events.</xs:documentation>
        </xs:annotation>
        <xs:complexContent>
-           <xs:extension base="EventAction">
+           <xs:extension base="evt:EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
                    <xs:group ref="evt:CopyMoveGroup" minOccurs="1" maxOccurs="1"/>
                </xs:sequence>
@@ -1596,7 +1597,7 @@
            <xs:documentation>Captures move events.</xs:documentation>
        </xs:annotation>
        <xs:complexContent>
-           <xs:extension base="EventAction">
+           <xs:extension base="evt:EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
                    <xs:group ref="evt:CopyMoveGroup" minOccurs="1" maxOccurs="1"/>
                </xs:sequence>
@@ -2454,7 +2455,7 @@
            <xs:documentation>Contains a criteria and describes the outcome of the event.</xs:documentation>
        </xs:annotation>
        <xs:complexContent>
-           <xs:extension base="EventAction">
+           <xs:extension base="evt:EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
                    <xs:group ref="evt:BaseObjectGroup" minOccurs="1" maxOccurs="1"/>
                    <xs:group ref="evt:CriteriaExtensionGroup" minOccurs="1" maxOccurs="1"/>
@@ -3036,7 +3037,7 @@
    <!-- Added -->
    <xs:complexType name="AuthenticateType">
        <xs:complexContent>
-           <xs:extension base="EventAction">
+           <xs:extension base="evt:EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
                    <xs:element name="Action"
                        type="evt:AuthenticateActionSimpleType"
@@ -3185,7 +3186,7 @@
    <!-- Added -->
    <xs:complexType name="AuthoriseType">
        <xs:complexContent>
-           <xs:extension base="EventAction">
+           <xs:extension base="evt:EventAction">
                <xs:sequence minOccurs="1" maxOccurs="1">
                    <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
                    <xs:element name="Action"
