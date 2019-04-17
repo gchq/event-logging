@@ -15,15 +15,14 @@
  */
 package event.logging.base.impl;
 
+import event.logging.AnyContent;
 import event.logging.AuthenticateAction;
-import event.logging.BaseAntiMalware;
 import event.logging.Criteria;
 import event.logging.Data;
 import event.logging.Device;
 import event.logging.Document;
 import event.logging.Event;
 import event.logging.Export;
-import event.logging.File;
 import event.logging.Import;
 import event.logging.MultiObject;
 import event.logging.ObjectOutcome;
@@ -31,22 +30,14 @@ import event.logging.Outcome;
 import event.logging.Query;
 import event.logging.Search;
 import event.logging.SendReceive;
-import event.logging.Software;
+import event.logging.System;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
-import event.logging.base.Payload;
 import event.logging.base.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,7 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Tests the creation of event logging data.
  */
-public class FluentEventLoggingServiceIT {
+class FluentEventLoggingServiceIT {
 //    static {
 //        BasicConfigurator.configure();
 //    }
@@ -76,45 +67,20 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final User user = new User();
-        user.setId("someuser");
-
-        final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-        authenticate.setAction(AuthenticateAction.LOGON);
-        authenticate.setUser(user);
-
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticate(authenticate);
+        event.getEventDetail()
+                .setAuthenticate(Event.EventDetail.Authenticate.builder()
+                        .withAction(AuthenticateAction.LOGON)
+                        .withUser(User.builder()
+                                .withId("user1")
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
-
-//        Event event2 = Event.builder()
-//                .withEventSource()
-//                    .withClient()
-//                        .withHostName("xxx")
-//                        .end()
-//                    .withSystem()
-//                        .withName("MySystem")
-//                        .withEnvironment("OPS")
-//                        .end()
-//                    .withUser()
-//                        .withId("user1")
-//                        .end()
-//                    .end()
-//                .withEventDetail()
-//                    .withAuthenticate()
-//                        .withAction(AuthenticateAction.LOGON)
-//                        .withUser()
-//                            .withId("user1")
-//                            .end()
-//                        .end()
-//                .end()
-//                .build();
-
-
+        eventLoggingService.setValidate(true);
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
@@ -133,7 +99,7 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMultiThread() throws Exception {
+    void testMultiThread() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
@@ -142,29 +108,26 @@ public class FluentEventLoggingServiceIT {
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
         for (int i = 1; i <= TIMES_TO_RUN; i++) {
-            final int run = i;
+            executorService.execute(() -> {
+                try {
+                    for (int j = 1; j <= NUM_OF_RECORDS; j++) {
 
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for (int j = 1; j <= NUM_OF_RECORDS; j++) {
-                            final User user = new User();
-                            user.setId("someuser");
+                        final Event event = createBasicEvent("LOGIN", "LOGIN");
+                        event.getEventDetail()
+                                .setAuthenticate(Event.EventDetail.Authenticate.builder()
+                                .withAction(AuthenticateAction.LOGON)
+                                .withUser(User.builder()
+                                    .withId("someuser")
+                                    .build())
+                                .build());
 
-                            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-                            authenticate.setAction(AuthenticateAction.LOGON);
-                            authenticate.setUser(user);
-
-                            final Event event = createBasicEvent("LOGIN", "LOGIN");
-                            event.getEventDetail().setAuthenticate(authenticate);
-                            event.getEventTime().setTimeCreated(new Date());
-                            eventLoggingService.log(event);
-                            done.incrementAndGet();
-                        }
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e.getMessage(), e);
+                        event.getEventTime().setTimeCreated(new Date());
+                        eventLoggingService.setValidate(true);
+                        eventLoggingService.log(event);
+                        done.incrementAndGet();
                     }
+                } catch (final Exception e) {
+                    throw new RuntimeException(e.getMessage(), e);
                 }
             });
         }
@@ -180,26 +143,26 @@ public class FluentEventLoggingServiceIT {
     private Event createBasicEvent(final String typeId, final String description) {
 
         return Event.builder()
-                .withEventTime()
-                    .withTimeCreated(new Date())
-                    .end()
-                .withEventSource()
-                    .withSystem()
-                        .withName("Test System")
-                        .withEnvironment("Test")
-                        .end()
-                    .withGenerator("JUnit")
-                    .withDevice()
-                        .withIPAddress("123.123.123.123")
-                        .end()
-                    .withUser()
-                        .withId("someuser")
-                        .end()
-                    .end()
-                .withEventDetail()
-                    .withTypeId(typeId)
-                    .withDescription(description)
-                    .end()
+                .withEventTime(Event.EventTime.builder()
+                        .withTimeCreated(new Date())
+                        .build())
+                .withEventSource(Event.EventSource.builder()
+                        .withSystem(System.builder()
+                                .withName("Test System")
+                                .withEnvironment("Test")
+                                .build())
+                        .withGenerator("JUnit")
+                        .withDevice(Device.builder()
+                                .withIPAddress("123.123.123.123")
+                                .build())
+                        .withUser(User.builder()
+                                .withId("someuser")
+                                .build())
+                        .build())
+                .withEventDetail(Event.EventDetail.builder()
+                        .withTypeId(typeId)
+                        .withDescription(description)
+                        .build())
                 .build();
     }
 
@@ -209,11 +172,14 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testAttributes() throws Exception {
+    void testAttributes() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
+
+        final Event event = createBasicEvent("LOGIN", "LOGIN");
+
         final Event.EventDetail.Authenticate.Builder authenticateBuilder = Event.EventDetail.Authenticate.builder()
-                        .withAction(AuthenticateAction.LOGON)
+                .withAction(AuthenticateAction.LOGON)
                 .withUser(EventLoggingUtil.createUser("someuser"));
 
         for (int i = 0; i < 5; i++) {
@@ -221,13 +187,11 @@ public class FluentEventLoggingServiceIT {
             authenticateBuilder.addData(EventLoggingUtil.createData("someothername" + i, "someothervalue" + i));
         }
 
-        final Event.EventDetail.Authenticate authenticate = authenticateBuilder.build();
-
-        final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticate(authenticate);
+        event.getEventDetail().setAuthenticate(authenticateBuilder.build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
+        eventLoggingService.setValidate(true);
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
@@ -246,21 +210,19 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testCreateEvent() throws Exception {
+    void testCreateEvent() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final ObjectOutcome objectOutcome = ObjectOutcome.builder()
+        final Event event = createBasicEvent("Create", "Create object");
+        event.getEventDetail().setCreate(ObjectOutcome.builder()
                 .addDocument(Document.builder()
                         .withId("Test Id")
                         .withTitle("Test Title")
                         .build())
-                .withOutcome()
+                .withOutcome(Outcome.builder()
                     .withSuccess(Boolean.TRUE)
-                    .end()
-                .build();
-
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+                    .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -278,60 +240,15 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testAntiMalware() throws Exception {
-        final long time = java.lang.System.currentTimeMillis();
-
-        final Document document = new Document();
-        document.setId("Test Id");
-        document.setTitle("Test Title");
-
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.TRUE);
-
-        final Software software = new Software();
-        software.setManufacturer("AVToolsInc.");
-        software.setName("Anti-virus");
-
-        final BaseAntiMalware.Signature signature = new BaseAntiMalware.Signature();
-        signature.setUpdated(new Date());
-        signature.setVersion("1.5");
-
-        final event.logging.AntiMalware value = new event.logging.AntiMalware();
-        value.setProduct(software);
-        value.setSignature(signature);
-
-        final Event.EventDetail.AntiMalware antiMalware = new Event.EventDetail.AntiMalware();
-        antiMalware.setScanEngineUpdated(value);
-
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setAntiMalware(antiMalware);
-
-        final EventLoggingService eventLoggingService = getEventLoggingService();
-
-        eventLoggingService.setValidate(true);
-        eventLoggingService.log(event);
-
-        for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
-            eventLoggingService.log(event);
-
-            Thread.sleep(WAIT_BETWEEN_RECORDS);
-        }
-
-        java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
-    }
-
-    @Test
-    public void testNastyChars() throws Exception {
-        final Query query = new Query();
-        query.setRaw(
-                "(?'v?v&amp;?6?#46?R?6????????r????????-w?)::TYPE_TDI| additionalSearchParameters={includeAutoExpIdentifiers=SELECTED, caseInsensitiveMatching=SELECTED, allowWildcards=SELECTED}");
-
-        final Search search = new Search();
-        search.setQuery(query);
+    void testNastyChars() {
+        final String rawQuery = "(?'v?v&amp;?6?#46?R?6????????r????????-w?)::TYPE_TDI| additionalSearchParameters={includeAutoExpIdentifiers=SELECTED, caseInsensitiveMatching=SELECTED, allowWildcards=SELECTED}";
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setSearch(Search.builder()
+                .withQuery(Query.builder()
+                        .withRaw(rawQuery)
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -340,15 +257,14 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testSmartQuotes() throws Exception {
-        final Query query = new Query();
-        query.setRaw("Daves quote");
-
-        final Search search = new Search();
-        search.setQuery(query);
+    void testSmartQuotes() {
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setSearch(Search.builder()
+                .withQuery(Query.builder()
+                        .withRaw("Daves quote")
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -357,9 +273,7 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testNastyChars2() throws Exception {
-        final Query query = new Query();
-
+    void testNastyChars2() {
         final StringBuilder sb = new StringBuilder();
         for (int i = Character.MIN_VALUE; i <= Character.MAX_VALUE; i++) {
             if (i % 100 == 0) {
@@ -368,13 +282,12 @@ public class FluentEventLoggingServiceIT {
             sb.append((char) i);
         }
 
-        query.setRaw(sb.toString());
-
-        final Search search = new Search();
-        search.setQuery(query);
-
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setSearch(Search.builder()
+                .withQuery(Query.builder()
+                        .withRaw(sb.toString())
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -383,66 +296,54 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testSendReceive() throws Exception {
+    void testSendReceive() {
 
         final Event event = createBasicEvent("Send", "Send event");
 
-        final User sourceUser = new User();
-        sourceUser.setId("sourceUserId");
-
-        final Device sourceDevice = new Device();
-        sourceDevice.setHostName("sourceHost");
-
-        final User destUser = new User();
-        destUser.setId("destUserId");
-
-        final Device destDevice = new Device();
-        destDevice.setHostName("destHost");
-
-        final SendReceive.Source source = new SendReceive.Source();
-        source.getUserOrDevice().add(sourceUser);
-        source.getUserOrDevice().add(sourceDevice);
-
-        final SendReceive.Destination destination = new SendReceive.Destination();
-        destination.getUserOrDevice().add(destUser);
-        destination.getUserOrDevice().add(destDevice);
-
-        final SendReceive sendReceive = new SendReceive();
-        sendReceive.setSource(source);
-        sendReceive.setDestination(destination);
-
-        event.getEventDetail().setSend(sendReceive);
+        event.getEventDetail()
+                .setSend(SendReceive.builder()
+                    .withSource(SendReceive.Source.builder()
+                        .addUser()
+                            .withId("sourceUserId")
+                            .end()
+                        .addDevice()
+                            .withHostName("sourceHost")
+                            .end()
+                        .build())
+                .withDestination(SendReceive.Destination.builder()
+                    .addUser()
+                        .withId("destUserId")
+                        .end()
+                    .addDevice()
+                        .withHostName("destHost")
+                        .end()
+                    .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
         eventLoggingService.setValidate(true);
         eventLoggingService.log(event);
-
     }
 
     @Test
-    public void testImport() throws Exception {
+    void testImport() {
 
         final Event event = createBasicEvent("Import", "Import event");
 
-        final MultiObject source = new MultiObject();
-
-        final File sourceFile = new File();
-        sourceFile.setName("SourceFile");
-
-        source.getObjects().add(sourceFile);
-
-        final MultiObject dest = new MultiObject();
-
-        final File destFile = new File();
-        destFile.setName("DestFile");
-        dest.getObjects().add(destFile);
-
-        final Import importElm = new Import();
-        importElm.setSource(source);
-        importElm.setDestination(dest);
-
-        event.getEventDetail().setImport(importElm);
+        event.getEventDetail()
+                .setImport(Import.builder()
+                    .withSource()
+                        .addFile()
+                            .withName("sourceFile")
+                            .end()
+                        .end()
+                    .withDestination()
+                        .addFile()
+                            .withName("destFile")
+                            .end()
+                        .end()
+                    .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -451,29 +352,16 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testCreateQuery() throws Exception {
+    void testCreateQuery() {
 
         final Event event = createBasicEvent("Query", "Simple query");
 
-        final User sourceUser = new User();
-        sourceUser.setId("sourceUserId");
-
-        final Device sourceDevice = new Device();
-        sourceDevice.setHostName("sourceHost");
-
-        final User destUser = new User();
-        destUser.setId("destUserId");
-
-        final Device destDevice = new Device();
-        destDevice.setHostName("destHost");
-
-        final Query query = new Query();
-        query.setRaw("my query string!");
-
-        final Search search = new Search();
-        search.setQuery(query);
-
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail()
+                .setSearch(Search.builder()
+                        .withQuery(Query.builder()
+                                .withRaw("my query string!")
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -482,37 +370,30 @@ public class FluentEventLoggingServiceIT {
     }
 
     @Test
-    public void testCreateExportAdvancedQuery() throws Exception {
+    void testCreateExportAdvancedQuery() {
 
         final Event event = createBasicEvent("Export-Criteria", "Export-Criteria-Search");
 
-        final Term term = new Term();
-        term.setName("date_modified");
-        term.setCondition(TermCondition.GREATER_THAN);
-        term.setValue("56789");
-
-        final Query.Advanced advancedQuery = new Query.Advanced();
-        advancedQuery.getAdvancedQueryItems().add(term);
-
-        final Query query = new Query();
-        query.setAdvanced(advancedQuery);
-
-        final Criteria criteria = new Criteria();
-        criteria.setQuery(query);
-
-        final MultiObject source = new MultiObject();
-
-        source.getObjects().add(criteria);
-
-        final Export export = new Export();
-        export.setSource(source);
-
-        final Data data = EventLoggingUtil.createData("MyName", "MyValue");
-
-        export.getData().add(data);
-
-        event.getEventDetail().setExport(export);
-
+        event.getEventDetail()
+                .setExport(Export.builder()
+                        .withSource(MultiObject.builder()
+                                .addCriteria(Criteria.builder()
+                                        .withQuery(Query.builder()
+                                                .withAdvanced(Query.Advanced.builder()
+                                                        .addAdvancedQueryItems(Term.builder()
+                                                                .withName("date_modified")
+                                                                .withCondition(TermCondition.GREATER_THAN)
+                                                                .withValue("56789")
+                                                                .build())
+                                                        .build())
+                                                .build())
+                                        .build())
+                                .build())
+                        .withData(Data.builder()
+                                .withName("MyName")
+                                .withValue("MyValue")
+                                .build())
+                        .build());
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
         eventLoggingService.setValidate(true);
@@ -525,22 +406,25 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMetaWithJSON() throws Exception {
+    void testMetaWithJSON() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final Document document = new Document();
-        document.setId("Test Id");
-        document.setTitle("Test Title");
-
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.TRUE);
-
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
-
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+        event.getEventDetail()
+                .setCreate(ObjectOutcome.builder()
+                        .addDocument(Document.builder()
+                                .withId("TestId")
+                                .withTitle("Test Title")
+                                .withMeta(AnyContent.builder()
+                                        .withContentType("JSON:streamMeta")
+                                        .withVersion("1.2.3")
+                                        .withContent("{\"streamMeta\":{\"streamId\":\"12345\",\"eventId\":\"45678\"}}")
+                                        .build())
+                                .build())
+                        .withOutcome(Outcome.builder()
+                                .withSuccess(Boolean.TRUE)
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -563,22 +447,25 @@ public class FluentEventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMetaWithXML() throws Exception {
+    void testMetaWithXML() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final Document document = new Document();
-        document.setId("Test Id");
-        document.setTitle("Test Title");
-
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.TRUE);
-
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
-
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+        event.getEventDetail()
+                .setCreate(ObjectOutcome.builder()
+                        .addDocument(Document.builder()
+                                .withId("TestId")
+                                .withTitle("Test Title")
+                                .withMeta(AnyContent.builder()
+                                        .withContentType("JSON:streamMeta")
+                                        .withVersion("1.2.3")
+                                        .withContent("<MyMeta xmlns=\"http://myorg.mydomain.mymeta\"><ElementA>value A</ElementA><ElementB>value B</ElementB></MyMeta>")
+                                        .build())
+                                .build())
+                        .withOutcome(Outcome.builder()
+                                .withSuccess(Boolean.TRUE)
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -593,26 +480,5 @@ public class FluentEventLoggingServiceIT {
         }
 
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
-    }
-
-    private Node buildPayload() throws JAXBException, ParserConfigurationException {
-
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(false);
-        final DocumentBuilder db = dbf.newDocumentBuilder();
-        final org.w3c.dom.Document doc = db.newDocument();
-
-        final JAXBContext jaxbContext = JAXBContext.newInstance(Payload.class);
-
-        final Payload payload = new Payload();
-        payload.setValue("thisIsMyValue");
-
-        jaxbContext.createMarshaller().marshal(payload, java.lang.System.out);
-
-        jaxbContext.createMarshaller().marshal(payload, doc);
-
-        final Element docElm = doc.getDocumentElement();
-
-        return docElm;
     }
 }

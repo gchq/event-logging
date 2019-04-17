@@ -93,30 +93,6 @@ public class EventLoggingServiceIT {
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
-//        Event event2 = Event.builder()
-//                .withEventSource()
-//                    .withClient()
-//                        .withHostName("xxx")
-//                        .end()
-//                    .withSystem()
-//                        .withName("MySystem")
-//                        .withEnvironment("OPS")
-//                        .end()
-//                    .withUser()
-//                        .withId("user1")
-//                        .end()
-//                    .end()
-//                .withEventDetail()
-//                    .withAuthenticate()
-//                        .withAction(AuthenticateAction.LOGON)
-//                        .withUser()
-//                            .withId("user1")
-//                            .end()
-//                        .end()
-//                .end()
-//                .build();
-
-
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
