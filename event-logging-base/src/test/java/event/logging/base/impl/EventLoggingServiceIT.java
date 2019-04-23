@@ -32,7 +32,7 @@ import event.logging.EventSource;
 import event.logging.EventTime;
 import event.logging.Export;
 import event.logging.File;
-import event.logging.Import;
+import event.logging.ImportEvent;
 import event.logging.MultiObject;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
@@ -43,7 +43,7 @@ import event.logging.SendReceive;
 import event.logging.Signature;
 import event.logging.Software;
 import event.logging.Source;
-import event.logging.System;
+import event.logging.SystemType;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
@@ -169,7 +169,7 @@ public class EventLoggingServiceIT {
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final System system = new System();
+        final SystemType system = new SystemType();
         system.setName("Test System");
         system.setEnvironment("Test");
 
@@ -293,7 +293,7 @@ public class EventLoggingServiceIT {
         antiMalware.setScanEngineUpdated(value);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setAntiMalware(antiMalware);
+        event.getEventDetail().setAntiMalwareEvent(antiMalware);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -400,7 +400,7 @@ public class EventLoggingServiceIT {
         sendReceive.setSource(source);
         sendReceive.setDestination(destination);
 
-        event.getEventDetail().setSend(sendReceive);
+        event.getEventDetail().setSendEvent(sendReceive);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -427,7 +427,7 @@ public class EventLoggingServiceIT {
         destFile.setName("DestFile");
         dest.getObjects().add(destFile);
 
-        final Import importElm = new Import();
+        final ImportEvent importElm = new ImportEvent();
         importElm.setSource(source);
         importElm.setDestination(dest);
 
@@ -481,7 +481,7 @@ public class EventLoggingServiceIT {
         term.setValue("56789");
 
         final AdvancedQuery advancedQuery = new AdvancedQuery();
-        advancedQuery.getAdvancedQueryItems().add(term);
+        advancedQuery.getAdvancedQueryOperatorGroup().add(term);
 
         final Query query = new Query();
         query.setAdvanced(advancedQuery);

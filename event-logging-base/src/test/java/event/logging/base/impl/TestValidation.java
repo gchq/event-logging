@@ -15,14 +15,14 @@
  */
 package event.logging.base.impl;
 
-import event.logging.AuthenticateEvent;
 import event.logging.AuthenticateAction;
+import event.logging.AuthenticateEvent;
 import event.logging.Device;
 import event.logging.Event;
 import event.logging.EventDetail;
 import event.logging.EventSource;
 import event.logging.EventTime;
-import event.logging.System;
+import event.logging.SystemType;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
 import event.logging.base.util.DeviceUtil;
@@ -155,7 +155,7 @@ public class TestValidation {
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final System system = new System();
+        final SystemType system = new SystemType();
         system.setName("Test System");
         system.setEnvironment("Test");
 

@@ -98,6 +98,7 @@ public class GenClasses {
     }
 
     public static void main(final String[] args) throws Exception {
+        System.out.println("main() called with args: (" + Arrays.stream(args).collect(Collectors.joining(", ")) + ")");
         new GenClasses().run();
 
         System.out.println("JAXB class generation complete");
@@ -225,16 +226,26 @@ public class GenClasses {
 //
 //        final int exitStatus = process.waitFor();
 
-        String[] xjcOptions = new String[]{
+
+        final String[] xjcOptions = new String[]{
                 "-xmlschema",
                 "-extension",
                 "-p", PACKAGE_NAME,
                 "-d", mainJavaDir.toAbsolutePath().toString(),
-                modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
                 "-b", bindingFile.toAbsolutePath().toString(),
                 "-quiet",
+                modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
                 "-Xfluent-builder"
         };
+
+        System.out.println("XJC Options:");
+        Arrays.stream(xjcOptions)
+                .map(str -> "  " + str)
+                .forEach(System.out::println);
+
+//        System.out.println(String.format("-p (package name): %s", PACKAGE_NAME));
+//        System.out.println(String.format("-d (output dir): %s", mainJavaDir.toAbsolutePath().toString()));
+//        System.out.println(String.format("-b (binding file): %s", bindingFile.toAbsolutePath().toString()));
 
         System.out.println("Running XJC");
         final int exitStatus = Driver.run(xjcOptions, System.out, System.out);
