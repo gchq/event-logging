@@ -63,14 +63,44 @@
                 <jaxb:class name="AuthenticateEvent" />
             </jaxb:bindings>
 
-            <jaxb:bindings node="xs:complexType[@name='Import']">
-                <jaxb:factoryMethod name="ImportEvent"/>
-                <jaxb:class name="ImportEvent" />
+            <jaxb:bindings node="xs:complexType[@name='Authorise']">
+                <jaxb:factoryMethod name="AuthoriseAction"/>
+                <jaxb:class name="AuthoriseEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Copy']">
+                <jaxb:factoryMethod name="CopyAction"/>
+                <jaxb:class name="CopyEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Move']">
+                <jaxb:factoryMethod name="MoveAction"/>
+                <jaxb:class name="MoveEvent" />
             </jaxb:bindings>
 
             <jaxb:bindings node="//xs:complexType[@name='Search']">
                 <jaxb:factoryMethod name="SearchEvent"/>
                 <jaxb:class name="SearchEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Import']">
+                <jaxb:factoryMethod name="ImportEvent"/>
+                <jaxb:class name="ImportEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Export']">
+                <jaxb:factoryMethod name="ExportEvent"/>
+                <jaxb:class name="ExportEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Install']">
+                <jaxb:factoryMethod name="InstallEvent"/>
+                <jaxb:class name="InstallEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Uninstall']">
+                <jaxb:factoryMethod name="UninstallEvent"/>
+                <jaxb:class name="UninstallEvent" />
             </jaxb:bindings>
 
             <!-- Rename System to SystemType to avoid the clash with java.lang.System -->
@@ -92,14 +122,17 @@
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Query']">
+
                 <jaxb:bindings node="xs:sequence/xs:element[@name='Advanced']/xs:complexType">
                     <jaxb:factoryMethod name="AdvancedQuery"/>
                     <jaxb:class name="AdvancedQuery" />
                 </jaxb:bindings>
+
                 <jaxb:bindings node="xs:sequence/xs:element[@name='Simple']/xs:complexType">
                     <jaxb:factoryMethod name="SimpleQuery"/>
                     <jaxb:class name="SimpleQuery" />
                 </jaxb:bindings>
+
             </jaxb:bindings>
 
         </jaxb:bindings>
@@ -214,6 +247,13 @@
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Unknown']/xs:complexType">
                 <jaxb:class name="UnknownEvent" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:element[@name='Send']/xs:complexType">
+                <jaxb:class name="SendEvent" />
+            </jaxb:bindings>
+            <jaxb:bindings node="xs:element[@name='Receive']/xs:complexType">
+                <jaxb:class name="ReceiveEvent" />
             </jaxb:bindings>
 
         </jaxb:bindings>

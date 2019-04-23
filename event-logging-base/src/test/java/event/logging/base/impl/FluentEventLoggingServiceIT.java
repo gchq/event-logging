@@ -169,6 +169,9 @@ class FluentEventLoggingServiceIT {
                 .withEventDetail(EventDetail.builder()
                         .withTypeId(typeId)
                         .withDescription(description)
+                        .withAuthenticateEvent(AuthenticateEvent.builder()
+                            .withAction(AuthenticateAction.LOGON)
+                            .build())
                         .build())
                 .build();
     }

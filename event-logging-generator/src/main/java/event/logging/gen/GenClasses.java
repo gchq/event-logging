@@ -18,8 +18,6 @@ package event.logging.gen;
 import com.sun.tools.xjc.Driver;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
@@ -43,112 +41,31 @@ import java.util.stream.Collectors;
  */
 public class GenClasses {
     private static final Charset UTF8 = Charset.forName("UTF-8");
-
     private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
-
     private static final String PUBLIC_CLASS = "public class ";
-
-
-    private static final String USER_HOME = System.getProperty("user.home");
-    private static final String XJC_PATH_1 = "/usr/bin/xjc";
-    private static final String XJC_PATH_2 = USER_HOME + "/.sdkman/candidates/java/current/bin/xjc";
-    private static final List<String> XJC_PATHS = Arrays.asList(
-            XJC_PATH_1,
-            XJC_PATH_2
-    );
-
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
     private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
-
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
     private static final String API_PROJECT_NAME = "event-logging-api";
     private static final String BASE_PROJECT_NAME = "event-logging-base";
-
     private static final String SCHEMA_DIR_NAME = "schema";
     private static final String PACKAGE_NAME = "event.logging";
-
     private static final Pattern EVENT_LOGGING_BASE_PATTERN = Pattern.compile("event\\.logging\\.base");
-
     private static final Pattern COMPLEX_TYPE_PATTERN = Pattern.compile("ComplexType");
     private static final Pattern SIMPLE_TYPE_PATTERN = Pattern.compile("SimpleType");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("/\\*\\*");
     private static final Pattern BASE_PATTERN = Pattern.compile("public Base[^ .]+ [^\n]+\n[^\n]+\n[^\n]+\n");
 
-    private static class IOSink extends Thread {
-        private final InputStream inputStream;
-        private final PrintStream printStream;
-
-        IOSink(final InputStream inputStream, final PrintStream printStream) {
-            this.inputStream = inputStream;
-            this.printStream = printStream;
-        }
-
-        @Override
-        public void run() {
-            try {
-                final byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) >= 0) {
-                    printStream.println(new String(buffer, 0, len));
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /**
+     * Expected to be called from gradle
+     */
     public static void main(final String[] args) throws Exception {
-        System.out.println("main() called with args: (" + Arrays.stream(args).collect(Collectors.joining(", ")) + ")");
         new GenClasses().run();
 
         System.out.println("JAXB class generation complete");
     }
 
     private void run() throws Exception {
-
-        // Options:
-        // -nv : do not perform strict validation of the input schema(s)
-        // -extension : allow vendor extensions - do not strictly follow the
-        // Compatibility Rules and App E.2 from the JAXB Spec
-        // -b <file/dir> : specify external bindings files (each <file> must
-        // have its own -b)
-        // If a directory is given, **/*.xjb is searched
-        // -d <dir> : generated files will go into this directory
-        // -p <pkg> : specifies the target package
-        // -httpproxy <proxy> : set HTTP/HTTPS proxy. Format is
-        // [user[:password]@]proxyHost:proxyPort
-        // -httpproxyfile <f> : Works like -httpproxy but takes the argument in
-        // a file to protect password
-        // -classpath <arg> : specify where to find user class files
-        // -catalog <file> : specify catalog files to resolve external entity
-        // references
-        // support TR9401, XCatalog, and OASIS XML Catalog format.
-        // -readOnly : generated files will be in read-only mode
-        // -npa : suppress generation of package level annotations
-        // (**/package-info.java)
-        // -no-header : suppress generation of a file header with timestamp
-        // -target 2.0 : behave like XJC 2.0 and generate code that doesnt use
-        // any 2.1 features.
-        // -xmlschema : treat input as W3C XML Schema (default)
-        // -relaxng : treat input as RELAX NG (experimental,unsupported)
-        // -relaxng-compact : treat input as RELAX NG compact syntax
-        // (experimental,unsupported)
-        // -dtd : treat input as XML DTD (experimental,unsupported)
-        // -wsdl : treat input as WSDL and compile schemas inside it
-        // (experimental,unsupported)
-        // -verbose : be extra verbose
-        // -quiet : suppress compiler output
-        // -help : display this help message
-        // -version : display version information
-        //
-        //
-        // Extensions:
-        // -Xlocator : enable source location support for generated code
-        // -Xsync-methods : generate accessor methods with the 'synchronized'
-        // keyword
-        // -mark-generated : mark the generated code as
-        // @javax.annotation.Generated
-        // -episode <FILE> : generate the episode file for separate compilation
 
         Path rootDir = Paths.get(".").normalize().toAbsolutePath();
         if (rootDir.endsWith(GENERATOR_PROJECT_NAME)) {
@@ -205,28 +122,6 @@ public class GenClasses {
         clean(srcDir.resolve("main/resources/event/logging"));
         clean(srcDir.resolve("test/java/event/logging"));
 
-        final String xjcBinary = getXjcPath().toAbsolutePath().toString();
-
-//        final String command = xjcBinary +
-//                " -xmlschema" +
-//                " -extension" +
-//                " -p " + PACKAGE_NAME +
-//                " -d " + mainJavaDir.toAbsolutePath() +
-//                "    " + modXsd.toAbsolutePath() + //the source schema to gen classes from
-//                " -b " + bindingFile.toAbsolutePath() +
-//                " -quiet ";
-//        System.out.println("Executing: " + command);
-//
-//        final Process process = Runtime.getRuntime().exec(command);
-//        final InputStream inputStream = process.getInputStream();
-//        final InputStream errorStream = process.getErrorStream();
-//
-//        new IOSink(inputStream, System.out).start();
-//        new IOSink(errorStream, System.err).start();
-//
-//        final int exitStatus = process.waitFor();
-
-
         final String[] xjcOptions = new String[]{
                 "-xmlschema",
                 "-extension",
@@ -235,19 +130,14 @@ public class GenClasses {
                 "-b", bindingFile.toAbsolutePath().toString(),
                 "-quiet",
                 modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
-                "-Xfluent-builder"
+                "-Xfluent-builder",
         };
 
-        System.out.println("XJC Options:");
+        System.out.println("Running XJC with arguments:");
         Arrays.stream(xjcOptions)
                 .map(str -> "  " + str)
                 .forEach(System.out::println);
 
-//        System.out.println(String.format("-p (package name): %s", PACKAGE_NAME));
-//        System.out.println(String.format("-d (output dir): %s", mainJavaDir.toAbsolutePath().toString()));
-//        System.out.println(String.format("-b (binding file): %s", bindingFile.toAbsolutePath().toString()));
-
-        System.out.println("Running XJC");
         final int exitStatus = Driver.run(xjcOptions, System.out, System.out);
 
         if (exitStatus != 0) {
@@ -271,26 +161,22 @@ public class GenClasses {
 
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
-        copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"), apiProjectDir.resolve("src/main/java/event/logging"));
-        copyAll(baseProjectDir.resolve("src/main/resources"), apiProjectDir.resolve("src/main/resources"));
-        copyAll(baseProjectDir.resolve("src/test/java/event/logging/base"), apiProjectDir.resolve("src/test/java/event/logging"));
-        copyAll(baseProjectDir.resolve("src/test/resources"), apiProjectDir.resolve("src/test/resources"));
+        copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"),
+                apiProjectDir.resolve("src/main/java/event/logging"));
+
+        copyAll(baseProjectDir.resolve("src/main/resources"),
+                apiProjectDir.resolve("src/main/resources"));
+
+        copyAll(baseProjectDir.resolve("src/test/java/event/logging/base"),
+                apiProjectDir.resolve("src/test/java/event/logging"));
+
+        copyAll(baseProjectDir.resolve("src/test/resources"),
+                apiProjectDir.resolve("src/test/resources"));
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
         Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
-    }
-
-    private Path getXjcPath() {
-        return XJC_PATHS.stream()
-                .map(Paths::get)
-                .filter(Files::exists)
-                .findFirst()
-                .orElseThrow(() ->
-                        new RuntimeException(String.format(
-                                "xjc binary not found in the following locations %s",
-                                XJC_PATHS.toString())));
     }
 
     private void clean(Path path) throws IOException {
@@ -462,13 +348,5 @@ public class GenClasses {
         // Replace Base Object creation.
         str = BASE_PATTERN.matcher(str).replaceAll("");
         return str;
-    }
-
-    private String makeAbstract(final String java) {
-        final int index = java.indexOf(PUBLIC_CLASS);
-        if (index != -1) {
-            return java.substring(0, index) + PUBLIC_ABSTRACT_CLASS + java.substring(index + PUBLIC_CLASS.length());
-        }
-        return java;
     }
 }
