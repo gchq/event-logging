@@ -17,36 +17,36 @@ package event.logging.base.impl;
 
 import event.logging.AdvancedQuery;
 import event.logging.AntiMalware;
-import event.logging.AntiMalwareEvent;
-import event.logging.AuthenticateEvent;
+import event.logging.AntiMalwareEventAction;
 import event.logging.AuthenticateAction;
+import event.logging.AuthenticateEventAction;
 import event.logging.Criteria;
 import event.logging.Data;
 import event.logging.Destination;
 import event.logging.Device;
 import event.logging.Document;
 import event.logging.Event;
-import event.logging.base.EventLoggingService;
 import event.logging.EventDetail;
 import event.logging.EventSource;
 import event.logging.EventTime;
-import event.logging.Export;
+import event.logging.ExportEventAction;
 import event.logging.File;
-import event.logging.ImportEvent;
+import event.logging.ImportEventAction;
 import event.logging.MultiObject;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
-import event.logging.base.Payload;
 import event.logging.Query;
-import event.logging.SearchEvent;
-import event.logging.SendReceive;
+import event.logging.SearchEventAction;
+import event.logging.SendEventAction;
 import event.logging.Signature;
 import event.logging.Software;
 import event.logging.Source;
-import event.logging.SystemType;
+import event.logging.SystemDetail;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
+import event.logging.base.EventLoggingService;
+import event.logging.base.Payload;
 import event.logging.base.util.DeviceUtil;
 import event.logging.base.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
@@ -93,12 +93,12 @@ public class EventLoggingServiceIT {
         final User user = new User();
         user.setId("someuser");
 
-        final AuthenticateEvent authenticateEvent = new AuthenticateEvent();
-        authenticateEvent.setAction(AuthenticateAction.LOGON);
-        authenticateEvent.setUser(user);
+        final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+        authenticateEventAction.setAction(AuthenticateAction.LOGON);
+        authenticateEventAction.setUser(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticateEvent(authenticateEvent);
+        event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -139,12 +139,12 @@ public class EventLoggingServiceIT {
                             final User user = new User();
                             user.setId("someuser");
 
-                            final AuthenticateEvent authenticateEvent = new AuthenticateEvent();
-                            authenticateEvent.setAction(AuthenticateAction.LOGON);
-                            authenticateEvent.setUser(user);
+                            final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+                            authenticateEventAction.setAction(AuthenticateAction.LOGON);
+                            authenticateEventAction.setUser(user);
 
                             final Event event = createBasicEvent("LOGIN", "LOGIN");
-                            event.getEventDetail().setAuthenticateEvent(authenticateEvent);
+                            event.getEventDetail().setAuthenticateEventAction(authenticateEvent);
                             event.getEventTime().setTimeCreated(new Date());
                             eventLoggingService.log(event);
                             done.incrementAndGet();
@@ -169,7 +169,7 @@ public class EventLoggingServiceIT {
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final SystemType system = new SystemType();
+        final SystemDetail system = new SystemDetail();
         system.setName("Test System");
         system.setEnvironment("Test");
 
@@ -396,11 +396,11 @@ public class EventLoggingServiceIT {
         destination.getUserOrDevice().add(destUser);
         destination.getUserOrDevice().add(destDevice);
 
-        final SendReceive sendReceive = new SendReceive();
-        sendReceive.setSource(source);
-        sendReceive.setDestination(destination);
+        final SendEvent sendEvent = new SendEvent();
+        sendEvent.setSource(source);
+        sendEvent.setDestination(destination);
 
-        event.getEventDetail().setSendEvent(sendReceive);
+        event.getEventDetail().setSendEvent(sendEvent);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -493,7 +493,7 @@ public class EventLoggingServiceIT {
 
         source.getObjects().add(criteria);
 
-        final Export export = new Export();
+        final ExportEvent exportEvent = new ExportEvent();
         export.setSource(source);
 
         final Data data = EventLoggingUtil.createData("MyName", "MyValue");

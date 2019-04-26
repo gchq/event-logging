@@ -28,16 +28,16 @@ import event.logging.Event;
 import event.logging.EventDetail;
 import event.logging.EventSource;
 import event.logging.EventTime;
-import event.logging.Export;
+import event.logging.ExportEvent;
 import event.logging.ImportEvent;
 import event.logging.MultiObject;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import event.logging.Query;
 import event.logging.SearchEvent;
-import event.logging.SendReceive;
+import event.logging.SendEvent;
 import event.logging.Source;
-import event.logging.SystemType;
+import event.logging.SystemDetail;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
@@ -154,7 +154,7 @@ class FluentEventLoggingServiceIT {
                         .withTimeCreated(new Date())
                         .build())
                 .withEventSource(EventSource.builder()
-                        .withSystem(SystemType.builder()
+                        .withSystem(SystemDetail.builder()
                                 .withName("Test System")
                                 .withEnvironment("Test")
                                 .build())
@@ -311,7 +311,7 @@ class FluentEventLoggingServiceIT {
         final Event event = createBasicEvent("Send", "Send event");
 
         event.getEventDetail()
-                .setSendEvent(SendReceive.builder()
+                .setSendEvent(SendEvent.builder()
                     .withSource(Source.builder()
                         .addUser()
                             .withId("sourceUserId")
@@ -385,7 +385,7 @@ class FluentEventLoggingServiceIT {
         final Event event = createBasicEvent("Export-Criteria", "Export-Criteria-Search");
 
         event.getEventDetail()
-                .setExportEvent(Export.builder()
+                .setExportEvent(ExportEvent.builder()
                         .withSource(MultiObject.builder()
                                 .addCriteria(Criteria.builder()
                                         .withQuery(Query.builder()

@@ -47,67 +47,72 @@
 
          <!--prevent the clash between the Network schema action and the Network complexType-->
         <!--<jaxb:bindings node="//xs:choice/xs:element[@name='Network']/xs:complexType">-->
-            <!--<jaxb:factoryMethod name="NetworkEvent"/>-->
-            <!--<jaxb:class name="NetworkEvent" />-->
+            <!--<jaxb:factoryMethod name="NetworkEventAction"/>-->
+            <!--<jaxb:class name="NetworkEventAction" />-->
         <!--</jaxb:bindings>-->
 
          <!--prevent the class between the AntiMalware schema action and the AntiMalware complexType -->
         <!--<jaxb:bindings node="//xs:choice/xs:element[@name='AntiMalware']/xs:complexType">-->
-            <!--<jaxb:factoryMethod name="AntiMalwareEvent"/>-->
-            <!--<jaxb:class name="AntiMalwareEvent" />-->
+            <!--<jaxb:factoryMethod name="AntiMalwareEventAction"/>-->
+            <!--<jaxb:class name="AntiMalwareEventAction" />-->
         <!--</jaxb:bindings>-->
 
         <jaxb:bindings node="/xs:schema">
 
             <jaxb:bindings node="xs:complexType[@name='Authenticate']">
-                <jaxb:factoryMethod name="AuthenticateEvent"/>
-                <jaxb:class name="AuthenticateEvent" />
+                <jaxb:factoryMethod name="AuthenticateEventAction"/>
+                <jaxb:class name="AuthenticateEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Authorise']">
-                <jaxb:factoryMethod name="AuthoriseEvent"/>
-                <jaxb:class name="AuthoriseEvent" />
+                <jaxb:factoryMethod name="AuthoriseEventAction"/>
+                <jaxb:class name="AuthoriseEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Copy']">
-                <jaxb:factoryMethod name="CopyEvent"/>
-                <jaxb:class name="CopyEvent" />
+                <jaxb:factoryMethod name="CopyEventAction"/>
+                <jaxb:class name="CopyEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Move']">
-                <jaxb:factoryMethod name="MoveEvent"/>
-                <jaxb:class name="MoveEvent" />
+                <jaxb:factoryMethod name="MoveEventAction"/>
+                <jaxb:class name="MoveEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="//xs:complexType[@name='Search']">
-                <jaxb:factoryMethod name="SearchEvent"/>
-                <jaxb:class name="SearchEvent" />
+                <jaxb:factoryMethod name="SearchEventAction"/>
+                <jaxb:class name="SearchEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Import']">
-                <jaxb:factoryMethod name="ImportEvent"/>
-                <jaxb:class name="ImportEvent" />
+                <jaxb:factoryMethod name="ImportEventAction"/>
+                <jaxb:class name="ImportEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Export']">
-                <jaxb:factoryMethod name="ExportEvent"/>
-                <jaxb:class name="ExportEvent" />
+                <jaxb:factoryMethod name="ExportEventAction"/>
+                <jaxb:class name="ExportEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Install']">
-                <jaxb:factoryMethod name="InstallEvent"/>
-                <jaxb:class name="InstallEvent" />
+                <jaxb:factoryMethod name="InstallEventAction"/>
+                <jaxb:class name="InstallEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Uninstall']">
-                <jaxb:factoryMethod name="UninstallEvent"/>
-                <jaxb:class name="UninstallEvent" />
+                <jaxb:factoryMethod name="UninstallEventAction"/>
+                <jaxb:class name="UninstallEventAction" />
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Approval']">
+                <jaxb:factoryMethod name="ApprovalEventAction"/>
+                <jaxb:class name="ApprovalEventAction" />
             </jaxb:bindings>
 
             <!-- Rename System to SystemType to avoid the clash with java.lang.System -->
             <jaxb:bindings node="//xs:complexType[@name='System']">
-                <jaxb:factoryMethod name="SystemType"/>
-                <jaxb:class name="SystemType" />
+                <jaxb:factoryMethod name="SystemDetail"/>
+                <jaxb:class name="SystemDetail" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='MultiObject']/xs:group[@ref='evt:MultiObjectGroup']">
@@ -153,75 +158,75 @@
 
         <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice">
 
-            <!-- Rename the java property for each of the schema actions to ...Event
+            <!-- Rename the java property for each of the schema actions to ...EventAction
                 to make it a bit clearer.  Can't use ...Action as that will conflict with some
                 existing classes.
             -->
             <jaxb:bindings node="xs:element[@name='Authenticate']">
-                <jaxb:property name="authenticateEvent" />
+                <jaxb:property name="authenticateEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Authorise']">
-                <jaxb:property name="authoriseEvent" />
+                <jaxb:property name="authoriseEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Search']">
-                <jaxb:property name="searchEvent" />
+                <jaxb:property name="searchEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Copy']">
-                <jaxb:property name="copyEvent" />
+                <jaxb:property name="copyEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Move']">
-                <jaxb:property name="moveEvent" />
+                <jaxb:property name="moveEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Create']">
-                <jaxb:property name="createEvent" />
+                <jaxb:property name="createEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='View']">
-                <jaxb:property name="viewEvent" />
+                <jaxb:property name="viewEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Import']">
-                <jaxb:property name="importEvent" />
+                <jaxb:property name="importEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Export']">
-                <jaxb:property name="exportEvent" />
+                <jaxb:property name="exportEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Update']">
-                <jaxb:property name="updateEvent" />
+                <jaxb:property name="updateEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Delete']">
-                <jaxb:property name="deleteEvent" />
+                <jaxb:property name="deleteEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Process']">
-                <jaxb:property name="ProcessEvent" />
+                <jaxb:property name="ProcessEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Print']">
-                <jaxb:property name="printEvent" />
+                <jaxb:property name="printEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Install']">
-                <jaxb:property name="installEvent" />
+                <jaxb:property name="installEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Uninstall']">
-                <jaxb:property name="uninstallEvent" />
+                <jaxb:property name="uninstallEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Network']">
-                <jaxb:property name="networkEvent" />
+                <jaxb:property name="networkEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='AntiMalware']">
-                <jaxb:property name="antiMalwareEvent" />
+                <jaxb:property name="antiMalwareEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Alert']">
-                <jaxb:property name="alertEvent" />
+                <jaxb:property name="alertEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Send']">
-                <jaxb:property name="sendEvent" />
+                <jaxb:property name="sendEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Receive']">
-                <jaxb:property name="receiveEvent" />
+                <jaxb:property name="receiveEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Approval']">
-                <jaxb:property name="approvalEvent" />
+                <jaxb:property name="approvalEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Unknown']">
-                <jaxb:property name="unknownEvent" />
+                <jaxb:property name="unknownEventAction" />
             </jaxb:bindings>
 
 
@@ -229,32 +234,32 @@
                 so we need to rename their classes here
             -->
             <jaxb:bindings node="xs:element[@name='Update']/xs:complexType">
-                <jaxb:class name="UpdateEvent" />
+                <jaxb:class name="UpdateEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Process']/xs:complexType">
-                <jaxb:class name="ProcessEvent" />
+                <jaxb:class name="ProcessEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Print']/xs:complexType">
-                <jaxb:class name="PrintEvent" />
+                <jaxb:class name="PrintEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Network']/xs:complexType">
-                <jaxb:class name="NetworkEvent" />
+                <jaxb:class name="NetworkEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='AntiMalware']/xs:complexType">
-                <jaxb:class name="AntiMalwareEvent" />
+                <jaxb:class name="AntiMalwareEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Alert']/xs:complexType">
-                <jaxb:class name="AlertEvent" />
+                <jaxb:class name="AlertEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Unknown']/xs:complexType">
-                <jaxb:class name="UnknownEvent" />
+                <jaxb:class name="UnknownEventAction" />
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:element[@name='Send']/xs:complexType">
-                <jaxb:class name="SendEvent" />
+                <jaxb:class name="SendEventAction" />
             </jaxb:bindings>
             <jaxb:bindings node="xs:element[@name='Receive']/xs:complexType">
-                <jaxb:class name="ReceiveEvent" />
+                <jaxb:class name="ReceiveEventAction" />
             </jaxb:bindings>
 
         </jaxb:bindings>
