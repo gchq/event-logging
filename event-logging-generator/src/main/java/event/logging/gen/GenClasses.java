@@ -173,6 +173,14 @@ public class GenClasses {
         copyAll(baseProjectDir.resolve("src/test/resources"),
                 apiProjectDir.resolve("src/test/resources"));
 
+        // The jaxb2-rich-contract-plugin creates some classes in com.kscs.util.jaxb so move them into
+        // event.logging.fluent
+        relocatePackage(
+                apiProjectDir,
+                "com.kscs.util.jaxb",
+                "event.logging.jaxb.fluent");
+
+
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
@@ -222,6 +230,76 @@ public class GenClasses {
                         content = EVENT_LOGGING_BASE_PATTERN.matcher(content).replaceAll("event.logging");
                         Files.write(dest, content.getBytes(UTF8));
 
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+    }
+
+    private void relocatePackage(final Path projectDir,
+                                 final String sourcePackage,
+                                 final String destPackage) throws IOException {
+
+        final Path from = projectDir.resolve("src/main/java/" + sourcePackage.replace(".", "/"));
+        final Path to = projectDir.resolve("src/main/java/" + destPackage.replace(".", "/"));
+        final Path allJava = projectDir.resolve("src/main/java");
+
+        System.out.println(String.format("Relocating packages - projectDir: %s, from: %s, to: %s",
+                projectDir.resolve("..").relativize(projectDir),
+                projectDir.relativize(from),
+                projectDir.relativize(to)));
+
+        if (Files.exists(from)) {
+            Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    Path rel = from.relativize(dir);
+                    Path dest = to.resolve(rel);
+                    Files.createDirectories(dest);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path rel = from.relativize(file);
+                    Path dest = to.resolve(rel);
+                    if (!Files.exists(dest)) {
+                        Files.move(file, dest);
+                        System.out.println(String.format("  Moved file: %s",
+                                file.getFileName().toString()));
+
+                        // CHANGE OUTPUT PACKAGES.
+                        byte[] data = Files.readAllBytes(dest);
+                        String content = new String(data, UTF8);
+                        content = content.replace(sourcePackage, destPackage);
+                        Files.write(dest, content.getBytes(UTF8));
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+
+        // Now fix all references to the source pkg in the whole project
+        if (Files.exists(allJava)) {
+            Files.walkFileTree(allJava, new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (Files.exists(file)) {
+
+                        // CHANGE OUTPUT PACKAGES.
+                        byte[] data = Files.readAllBytes(file);
+                        String originalContent = new String(data, UTF8);
+                        String newContent = originalContent.replace(sourcePackage, destPackage);
+                        Files.write(file, newContent.getBytes(UTF8));
+
+                        if (!newContent.equals(originalContent)) {
+                            System.out.println(String.format("  Replaced %s with %s in file: %s",
+                                    sourcePackage,
+                                    destPackage,
+                                    file.getFileName().toString()));
+                        }
                     }
                     return FileVisitResult.CONTINUE;
                 }
