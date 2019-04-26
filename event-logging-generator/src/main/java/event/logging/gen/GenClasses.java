@@ -247,16 +247,6 @@ public class GenClasses {
                 java = fixObjectFactory(java);
             }
 
-            // TODO we need to change the schema so all Base... types are made abstract="true"
-            // which should mean xjc makes the classes abstract.
-            // Commented out at the moment as making them abstract manually breaks compilation
-            // due to the builder methods in them.
-
-            // Make Base objects abstract.
-//            if (javaFile.getFileName().toString().contains("Base")) {
-//                java = makeAbstract(java);
-//            }
-
             Files.write(javaFile, java.getBytes(UTF8));
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
