@@ -609,14 +609,14 @@
                                              </xs:annotation>
                                           </xs:element>
                                           <xs:element name="Source"
-                                             type="evt:NetworkSrcDstComplexType" minOccurs="0"
+                                             type="evt:NetworkLocationComplexType" minOccurs="0"
                                              maxOccurs="1">
                                              <xs:annotation>
                                                 <xs:documentation>The source network device involved in the IDS event.</xs:documentation>
                                              </xs:annotation>
                                           </xs:element>
                                           <xs:element name="Destination"
-                                             type="evt:NetworkSrcDstComplexType" minOccurs="0"
+                                             type="evt:NetworkLocationComplexType" minOccurs="0"
                                              maxOccurs="1">
                                              <xs:annotation>
                                                 <xs:documentation>The destination network device involved in the IDS event.</xs:documentation>
@@ -1220,12 +1220,12 @@
    </xs:complexType>
    <xs:complexType name="BaseNetworkComplexType" abstract="true">
       <xs:sequence minOccurs="1" maxOccurs="1">
-         <xs:element name="Source" type="evt:NetworkSrcDstComplexType" minOccurs="1" maxOccurs="1">
+         <xs:element name="Source" type="evt:NetworkLocationComplexType" minOccurs="1" maxOccurs="1">
             <xs:annotation>
                <xs:documentation>The source device that is attempting the network action.</xs:documentation>
             </xs:annotation>
          </xs:element>
-         <xs:element name="Destination" type="evt:NetworkSrcDstComplexType" minOccurs="0"
+         <xs:element name="Destination" type="evt:NetworkLocationComplexType" minOccurs="0"
             maxOccurs="1">
             <xs:annotation>
                <xs:documentation>The destination device for the network action.</xs:documentation>
@@ -1880,7 +1880,7 @@
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
-   <xs:complexType name="NetworkSrcDstComplexType">
+   <xs:complexType name="NetworkLocationComplexType">
       <xs:annotation>
          <xs:documentation>Desc</xs:documentation>
       </xs:annotation>
@@ -1895,8 +1895,8 @@
                <xs:documentation>The application being used by the source or destination.</xs:documentation>
             </xs:annotation>
          </xs:element>
-         <xs:element name="TransportProtocol" type="evt:NetworkSrcDstTransportProtocolSimpleType"
-            minOccurs="0" maxOccurs="1">
+         <xs:element name="TransportProtocol" type="evt:NetworkProtocolSimpleType" minOccurs="0"
+            maxOccurs="1">
             <xs:annotation>
                <xs:documentation>The transport protocol being used by the source or destination.</xs:documentation>
             </xs:annotation>
@@ -2614,7 +2614,7 @@
          <xs:enumeration value="Other"/>
       </xs:restriction>
    </xs:simpleType>
-   <xs:simpleType name="NetworkSrcDstTransportProtocolSimpleType">
+   <xs:simpleType name="NetworkProtocolSimpleType">
       <xs:restriction base="xs:string">
          <xs:enumeration value="TCP"/>
          <xs:enumeration value="UDP"/>

@@ -37,25 +37,56 @@
             <!--<jaxb:property name="objects" />-->
         <!--</jaxb:bindings>-->
 
-        <!--<jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">-->
-            <!--<jaxb:property name="AdvancedQueryItems" />-->
-        <!--</jaxb:bindings>-->
+        <jaxb:bindings node="xs:complexType[@name='BaseAdvancedQueryOperator']/xs:complexContent/xs:extension/xs:group">
+            <jaxb:property name="queryItems" />
+        </jaxb:bindings>
 
-        <!--<jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">-->
-            <!--<jaxb:property name="AdvancedQueryItems" />-->
-        <!--</jaxb:bindings>      -->
+        <jaxb:bindings node="//xs:element[@name='Advanced']/xs:complexType/xs:group">
+            <jaxb:property name="queryItems" />
+        </jaxb:bindings>      
 
-         <!--prevent the clash between the Network schema action and the Network complexType-->
-        <!--<jaxb:bindings node="//xs:choice/xs:element[@name='Network']/xs:complexType">-->
-            <!--<jaxb:factoryMethod name="NetworkEventAction"/>-->
-            <!--<jaxb:class name="NetworkEventAction" />-->
-        <!--</jaxb:bindings>-->
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='AccessControlGroups']/xs:sequence/xs:element[@name='AccessControlGroup']">
+            <jaxb:property name="accessControlGroups" />
+        </jaxb:bindings>
 
-         <!--prevent the class between the AntiMalware schema action and the AntiMalware complexType -->
-        <!--<jaxb:bindings node="//xs:choice/xs:element[@name='AntiMalware']/xs:complexType">-->
-            <!--<jaxb:factoryMethod name="AntiMalwareEventAction"/>-->
-            <!--<jaxb:class name="AntiMalwareEventAction" />-->
-        <!--</jaxb:bindings>-->
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="//xs:element[@name='AddAccess']/xs:complexType/xs:sequence/xs:element[@name='AccessZone']">
+            <jaxb:property name="accessZones" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Authorise']/xs:complexContent/xs:extension/xs:sequence/xs:element[@name='AddGroups']/xs:complexType/xs:sequence/xs:element[@name='Group']">
+            <jaxb:property name="groups" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Approval']/xs:sequence/xs:element[@name='Approvers']/xs:complexType/xs:sequence/xs:element[@name='Approver']">
+            <jaxb:property name="approvers" />
+        </jaxb:bindings>
+
+        <!-- TODO In Authorisations we have List<Auth> auth, which is not ideal, not sure what 'auth' is? -->
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Groups']/xs:sequence/xs:element[@name='Group']">
+            <jaxb:property name="groups" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='MetaDataTags']/xs:sequence/xs:element[@name='Tag']">
+            <jaxb:property name="tags" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:group[@name='BaseObjectGroup']/xs:sequence/xs:element[@name='Permissions']/xs:complexType/xs:sequence/xs:element[@name='Permission']">
+            <jaxb:property name="permissions" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Classification']/xs:sequence/xs:element[@name='PermittedNationalities']/xs:complexType/xs:sequence/xs:element[@name='Nationality']">
+            <jaxb:property name="nationalities" />
+        </jaxb:bindings>
+
 
         <jaxb:bindings node="/xs:schema">
 
@@ -109,12 +140,14 @@
                 <jaxb:class name="ApprovalEventAction" />
             </jaxb:bindings>
 
-            <!-- Rename System to SystemType to avoid the clash with java.lang.System -->
+            <!-- Rename System to SystemDetail to avoid the clash with java.lang.System -->
             <jaxb:bindings node="//xs:complexType[@name='System']">
                 <jaxb:factoryMethod name="SystemDetail"/>
                 <jaxb:class name="SystemDetail" />
             </jaxb:bindings>
 
+
+            <!-- Change the property names to a more sensible 'objetcs' -->
             <jaxb:bindings node="xs:complexType[@name='MultiObject']/xs:group[@ref='evt:MultiObjectGroup']">
                 <jaxb:property name="objects" />
             </jaxb:bindings>
@@ -126,6 +159,8 @@
             <jaxb:bindings node="xs:complexType[@name='ObjectOutcome']//xs:group[@ref='evt:MultiObjectGroup']">
                 <jaxb:property name="objects" />
             </jaxb:bindings>
+
+
 
             <jaxb:bindings node="xs:complexType[@name='Query']">
 
@@ -143,18 +178,6 @@
 
         </jaxb:bindings>
 
-
-        <!--[> Improve the name of the Advanced Query type<]-->
-        <!--<jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Advanced']/xs:complexType">-->
-            <!--[><jaxb:factoryMethod name="AdvancedQuery"/><]-->
-            <!--<jaxb:class name="AdvancedQuery" />-->
-        <!--</jaxb:bindings>-->
-
-        <!--[> Improve the name of the Simple Query type<]-->
-        <!--<jaxb:bindings node="//xs:complexType[@name='Query']//xs:element[@name='Simple']/xs:complexType">-->
-            <!--[><jaxb:factoryMethod name="SimpleQuery"/><]-->
-            <!--<jaxb:class name="SimpleQuery" />-->
-        <!--</jaxb:bindings>-->
 
         <jaxb:bindings node="//xs:element[@name='EventDetail']/xs:complexType/xs:sequence/xs:choice">
 
@@ -254,7 +277,6 @@
             <jaxb:bindings node="xs:element[@name='Unknown']/xs:complexType">
                 <jaxb:class name="UnknownEventAction" />
             </jaxb:bindings>
-
             <jaxb:bindings node="xs:element[@name='Send']/xs:complexType">
                 <jaxb:class name="SendEventAction" />
             </jaxb:bindings>
