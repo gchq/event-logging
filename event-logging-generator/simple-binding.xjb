@@ -87,6 +87,16 @@
             <jaxb:property name="nationalities" />
         </jaxb:bindings>
 
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Authorise']//xs:element[@name='RemoveGroups']//xs:element[@name='Group']">
+            <jaxb:property name="groups" />
+        </jaxb:bindings>
+
+        <!-- Make the property name plural -->
+        <jaxb:bindings node="xs:complexType[@name='Approval']//xs:element[@name='Requestors']//xs:element[@name='Requestor']">
+            <jaxb:property name="requestors" />
+        </jaxb:bindings>
+
 
         <jaxb:bindings node="/xs:schema">
 
