@@ -9,6 +9,7 @@ dependencies {
     compile "org.glassfish.jaxb:jaxb-xjc:${versions.jaxb_xjc}"
     compile "org.glassfish.jaxb:jaxb-runtime:${versions.jaxb_xjc}"
     compile "net.codesup.util:jaxb2-rich-contract-plugin:${versions.jaxb_rich_contract}"
+    compile "org.jvnet.jaxb2_commons:jaxb2-basics:${versions.jaxb2_basics}"
 
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 }

@@ -131,6 +131,7 @@ public class GenClasses {
                 "-quiet",
                 modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
                 "-Xfluent-builder",
+                "-Xinheritance",
         };
 
         System.out.println("Running XJC with arguments:");

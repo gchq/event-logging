@@ -113,6 +113,7 @@ ext.versions = [
         jaxb_xjc             : '2.3.2',
         jaxb_api             : '2.3.1',
         jaxb_rich_contract   : '2.0.1',
+        jaxb2_basics         : '1.11.1',
         junit                : '5.2.0',
         logback              : '1.2.3',
         saxon                : '9.7.0-18',

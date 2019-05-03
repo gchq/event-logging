@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jaxb:bindings
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
     xmlns:evt="event-logging:3"
@@ -97,6 +98,29 @@
             <jaxb:property name="requestors" />
         </jaxb:bindings>
 
+        <!-- Make (User|Device)ComplexType classes implement Endpoint to make the choice
+        in SendreceiveGroup/Source|Dest be List<Endpoint> instead of List<Object> -->
+        <jaxb:bindings node="xs:complexType[@name='User']">
+            <inheritance:implements>event.logging.Endpoint</inheritance:implements> 
+        </jaxb:bindings>
+        <jaxb:bindings node="xs:complexType[@name='Device']">
+            <inheritance:implements>event.logging.Endpoint</inheritance:implements> 
+        </jaxb:bindings>
+
+        <!-- Change prop name from userOrDevice to endpoints-->
+        <jaxb:bindings node="xs:group[@name='SendReceiveGroup']//xs:element[@name='Source']//xs:choice">
+            <jaxb:property name="endpoints" >
+                <!-- Force it to be List<Endpoint> instead of List<java.lang.Object> -->
+                <jaxb:baseType name="event.logging.Endpoint" />
+            </jaxb:property>
+        </jaxb:bindings>
+        <jaxb:bindings node="xs:group[@name='SendReceiveGroup']//xs:element[@name='Destination']//xs:choice">
+            <jaxb:property name="endpoints" >
+                <!-- Force it to be List<Endpoint> instead of List<java.lang.Object> -->
+                <jaxb:baseType name="event.logging.Endpoint" />
+            </jaxb:property>
+        </jaxb:bindings>
+
 
         <jaxb:bindings node="/xs:schema">
 
@@ -154,6 +178,12 @@
             <jaxb:bindings node="//xs:complexType[@name='System']">
                 <jaxb:factoryMethod name="SystemDetail"/>
                 <jaxb:class name="SystemDetail" />
+            </jaxb:bindings>
+
+            <!-- Rename Object to OtherObject to avoid the clash with java.lang.Object -->
+            <jaxb:bindings node="//xs:complexType[@name='Object']">
+                <jaxb:factoryMethod name="OtherObject"/>
+                <jaxb:class name="OtherObject" />
             </jaxb:bindings>
 
 
