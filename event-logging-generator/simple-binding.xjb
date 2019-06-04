@@ -16,9 +16,11 @@
     <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
 
         <!-- localScoping to prevent nested classes -->
+        <!-- choiceContentProperty to give us a single java property for a xs:choice -->
         <jaxb:globalBindings 
             generateElementProperty="false" 
-            localScoping="toplevel" >
+            localScoping="toplevel">
+            <!--choiceContentProperty="true"-->
 
             <!-- <xjc:simple /> -->
             <jaxb:javaType 
@@ -127,51 +129,77 @@
             <jaxb:bindings node="xs:complexType[@name='Authenticate']">
                 <jaxb:factoryMethod name="AuthenticateEventAction"/>
                 <jaxb:class name="AuthenticateEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Authorise']">
                 <jaxb:factoryMethod name="AuthoriseEventAction"/>
                 <jaxb:class name="AuthoriseEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Copy']">
                 <jaxb:factoryMethod name="CopyEventAction"/>
                 <jaxb:class name="CopyEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Move']">
                 <jaxb:factoryMethod name="MoveEventAction"/>
                 <jaxb:class name="MoveEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="//xs:complexType[@name='Search']">
                 <jaxb:factoryMethod name="SearchEventAction"/>
                 <jaxb:class name="SearchEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+            </jaxb:bindings>
+
+            <jaxb:bindings node="//xs:complexType[@name='ObjectOutcome']">
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Import']">
                 <jaxb:factoryMethod name="ImportEventAction"/>
                 <jaxb:class name="ImportEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Export']">
                 <jaxb:factoryMethod name="ExportEventAction"/>
                 <jaxb:class name="ExportEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Update']">
+                <jaxb:factoryMethod name="UpdateEventAction"/>
+                <jaxb:class name="UpdateEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+            </jaxb:bindings>
+
+            <jaxb:bindings node="xs:complexType[@name='Process']">
+                <jaxb:factoryMethod name="ProcessEventAction"/>
+                <jaxb:class name="ProcessEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Install']">
                 <jaxb:factoryMethod name="InstallEventAction"/>
                 <jaxb:class name="InstallEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Uninstall']">
                 <jaxb:factoryMethod name="UninstallEventAction"/>
                 <jaxb:class name="UninstallEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <jaxb:bindings node="xs:complexType[@name='Approval']">
                 <jaxb:factoryMethod name="ApprovalEventAction"/>
                 <jaxb:class name="ApprovalEventAction" />
+                <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             </jaxb:bindings>
 
             <!-- Rename System to SystemDetail to avoid the clash with java.lang.System -->
@@ -225,6 +253,7 @@
                 to make it a bit clearer.  Can't use ...Action as that will conflict with some
                 existing classes.
             -->
+            <!--
             <jaxb:bindings node="xs:element[@name='Authenticate']">
                 <jaxb:property name="authenticateEventAction" />
             </jaxb:bindings>
@@ -291,17 +320,20 @@
             <jaxb:bindings node="xs:element[@name='Unknown']">
                 <jaxb:property name="unknownEventAction" />
             </jaxb:bindings>
+            -->
 
 
             <!-- Some elements in the choice in EventDetail are anonymous complex types
                 so we need to rename their classes here
             -->
-            <jaxb:bindings node="xs:element[@name='Update']/xs:complexType">
-                <jaxb:class name="UpdateEventAction" />
-            </jaxb:bindings>
-            <jaxb:bindings node="xs:element[@name='Process']/xs:complexType">
-                <jaxb:class name="ProcessEventAction" />
-            </jaxb:bindings>
+            <!--<jaxb:bindings node="xs:element[@name='Update']/xs:complexType">-->
+                <!--<jaxb:class name="UpdateEventAction" />-->
+            <!--</jaxb:bindings>-->
+            <!--<jaxb:bindings node="xs:element[@name='Process']/xs:complexType">-->
+                <!--<jaxb:class name="ProcessEventAction" />-->
+            <!--</jaxb:bindings>-->
+
+        <!--
             <jaxb:bindings node="xs:element[@name='Print']/xs:complexType">
                 <jaxb:class name="PrintEventAction" />
             </jaxb:bindings>
@@ -323,6 +355,7 @@
             <jaxb:bindings node="xs:element[@name='Receive']/xs:complexType">
                 <jaxb:class name="ReceiveEventAction" />
             </jaxb:bindings>
+        -->
 
         </jaxb:bindings>
 

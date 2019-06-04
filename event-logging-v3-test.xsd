@@ -219,6 +219,7 @@
                               <xs:documentation>All events related to account management such as adding and removing user and system accounts.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
+                        <!--
                         <xs:element name="Search" type="evt:SearchComplexType" minOccurs="1"
                            maxOccurs="1">
                            <xs:annotation>
@@ -559,6 +560,7 @@
                               </xs:sequence>
                            </xs:complexType>
                         </xs:element>
+                        -->
                      </xs:choice>
                   </xs:sequence>
                </xs:complexType>
