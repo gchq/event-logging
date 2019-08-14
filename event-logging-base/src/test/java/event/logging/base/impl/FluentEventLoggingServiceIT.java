@@ -16,9 +16,10 @@
 package event.logging.base.impl;
 
 import event.logging.AdvancedQuery;
+import event.logging.And;
 import event.logging.AnyContent;
 import event.logging.AuthenticateAction;
-import event.logging.AuthenticateEvent;
+import event.logging.AuthenticateEventAction;
 import event.logging.Criteria;
 import event.logging.Data;
 import event.logging.Destination;
@@ -28,14 +29,14 @@ import event.logging.Event;
 import event.logging.EventDetail;
 import event.logging.EventSource;
 import event.logging.EventTime;
-import event.logging.ExportEvent;
-import event.logging.ImportEvent;
+import event.logging.ExportEventAction;
+import event.logging.ImportEventAction;
 import event.logging.MultiObject;
 import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import event.logging.Query;
-import event.logging.SearchEvent;
-import event.logging.SendEvent;
+import event.logging.SearchEventAction;
+import event.logging.SendEventAction;
 import event.logging.Source;
 import event.logging.SystemDetail;
 import event.logging.Term;
@@ -46,6 +47,7 @@ import event.logging.base.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,7 +81,7 @@ class FluentEventLoggingServiceIT {
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
         event.getEventDetail()
-                .setAuthenticateEvent(AuthenticateEvent.builder()
+                .setAuthenticateEventAction(AuthenticateEventAction.builder()
                         .withAction(AuthenticateAction.LOGON)
                         .withUser(User.builder()
                                 .withId("user1")
@@ -121,7 +123,7 @@ class FluentEventLoggingServiceIT {
 
                         final Event event = createBasicEvent("LOGIN", "LOGIN");
                         event.getEventDetail()
-                                .setAuthenticateEvent(AuthenticateEvent.builder()
+                                .setAuthenticateEventAction(AuthenticateEventAction.builder()
                                 .withAction(AuthenticateAction.LOGON)
                                 .withUser(User.builder()
                                     .withId("someuser")
@@ -169,10 +171,35 @@ class FluentEventLoggingServiceIT {
                 .withEventDetail(EventDetail.builder()
                         .withTypeId(typeId)
                         .withDescription(description)
-                        .withAuthenticateEvent(AuthenticateEvent.builder()
+                        .withAuthenticateEventAction(AuthenticateEventAction.builder()
                             .withAction(AuthenticateAction.LOGON)
                             .build())
                         .build())
+                .build();
+    }
+
+    private Event createBasicEvent(final EventDetail eventDetail) {
+
+        Objects.requireNonNull(eventDetail);
+
+        return Event.builder()
+                .withEventTime(EventTime.builder()
+                        .withTimeCreated(new Date())
+                        .build())
+                .withEventSource(EventSource.builder()
+                        .withSystem(SystemDetail.builder()
+                                .withName("Test System")
+                                .withEnvironment("Test")
+                                .build())
+                        .withGenerator("JUnit")
+                        .withDevice(Device.builder()
+                                .withIPAddress("123.123.123.123")
+                                .build())
+                        .withUser(User.builder()
+                                .withId("someuser")
+                                .build())
+                        .build())
+                .withEventDetail(eventDetail)
                 .build();
     }
 
@@ -188,7 +215,7 @@ class FluentEventLoggingServiceIT {
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
 
-        final AuthenticateEvent.Builder authenticateBuilder = AuthenticateEvent.builder()
+        final AuthenticateEventAction.Builder authenticateBuilder = AuthenticateEventAction.builder()
                 .withAction(AuthenticateAction.LOGON)
                 .withUser(EventLoggingUtil.createUser("someuser"));
 
@@ -197,7 +224,7 @@ class FluentEventLoggingServiceIT {
             authenticateBuilder.addData(EventLoggingUtil.createData("someothername" + i, "someothervalue" + i));
         }
 
-        event.getEventDetail().setAuthenticateEvent(authenticateBuilder.build());
+        event.getEventDetail().setAuthenticateEventAction(authenticateBuilder.build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -223,16 +250,20 @@ class FluentEventLoggingServiceIT {
     void testCreateEvent() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreateEvent(ObjectOutcome.builder()
-                .addDocument(Document.builder()
-                        .withId("Test Id")
-                        .withTitle("Test Title")
-                        .build())
-                .withOutcome(Outcome.builder()
-                    .withSuccess(Boolean.TRUE)
-                    .build())
-                .build());
+        final Event event = createBasicEvent(
+                EventDetail.builder()
+                        .withTypeId("Create")
+                        .withDescription("Create object")
+                        .withCreateEventAction(ObjectOutcome.builder()
+                                .addDocument(Document.builder()
+                                        .withId("Test Id")
+                                        .withTitle("Test Title")
+                                        .build())
+                                .withOutcome(Outcome.builder()
+                                        .withSuccess(Boolean.TRUE)
+                                        .build())
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -253,12 +284,15 @@ class FluentEventLoggingServiceIT {
     void testNastyChars() {
         final String rawQuery = "(?'v?v&amp;?6?#46?R?6????????r????????-w?)::TYPE_TDI| additionalSearchParameters={includeAutoExpIdentifiers=SELECTED, caseInsensitiveMatching=SELECTED, allowWildcards=SELECTED}";
 
-        final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEvent(SearchEvent.builder()
-                .withQuery(Query.builder()
-                        .withRaw(rawQuery)
-                        .build())
-                .build());
+        final Event event = createBasicEvent(
+                EventDetail.builder()
+                        .withTypeId("Search")
+                        .withDescription("Nasty search")
+                        .withSearchEventAction(SearchEventAction.builder()
+                                .withQuery(Query.builder()
+                                        .withRaw(rawQuery)
+                                        .build())
+                                .build()).build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -269,12 +303,15 @@ class FluentEventLoggingServiceIT {
     @Test
     void testSmartQuotes() {
 
-        final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEvent(SearchEvent.builder()
-                .withQuery(Query.builder()
-                        .withRaw("Daves quote")
-                        .build())
-                .build());
+        final Event event = createBasicEvent(
+                EventDetail.builder()
+                        .withTypeId("Search")
+                        .withDescription("Nasty search")
+                        .withSearchEventAction(SearchEventAction.builder()
+                                .withQuery(Query.builder()
+                                        .withRaw("Daves quote")
+                                        .build())
+                                .build()).build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -292,12 +329,15 @@ class FluentEventLoggingServiceIT {
             sb.append((char) i);
         }
 
-        final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEvent(SearchEvent.builder()
+        final Event event = createBasicEvent(
+                EventDetail.builder()
+                        .withTypeId("Search")
+                        .withDescription("Nasty search")
+                        .withSearchEventAction(SearchEventAction.builder()
                 .withQuery(Query.builder()
                         .withRaw(sb.toString())
                         .build())
-                .build());
+                .build()).build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -308,27 +348,29 @@ class FluentEventLoggingServiceIT {
     @Test
     void testSendReceive() {
 
-        final Event event = createBasicEvent("Send", "Send event");
-
-        event.getEventDetail()
-                .setSendEvent(SendEvent.builder()
-                    .withSource(Source.builder()
-                        .addUser()
-                            .withId("sourceUserId")
-                            .end()
-                        .addDevice()
-                            .withHostName("sourceHost")
-                            .end()
-                        .build())
-                .withDestination(Destination.builder()
-                    .addUser()
-                        .withId("destUserId")
-                        .end()
-                    .addDevice()
-                        .withHostName("destHost")
-                        .end()
-                    .build())
-                .build());
+        final Event event = createBasicEvent(
+                EventDetail.builder()
+                        .withTypeId("send")
+                        .withDescription("send event")
+                        .withSendEventAction(SendEventAction.builder()
+                                .withSource(Source.builder()
+                                        .addUser()
+                                        .withId("sourceUserId")
+                                        .end()
+                                        .addDevice()
+                                        .withHostName("sourceHost")
+                                        .end()
+                                        .build())
+                                .withDestination(Destination.builder()
+                                        .addUser()
+                                        .withId("destUserId")
+                                        .end()
+                                        .addDevice()
+                                        .withHostName("destHost")
+                                        .end()
+                                        .build())
+                                .build())
+                        .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -339,21 +381,22 @@ class FluentEventLoggingServiceIT {
     @Test
     void testImport() {
 
-        final Event event = createBasicEvent("Import", "Import event");
-
-        event.getEventDetail()
-                .setImportEvent(ImportEvent.builder()
-                    .withSource()
+        final Event event = createBasicEvent(EventDetail.builder()
+                .withTypeId("Import")
+                .withDescription("Import event")
+                .withImportEventAction(ImportEventAction.builder()
+                        .withSource()
                         .addFile()
-                            .withName("sourceFile")
-                            .end()
+                        .withName("sourceFile")
                         .end()
-                    .withDestination()
+                        .end()
+                        .withDestination()
                         .addFile()
-                            .withName("destFile")
-                            .end()
+                        .withName("destFile")
                         .end()
-                    .build());
+                        .end()
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -364,14 +407,15 @@ class FluentEventLoggingServiceIT {
     @Test
     void testCreateQuery() {
 
-        final Event event = createBasicEvent("Query", "Simple query");
-
-        event.getEventDetail()
-                .setSearchEvent(SearchEvent.builder()
+        final Event event = createBasicEvent(EventDetail.builder()
+                .withTypeId("Query")
+                .withDescription("Query event")
+                .withSearchEventAction(SearchEventAction.builder()
                         .withQuery(Query.builder()
                                 .withRaw("my query string!")
                                 .build())
-                        .build());
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -382,18 +426,25 @@ class FluentEventLoggingServiceIT {
     @Test
     void testCreateExportAdvancedQuery() {
 
-        final Event event = createBasicEvent("Export-Criteria", "Export-Criteria-Search");
-
-        event.getEventDetail()
-                .setExportEvent(ExportEvent.builder()
+        final Event event = createBasicEvent(EventDetail.builder()
+                .withTypeId("Export-Criteria")
+                .withDescription("Export-Criteria-Search")
+                .withExportEventAction(ExportEventAction.builder()
                         .withSource(MultiObject.builder()
                                 .addCriteria(Criteria.builder()
                                         .withQuery(Query.builder()
                                                 .withAdvanced(AdvancedQuery.builder()
-                                                        .addTerm(Term.builder()
-                                                                .withName("date_modified")
-                                                                .withCondition(TermCondition.GREATER_THAN)
-                                                                .withValue("56789")
+                                                        .addAnd(And.builder()
+                                                                .addTerm(Term.builder()
+                                                                        .withName("date_modified")
+                                                                        .withCondition(TermCondition.GREATER_THAN)
+                                                                        .withValue("56789")
+                                                                        .build())
+                                                                .addTerm(Term.builder()
+                                                                        .withName("date_modified")
+                                                                        .withCondition(TermCondition.LESS_THAN)
+                                                                        .withValue("98765")
+                                                                        .build())
                                                                 .build())
                                                         .build())
                                                 .build())
@@ -403,7 +454,8 @@ class FluentEventLoggingServiceIT {
                                 .withName("MyName")
                                 .withValue("MyValue")
                                 .build())
-                        .build());
+                        .build())
+                .build());
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
         eventLoggingService.setValidate(true);
@@ -419,9 +471,10 @@ class FluentEventLoggingServiceIT {
     void testMetaWithJSON() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail()
-                .setCreateEvent(ObjectOutcome.builder()
+        final Event event = createBasicEvent(EventDetail.builder()
+                .withTypeId("Create")
+                .withDescription("Create object")
+                .withCreateEventAction(ObjectOutcome.builder()
                         .addDocument(Document.builder()
                                 .withId("TestId")
                                 .withTitle("Test Title")
@@ -434,7 +487,8 @@ class FluentEventLoggingServiceIT {
                         .withOutcome(Outcome.builder()
                                 .withSuccess(Boolean.TRUE)
                                 .build())
-                        .build());
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -460,9 +514,10 @@ class FluentEventLoggingServiceIT {
     void testMetaWithXML() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail()
-                .setCreateEvent(ObjectOutcome.builder()
+        final Event event = createBasicEvent(EventDetail.builder()
+                        .withTypeId("Create")
+                        .withDescription("Create object")
+                .withCreateEventAction(ObjectOutcome.builder()
                         .addDocument(Document.builder()
                                 .withId("TestId")
                                 .withTitle("Test Title")
@@ -475,7 +530,8 @@ class FluentEventLoggingServiceIT {
                         .withOutcome(Outcome.builder()
                                 .withSuccess(Boolean.TRUE)
                                 .build())
-                        .build());
+                        .build())
+                .build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 

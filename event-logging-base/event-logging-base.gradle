@@ -9,7 +9,8 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
     testCompile "org.assertj:assertj-core:${versions.assertj}"
 }
 

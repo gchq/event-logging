@@ -16,13 +16,13 @@
 package event.logging.base.impl;
 
 import event.logging.AuthenticateAction;
-import event.logging.AuthenticateEvent;
+import event.logging.AuthenticateEventAction;
 import event.logging.Device;
 import event.logging.Event;
 import event.logging.EventDetail;
 import event.logging.EventSource;
 import event.logging.EventTime;
-import event.logging.SystemType;
+import event.logging.SystemDetail;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
 import event.logging.base.util.DeviceUtil;
@@ -54,8 +54,8 @@ public class TestValidation {
 
 
     @BeforeAll
-    public void setupCustomLogAppender() {
-        java.lang.System.setProperty("event.logging.logreceiver", "TestLogReceiver");
+    public static void setupCustomLogAppender() {
+        java.lang.System.setProperty("event.logging.logreceiver", "event.logging.base.impl.TestLogReceiver");
 
 
 //        consoleWriter = new StringWriter();
@@ -72,7 +72,7 @@ public class TestValidation {
     }
 
     @AfterAll
-    public void removeCustomLogAppender() {
+    public static void removeCustomLogAppender() {
 //        LoggerFactory.getLogger(DefaultXMLValidator.class).removeAppender(JUNIT_CONSOLE_APPENDER);
 
         java.lang.System.setProperty("event.logging.logreceiver", "event.logging.impl.LoggerLogReceiver");
@@ -94,7 +94,7 @@ public class TestValidation {
 
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
-        assertThat(event.logging.base.impl.TestLogReceiver.getCurrentMessage().isEmpty()).isTrue();
+        assertThat(event.logging.base.impl.TestLogReceiver.getCurrentMessage().isEmpty()).isFalse();
     }
 
     @Test
@@ -155,7 +155,7 @@ public class TestValidation {
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final SystemType system = new SystemType();
+        final SystemDetail system = new SystemDetail();
         system.setName("Test System");
         system.setEnvironment("Test");
 
@@ -179,11 +179,11 @@ public class TestValidation {
             final User authUser = new User();
             authUser.setId("someuser");
 
-            final AuthenticateEvent authenticateEvent = new AuthenticateEvent();
-            authenticateEvent.setAction(AuthenticateAction.LOGON);
-            authenticateEvent.setUser(authUser);
+            final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+            authenticateEventAction.setAction(AuthenticateAction.LOGON);
+            authenticateEventAction.setUser(authUser);
 
-            event.getEventDetail().setAuthenticateEvent(authenticateEvent);
+            event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
             event.getEventTime().setTimeCreated(new Date());
         }
 

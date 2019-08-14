@@ -58,7 +58,7 @@ public class TestDefaultEventSerializer {
         outcome.getData().add(data);
         objectOutcome.setOutcome(outcome);
 
-        eventDetail.setCreateEvent(objectOutcome);
+        eventDetail.setCreateEventAction(objectOutcome);
         event.setEventDetail(eventDetail);
 
         return event;

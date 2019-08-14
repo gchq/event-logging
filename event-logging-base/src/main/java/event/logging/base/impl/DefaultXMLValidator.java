@@ -128,9 +128,7 @@ public final class DefaultXMLValidator implements XMLValidator {
         if (schema != null) {
             try {
                 doValidation(xml);
-            } catch (final IOException e) {
-                LOGGER.error(e.getMessage(), e);
-            } catch (final SAXException e) {
+            } catch (final IOException | SAXException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }

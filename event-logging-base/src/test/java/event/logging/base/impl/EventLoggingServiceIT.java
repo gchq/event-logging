@@ -16,8 +16,6 @@
 package event.logging.base.impl;
 
 import event.logging.AdvancedQuery;
-import event.logging.AntiMalware;
-import event.logging.AntiMalwareEventAction;
 import event.logging.AuthenticateAction;
 import event.logging.AuthenticateEventAction;
 import event.logging.Criteria;
@@ -38,8 +36,6 @@ import event.logging.Outcome;
 import event.logging.Query;
 import event.logging.SearchEventAction;
 import event.logging.SendEventAction;
-import event.logging.Signature;
-import event.logging.Software;
 import event.logging.Source;
 import event.logging.SystemDetail;
 import event.logging.Term;
@@ -266,49 +262,49 @@ public class EventLoggingServiceIT {
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
 
-    @Test
-    void testAntiMalware() throws Exception {
-        final long time = java.lang.System.currentTimeMillis();
-
-        final Document document = new Document();
-        document.setId("Test Id");
-        document.setTitle("Test Title");
-
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.TRUE);
-
-        final Software software = new Software();
-        software.setManufacturer("AVToolsInc.");
-        software.setName("Anti-virus");
-
-        final Signature signature = new Signature();
-        signature.setUpdated(new Date());
-        signature.setVersion("1.5");
-
-        final AntiMalware value = new AntiMalware();
-        value.setProduct(software);
-        value.setSignature(signature);
-
-        final AntiMalwareEventAction antiMalwareAction = new AntiMalwareEventAction();
-        antiMalwareAction.setScanEngineUpdated(value);
-
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setAntiMalwareEventAction(antiMalwareAction);
-
-        final EventLoggingService eventLoggingService = getEventLoggingService();
-
-        eventLoggingService.setValidate(true);
-        eventLoggingService.log(event);
-
-        for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
-            eventLoggingService.log(event);
-
-            Thread.sleep(WAIT_BETWEEN_RECORDS);
-        }
-
-        java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
-    }
+//    @Test
+//    void testAntiMalware() throws Exception {
+//        final long time = java.lang.System.currentTimeMillis();
+//
+//        final Document document = new Document();
+//        document.setId("Test Id");
+//        document.setTitle("Test Title");
+//
+//        final Outcome outcome = new Outcome();
+//        outcome.setSuccess(Boolean.TRUE);
+//
+//        final Software software = new Software();
+//        software.setManufacturer("AVToolsInc.");
+//        software.setName("Anti-virus");
+//
+//        final Signature signature = new Signature();
+//        signature.setUpdated(new Date());
+//        signature.setVersion("1.5");
+//
+//        final AntiMalware value = new AntiMalware();
+//        value.setProduct(software);
+//        value.setSignature(signature);
+//
+//        final AntiMalwareEventAction antiMalwareAction = new AntiMalwareEventAction();
+//        antiMalwareAction.setScanEngineUpdated(value);
+//
+//        final Event event = createBasicEvent("Create", "Create object");
+//        event.getEventDetail().setAntiMalwareEventAction(antiMalwareAction);
+//
+//        final EventLoggingService eventLoggingService = getEventLoggingService();
+//
+//        eventLoggingService.setValidate(true);
+//        eventLoggingService.log(event);
+//
+//        for (int i = 0; i < NUM_OF_RECORDS; i++) {
+//            event.getEventTime().setTimeCreated(new Date());
+//            eventLoggingService.log(event);
+//
+//            Thread.sleep(WAIT_BETWEEN_RECORDS);
+//        }
+//
+//        java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
+//    }
 
     @Test
     void testNastyChars() {
@@ -389,12 +385,12 @@ public class EventLoggingServiceIT {
         destDevice.setHostName("destHost");
 
         final Source source = new Source();
-        source.getUserOrDevice().add(sourceUser);
-        source.getUserOrDevice().add(sourceDevice);
+        source.getEndpoints().add(sourceUser);
+        source.getEndpoints().add(sourceDevice);
 
         final Destination destination = new Destination();
-        destination.getUserOrDevice().add(destUser);
-        destination.getUserOrDevice().add(destDevice);
+        destination.getEndpoints().add(destUser);
+        destination.getEndpoints().add(destDevice);
 
         final SendEventAction sendEventAction = new SendEventAction();
         sendEventAction.setSource(source);
@@ -481,7 +477,7 @@ public class EventLoggingServiceIT {
         term.setValue("56789");
 
         final AdvancedQuery advancedQuery = new AdvancedQuery();
-        advancedQuery.getAdvancedQueryOperatorGroup().add(term);
+        advancedQuery.getQueryItems().add(term);
 
         final Query query = new Query();
         query.setAdvanced(advancedQuery);
