@@ -1319,8 +1319,8 @@
       <xs:annotation>
          <xs:documentation>Captures copy events.</xs:documentation>
       </xs:annotation>
-      <xs:complexContent>
-         <xs:extension base="evt:BaseEventAction">
+      <!--<xs:complexContent>-->
+         <!--<xs:extension base="evt:BaseEventAction">-->
             <xs:sequence minOccurs="1" maxOccurs="1">
                <xs:element name="Source" type="evt:MultiObjectComplexType" minOccurs="1"
                   maxOccurs="1">
@@ -1347,8 +1347,8 @@
                   </xs:annotation>
                </xs:element>
             </xs:sequence>
-         </xs:extension>
-      </xs:complexContent>
+         <!--</xs:extension>-->
+      <!--</xs:complexContent>-->
    </xs:complexType>
    <xs:complexType name="CopyMoveOutcomeComplexType">
       <xs:complexContent>
@@ -1688,8 +1688,8 @@
       <xs:annotation>
          <xs:documentation>Captures move events.</xs:documentation>
       </xs:annotation>
-      <xs:complexContent>
-         <xs:extension base="evt:BaseEventAction">
+      <!--<xs:complexContent>-->
+         <!--<xs:extension base="evt:BaseEventAction">-->
             <xs:sequence minOccurs="1" maxOccurs="1">
                <xs:element name="Source" type="evt:MultiObjectComplexType" minOccurs="1"
                   maxOccurs="1">
@@ -1716,8 +1716,8 @@
                   </xs:annotation>
                </xs:element>
             </xs:sequence>
-         </xs:extension>
-      </xs:complexContent>
+         <!--</xs:extension>-->
+      <!--</xs:complexContent>-->
    </xs:complexType>
    <xs:complexType name="MultiObjectComplexType">
       <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
@@ -2596,16 +2596,16 @@
 
 
    <!-- Added -->
-   <xs:complexType abstract="true" name="BaseEventAction">
-      <xs:annotation>
-         <xs:documentation>A base type for all 'schema actions'</xs:documentation>
-      </xs:annotation>
-   </xs:complexType>
+   <!--<xs:complexType abstract="true" name="BaseEventAction">-->
+      <!--<xs:annotation>-->
+         <!--<xs:documentation>A base type for all 'schema actions'</xs:documentation>-->
+      <!--</xs:annotation>-->
+   <!--</xs:complexType>-->
 
    <!-- Added -->
    <xs:complexType name="AuthenticateComplexType">
-      <xs:complexContent>
-         <xs:extension base="evt:BaseEventAction">
+      <!--<xs:complexContent>-->
+         <!--<xs:extension base="evt:BaseEventAction">-->
             <xs:sequence minOccurs="1" maxOccurs="1">
                <xs:element name="Action" type="evt:AuthenticateActionSimpleType" minOccurs="1"
                   maxOccurs="1">
@@ -2649,8 +2649,8 @@
                   </xs:annotation>
                </xs:element>
             </xs:sequence>
-         </xs:extension>
-      </xs:complexContent>
+         <!--</xs:extension>-->
+      <!--</xs:complexContent>-->
    </xs:complexType>
 
 
@@ -2687,8 +2687,8 @@
 
    <!-- Added -->
    <xs:complexType name="AuthoriseComplexType">
-      <xs:complexContent>
-         <xs:extension base="evt:BaseEventAction">
+      <!--<xs:complexContent>-->
+         <!--<xs:extension base="evt:BaseEventAction">-->
             <xs:sequence minOccurs="1" maxOccurs="1">
                <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
 
@@ -2742,8 +2742,8 @@
 
             <!--</xs:extension>-->
             <!--</xs:complexContent>-->
-         </xs:extension>
-      </xs:complexContent>
+         <!--</xs:extension>-->
+      <!--</xs:complexContent>-->
    </xs:complexType>
 
    <!-- https://stackoverflow.com/questions/5020313/polymorphism-in-xsd-schema-and-jaxb-classes -->

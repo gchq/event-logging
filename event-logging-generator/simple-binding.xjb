@@ -26,7 +26,7 @@
         <jaxb:globalBindings 
             generateElementProperty="false" 
             localScoping="toplevel">
-            <!--choiceContentProperty="true"-->
+            <!--choiceContentProperty="true">-->
 
             <!-- <xjc:simple /> -->
             <jaxb:javaType 
@@ -40,6 +40,13 @@
                 parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
                 printMethod="event.logging.jaxb.DateAdaptor.printDate" />
         </jaxb:globalBindings>
+
+        <!--<jaxb:bindings node="xs:element[@name='Event']/xs:complexType/xs:sequence">-->
+            <!--<jaxb:bindings node="xs:element[@name='EventSource']/xs:complexType/xs:sequence/xs:choice/xs:sequence[1]">-->
+                <!--<jaxb:factoryMethod name="EventSourceEntity"/>-->
+                <!--<jaxb:class name="EventSourceEntity" />-->
+            <!--</jaxb:bindings>-->
+        <!--</jaxb:bindings>-->
 
 
         <!--<jaxb:bindings node="xs:group[@name='MultiObjectGroup']/xs:choice">-->
@@ -63,7 +70,7 @@
         </jaxb:bindings>
 
         <!-- Make the property name plural -->
-        <jaxb:bindings node="xs:complexType[@name='Authorise']/xs:complexContent/xs:extension/xs:sequence/xs:element[@name='AddGroups']/xs:complexType/xs:sequence/xs:element[@name='Group']">
+        <jaxb:bindings node="xs:complexType[@name='Authorise']/xs:sequence/xs:element[@name='AddGroups']/xs:complexType/xs:sequence/xs:element[@name='Group']">
             <jaxb:property name="groups" />
         </jaxb:bindings>
 
@@ -87,6 +94,15 @@
         <!-- Make the property name plural -->
         <jaxb:bindings node="xs:group[@name='BaseObjectGroup']/xs:sequence/xs:element[@name='Permissions']/xs:complexType/xs:sequence/xs:element[@name='Permission']">
             <jaxb:property name="permissions" />
+
+            <!-- Make the property name plural -->
+            <jaxb:bindings node="xs:complexType/xs:sequence/xs:element[@name='Allow']">
+                <jaxb:property name="allowAttributes" />
+            </jaxb:bindings>
+            <!-- Make the property name plural -->
+            <jaxb:bindings node="xs:complexType/xs:sequence/xs:element[@name='Deny']">
+                <jaxb:property name="denyAttributes" />
+            </jaxb:bindings>
         </jaxb:bindings>
 
         <!-- Make the property name plural -->
@@ -162,6 +178,7 @@
                 <jaxb:baseType name="event.logging.AdvancedQueryItem" />
             </jaxb:property>
         </jaxb:bindings>      
+
 
 
         <jaxb:bindings node="xs:complexType[@name='Authenticate']">
