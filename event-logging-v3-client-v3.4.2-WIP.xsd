@@ -297,7 +297,7 @@
                            </xs:annotation>
                         </xs:element>
                         <xs:element name="Network" minOccurs="1" maxOccurs="1"
-                           type="evt:NetworkActionComplexType">
+                           type="evt:NetworkEventActionComplexType">
                            <xs:annotation>
                               <xs:documentation>Any events related to network traffic, filtering or access should be recorded using this element.</xs:documentation>
                            </xs:annotation>
@@ -308,121 +308,10 @@
                               <!--<xs:documentation>[DEPRECATED: This element will be removed in a future version. The Process element should be used instead.] Used for all anti-malware related events.</xs:documentation>-->
                            <!--</xs:annotation>-->
                         <!--</xs:element>-->
-                        <xs:element name="Alert" minOccurs="1" maxOccurs="1">
+                        <xs:element name="Alert" minOccurs="1" maxOccurs="1" type="evt:AlertComplexType">
                            <xs:annotation>
                               <xs:documentation>An alert event according to the system producing the event, e.g. an event raised when an anti-malware system finds malware.</xs:documentation>
                            </xs:annotation>
-                           <xs:complexType>
-                              <xs:sequence minOccurs="1" maxOccurs="1">
-                                 <xs:element name="Type" type="evt:AlertTypeSimpleType"
-                                    minOccurs="1" maxOccurs="1"/>
-                                 <xs:element name="Severity" type="evt:AlertSeveritySimpleType"
-                                    minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The severity of the alert.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="Priority" type="evt:AlertPrioritySimpleType"
-                                    minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The priority of the alert.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="Subject" type="xs:string" minOccurs="0"
-                                    maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The name of the event or rule that fired or vulnerability or malware that has been scanned for or found.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="Description" type="xs:string" minOccurs="0"
-                                    maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The descriptive message for the alert.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="IDS" minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>Information about an IDS generated event.</xs:documentation>
-                                    </xs:annotation>
-                                    <xs:complexType>
-                                       <xs:sequence minOccurs="1" maxOccurs="1">
-                                          <xs:element name="Rule" type="xs:string" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The type of IDS event or rule that fired.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Source"
-                                             type="evt:NetworkLocationComplexType" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The source network device involved in the IDS event.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Destination"
-                                             type="evt:NetworkLocationComplexType" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The destination network device involved in the IDS event.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Payload"
-                                             type="evt:MultiObjectComplexType" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>Details about the payload being transmitted between the source and destination devices.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                       </xs:sequence>
-                                    </xs:complexType>
-                                 </xs:element>
-                                 <xs:element name="Malware" type="evt:AntiMalwareThreatComplexType"
-                                    minOccurs="0" maxOccurs="1"/>
-                                 <xs:element name="Network" type="evt:NetworkComplexType"
-                                    minOccurs="0" maxOccurs="1"/>
-                                 <xs:element name="Change" minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>Any events to do with monitoring the status of files should use this element.</xs:documentation>
-                                    </xs:annotation>
-                                    <xs:complexType>
-                                       <xs:sequence minOccurs="1" maxOccurs="1">
-                                          <xs:element name="Action"
-                                             type="evt:ChangeActionSimpleType" minOccurs="1"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The action performed by the file monitor, e.g. StartScan, StopScan.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Before"
-                                             type="evt:MultiObjectComplexType" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>Describes the last known state of the file before it was altered.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="After" type="evt:MultiObjectComplexType"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>Describes the new state of the file now it has changed.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Rule" type="xs:string" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The file monitoring rule that was fired to generate this event.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                       </xs:sequence>
-                                    </xs:complexType>
-                                 </xs:element>
-                                 <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
-                                    maxOccurs="unbounded">
-                                    <xs:annotation>
-                                       <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                              </xs:sequence>
-                           </xs:complexType>
                         </xs:element>
                         <xs:element name="Send" minOccurs="1" maxOccurs="1">
                            <xs:annotation>
@@ -2025,12 +1914,6 @@
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
-   <xs:complexType name="SendReceiveComplexType">
-      <xs:annotation>
-         <xs:documentation>Structure to describe the details of a send or receive event</xs:documentation>
-      </xs:annotation>
-      <xs:group maxOccurs="1" minOccurs="1" ref="evt:SendReceiveGroup"/>
-   </xs:complexType>
    <xs:complexType name="ShortcutComplexType">
       <xs:complexContent>
          <xs:extension base="evt:BaseFileComplexType"/>
@@ -2583,6 +2466,76 @@
       </xs:choice>
    </xs:group>
 
+   <!-- added -->
+   <xs:group name="InstallationGroup">
+      <xs:sequence>
+         <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="Software" type="evt:SoftwareComplexType" minOccurs="1" maxOccurs="1">
+               <xs:annotation>
+                  <xs:documentation>Description of the software that was installed/uninstalled.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+            <xs:element name="Hardware" type="evt:HardwareComplexType" minOccurs="1" maxOccurs="1">
+               <xs:annotation>
+                  <xs:documentation>Description of the hardware that was installed/uninstalled.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+            <xs:element name="Media" type="evt:MediaComplexType" minOccurs="1" maxOccurs="1">
+               <xs:annotation>
+                  <xs:documentation>Description of the media that was installed/uninstalled.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         </xs:choice>
+         <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1"/>
+         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:group>
+
+
+   <!-- added -->
+   <xs:group name="SendReceiveGroup">
+      <xs:sequence>
+         <xs:element name="Source" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The initiator(s) of the object or resource sent or received. A initiator can be a user and/or device.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:choice minOccurs="1" maxOccurs="unbounded">
+                  <xs:element name="User" type="evt:UserComplexType" minOccurs="1" maxOccurs="1"/>
+                  <xs:element name="Device" type="evt:DeviceComplexType" minOccurs="1" maxOccurs="1"
+                  />
+               </xs:choice>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="Destination" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The destination(s) of the object or resource sent or received. A destination can be a user and/or device.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:choice minOccurs="1" maxOccurs="unbounded">
+                  <xs:element name="User" type="evt:UserComplexType" minOccurs="1" maxOccurs="1"/>
+                  <xs:element name="Device" type="evt:DeviceComplexType" minOccurs="1" maxOccurs="1"
+                  />
+               </xs:choice>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="Payload" type="evt:MultiObjectComplexType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>If the network action is related to message transfer from one place to another then this element describes the message.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:group>
 
    <!-- Added -->
    <xs:complexType name="AuthoriseComplexType">
@@ -2760,74 +2713,121 @@
       </xs:sequence>
    </xs:complexType>
 
-
-
-   <xs:group name="InstallationGroup">
-      <xs:sequence>
-         <xs:choice minOccurs="1" maxOccurs="1">
-            <xs:element name="Software" type="evt:SoftwareComplexType" minOccurs="1" maxOccurs="1">
-               <xs:annotation>
-                  <xs:documentation>Description of the software that was installed/uninstalled.</xs:documentation>
-               </xs:annotation>
-            </xs:element>
-            <xs:element name="Hardware" type="evt:HardwareComplexType" minOccurs="1" maxOccurs="1">
-               <xs:annotation>
-                  <xs:documentation>Description of the hardware that was installed/uninstalled.</xs:documentation>
-               </xs:annotation>
-            </xs:element>
-            <xs:element name="Media" type="evt:MediaComplexType" minOccurs="1" maxOccurs="1">
-               <xs:annotation>
-                  <xs:documentation>Description of the media that was installed/uninstalled.</xs:documentation>
-               </xs:annotation>
-            </xs:element>
-         </xs:choice>
-         <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1"/>
-         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0" maxOccurs="unbounded"/>
-      </xs:sequence>
-   </xs:group>
-   <xs:group name="SendReceiveGroup">
-      <xs:sequence>
-         <xs:element name="Source" minOccurs="1" maxOccurs="1">
+   <!-- Added -->
+   <xs:complexType name="AlertComplexType">
+      <xs:sequence minOccurs="1" maxOccurs="1">
+         <xs:element name="Type" type="evt:AlertTypeSimpleType"
+            minOccurs="1" maxOccurs="1"/>
+         <xs:element name="Severity" type="evt:AlertSeveritySimpleType"
+            minOccurs="0" maxOccurs="1">
             <xs:annotation>
-               <xs:documentation>The initiator(s) of the object or resource sent or received. A initiator can be a user and/or device.</xs:documentation>
+               <xs:documentation>The severity of the alert.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Priority" type="evt:AlertPrioritySimpleType"
+            minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The priority of the alert.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Subject" type="xs:string" minOccurs="0"
+            maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The name of the event or rule that fired or vulnerability or malware that has been scanned for or found.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Description" type="xs:string" minOccurs="0"
+            maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The descriptive message for the alert.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="IDS" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Information about an IDS generated event.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
-               <xs:choice minOccurs="1" maxOccurs="unbounded">
-                  <xs:element name="User" type="evt:UserComplexType" minOccurs="1" maxOccurs="1"/>
-                  <xs:element name="Device" type="evt:DeviceComplexType" minOccurs="1" maxOccurs="1"
-                  />
-               </xs:choice>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="Rule" type="xs:string" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The type of IDS event or rule that fired.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Source"
+                     type="evt:NetworkLocationComplexType" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The source network device involved in the IDS event.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Destination"
+                     type="evt:NetworkLocationComplexType" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The destination network device involved in the IDS event.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Payload"
+                     type="evt:MultiObjectComplexType" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>Details about the payload being transmitted between the source and destination devices.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
             </xs:complexType>
          </xs:element>
-         <xs:element name="Destination" minOccurs="1" maxOccurs="1">
+         <xs:element name="Malware" type="evt:AntiMalwareThreatComplexType"
+            minOccurs="0" maxOccurs="1"/>
+         <xs:element name="Network" type="evt:NetworkComplexType"
+            minOccurs="0" maxOccurs="1"/>
+         <xs:element name="Change" minOccurs="0" maxOccurs="1">
             <xs:annotation>
-               <xs:documentation>The destination(s) of the object or resource sent or received. A destination can be a user and/or device.</xs:documentation>
+               <xs:documentation>Any events to do with monitoring the status of files should use this element.</xs:documentation>
             </xs:annotation>
             <xs:complexType>
-               <xs:choice minOccurs="1" maxOccurs="unbounded">
-                  <xs:element name="User" type="evt:UserComplexType" minOccurs="1" maxOccurs="1"/>
-                  <xs:element name="Device" type="evt:DeviceComplexType" minOccurs="1" maxOccurs="1"
-                  />
-               </xs:choice>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="Action"
+                     type="evt:ChangeActionSimpleType" minOccurs="1"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The action performed by the file monitor, e.g. StartScan, StopScan.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Before"
+                     type="evt:MultiObjectComplexType" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>Describes the last known state of the file before it was altered.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="After" type="evt:MultiObjectComplexType"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>Describes the new state of the file now it has changed.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Rule" type="xs:string" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The file monitoring rule that was fired to generate this event.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
             </xs:complexType>
          </xs:element>
-         <xs:element name="Payload" type="evt:MultiObjectComplexType" minOccurs="0" maxOccurs="1">
-            <xs:annotation>
-               <xs:documentation>If the network action is related to message transfer from one place to another then this element describes the message.</xs:documentation>
-            </xs:annotation>
-         </xs:element>
-         <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1">
-            <xs:annotation>
-               <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
-            </xs:annotation>
-         </xs:element>
-         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0" maxOccurs="unbounded">
+         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
+            maxOccurs="unbounded">
             <xs:annotation>
                <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
             </xs:annotation>
          </xs:element>
       </xs:sequence>
-   </xs:group>
+   </xs:complexType>
+
+
+   <!-- added -->
    <xs:complexType name="UpdateComplexType">
       <xs:sequence minOccurs="1" maxOccurs="1">
          <xs:element name="Before" type="evt:MultiObjectComplexType" minOccurs="0" maxOccurs="1">
@@ -2852,6 +2852,8 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
+
+   <!-- added -->
    <xs:complexType name="ProcessComplexType">
       <xs:sequence minOccurs="1" maxOccurs="1">
          <xs:element name="Action" type="evt:ProcessActionSimpleType" minOccurs="1" maxOccurs="1">
@@ -2911,7 +2913,9 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
-   <xs:complexType name="NetworkActionComplexType">
+
+   <!-- Added -->
+   <xs:complexType name="NetworkEventActionComplexType">
       <xs:choice minOccurs="1" maxOccurs="1">
          <xs:element name="Bind" type="evt:NetworkOutcomeComplexType" minOccurs="1" maxOccurs="1"/>
          <xs:element name="Connect" type="evt:NetworkOutcomeComplexType" minOccurs="1" maxOccurs="1"/>
@@ -2924,36 +2928,6 @@
          <xs:element name="Deny" type="evt:NetworkOutcomeComplexType" minOccurs="1" maxOccurs="1"/>
       </xs:choice>
    </xs:complexType>
-   <!--<xs:complexType name="AntiMalwareActionComplexType">-->
-      <!--<xs:sequence minOccurs="1" maxOccurs="1">-->
-         <!--<xs:choice minOccurs="1" maxOccurs="1">-->
-            <!--<xs:element name="StartScan" type="evt:AntiMalwareComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-            <!--<xs:element name="StopScan" type="evt:AntiMalwareComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-            <!--<xs:element name="Admin" type="evt:AntiMalwareComplexType" minOccurs="1" maxOccurs="1"/>-->
-            <!--<xs:element name="Quarantine" type="evt:AntiMalwareThreatComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-            <!--<xs:element name="Report" type="evt:AntiMalwareComplexType" minOccurs="1" maxOccurs="1"/>-->
-            <!--<xs:element name="Email" type="evt:AntiMalwareComplexType" minOccurs="1" maxOccurs="1"/>-->
-            <!--<xs:element name="Delete" type="evt:AntiMalwareThreatComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-            <!--<xs:element name="ScanEngineUpdated" type="evt:AntiMalwareComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-            <!--<xs:element name="SignaturesUpdated" type="evt:AntiMalwareComplexType" minOccurs="1"-->
-               <!--maxOccurs="1"/>-->
-         <!--</xs:choice>-->
-         <!--<xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1">-->
-            <!--<xs:annotation>-->
-               <!--<xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>-->
-            <!--</xs:annotation>-->
-         <!--</xs:element>-->
-         <!--<xs:element name="Data" type="evt:DataComplexType" minOccurs="0" maxOccurs="unbounded">-->
-            <!--<xs:annotation>-->
-               <!--<xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>-->
-            <!--</xs:annotation>-->
-         <!--</xs:element>-->
-      <!--</xs:sequence>-->
-   <!--</xs:complexType>-->
+
 </xs:schema>
 <!-- vim:set expandtab shiftwidth=3 tabstop=3: -->
