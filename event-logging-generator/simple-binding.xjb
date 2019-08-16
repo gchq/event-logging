@@ -239,6 +239,12 @@
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
+        <jaxb:bindings node="xs:complexType[@name='Print']">
+            <jaxb:factoryMethod name="PrintEventAction"/>
+            <jaxb:class name="PrintEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
         <jaxb:bindings node="xs:complexType[@name='Install']">
             <jaxb:factoryMethod name="InstallEventAction"/>
             <jaxb:class name="InstallEventAction" />

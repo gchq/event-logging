@@ -279,111 +279,10 @@
                               <xs:documentation>Whenever processes such as applications or services are started, stopped etc, this should be recorded in this element. It also covers the running of batch processes or jobs.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
-                        <xs:element name="Print" minOccurs="1" maxOccurs="1">
+                        <xs:element name="Print" minOccurs="1" maxOccurs="1" type="evt:PrintComplexType">
                            <xs:annotation>
                               <xs:documentation>All events related to printing should use this element.</xs:documentation>
                            </xs:annotation>
-                           <xs:complexType>
-                              <xs:sequence minOccurs="1" maxOccurs="1">
-                                 <xs:element name="Action" type="evt:PrintActionSimpleType"
-                                    minOccurs="1" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The print action that was performed, e.g. CreateJob.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="PrintJob" minOccurs="1" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>Describes the print job that the event relates to.</xs:documentation>
-                                    </xs:annotation>
-                                    <xs:complexType>
-                                       <xs:sequence minOccurs="1" maxOccurs="1">
-                                          <xs:element name="Document" type="evt:DocumentComplexType"
-                                             minOccurs="1" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>Describes the document being printed.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Pages" type="xs:nonNegativeInteger"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The number of pages being printed.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Size" type="xs:nonNegativeInteger"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The size of the print job in bytes.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Submitted" type="evt:DateTimeSimpleType"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The time that the print job was submitted.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                       </xs:sequence>
-                                    </xs:complexType>
-                                 </xs:element>
-                                 <xs:element name="PrintSettings" minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>The printer settings that are to be used for the print job.</xs:documentation>
-                                    </xs:annotation>
-                                    <xs:complexType>
-                                       <xs:sequence minOccurs="1" maxOccurs="1">
-                                          <xs:element name="PaperSize" type="xs:string"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The paper size, e.g. A4.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Orientation"
-                                             type="evt:PrintSettingsOrientationSimpleType"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>The paper orientation, e.g. Portrait, Landscape.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Colour" type="xs:boolean" minOccurs="0"
-                                             maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>True if printing in colour. Most printing is performed in black and white so this defaults to false and can therefore be omitted if printing in black and white.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="DeviceFonts" type="xs:boolean"
-                                             minOccurs="0" maxOccurs="1">
-                                             <xs:annotation>
-                                                <xs:documentation>True if fonts are to be used on the printing device. Using device fonts reduces the size of the print job as no font information needs to be supplied to the printer. However, using device fonts will result in different output on different printers. Most print jobs will not use device fonts so this defaults to false and can therefore be omitted if device fonts are not being used.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                          <xs:element name="Data" type="evt:DataComplexType"
-                                             minOccurs="0" maxOccurs="unbounded">
-                                             <xs:annotation>
-                                                <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
-                                             </xs:annotation>
-                                          </xs:element>
-                                       </xs:sequence>
-                                    </xs:complexType>
-                                 </xs:element>
-                                 <xs:element name="Printer" type="evt:DeviceComplexType"
-                                    minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>Describes the printer to use for the print job.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="Outcome" type="evt:OutcomeComplexType"
-                                    minOccurs="0" maxOccurs="1">
-                                    <xs:annotation>
-                                       <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                                 <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
-                                    maxOccurs="unbounded">
-                                    <xs:annotation>
-                                       <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
-                                    </xs:annotation>
-                                 </xs:element>
-                              </xs:sequence>
-                           </xs:complexType>
                         </xs:element>
                         <xs:element name="Install" type="evt:InstallComplexType" minOccurs="1"
                            maxOccurs="1">
@@ -2687,66 +2586,56 @@
 
    <!-- Added -->
    <xs:complexType name="AuthoriseComplexType">
-      <!--<xs:complexContent>-->
-         <!--<xs:extension base="evt:BaseEventAction">-->
-            <xs:sequence minOccurs="1" maxOccurs="1">
-               <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:sequence minOccurs="1" maxOccurs="1">
+         <xs:group ref="evt:MultiObjectGroup" minOccurs="1" maxOccurs="unbounded"/>
 
-               <xs:element name="Action" type="evt:AuthorisationSimpleType" minOccurs="0"
-                  maxOccurs="1"/>
-               <xs:element name="AddGroups" minOccurs="0" maxOccurs="1">
-                  <xs:annotation>
-                     <xs:documentation>A list of roles or permissions that have been added to an object.</xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                     <xs:sequence minOccurs="1" maxOccurs="1">
-                        <xs:element name="Group" type="evt:GroupComplexType" minOccurs="0"
-                           maxOccurs="unbounded">
-                           <xs:annotation>
-                              <xs:documentation>A role or permission that has been added to an object.</xs:documentation>
-                           </xs:annotation>
-                        </xs:element>
-                     </xs:sequence>
-                  </xs:complexType>
-               </xs:element>
-               <xs:element name="RemoveGroups" minOccurs="0" maxOccurs="1">
-                  <xs:annotation>
-                     <xs:documentation>A list of roles or permissions that have been removed from an object.</xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                     <xs:sequence minOccurs="1" maxOccurs="1">
-                        <xs:element name="Group" type="evt:GroupComplexType" minOccurs="0"
-                           maxOccurs="unbounded">
-                           <xs:annotation>
-                              <xs:documentation>A role or permission that has been removed from an object.</xs:documentation>
-                           </xs:annotation>
-                        </xs:element>
-                     </xs:sequence>
-                  </xs:complexType>
-               </xs:element>
-               <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1">
-                  <xs:annotation>
-                     <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
-                  </xs:annotation>
-               </xs:element>
-               <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
-                  maxOccurs="unbounded">
-                  <xs:annotation>
-                     <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
-                  </xs:annotation>
-               </xs:element>
-
-            </xs:sequence>
-            <!--<xs:complexContent>-->
-            <!--<xs:extension base="evt:BaseMultiObjectComplexType">-->
-
-            <!--</xs:extension>-->
-            <!--</xs:complexContent>-->
-         <!--</xs:extension>-->
-      <!--</xs:complexContent>-->
+         <xs:element name="Action" type="evt:AuthorisationSimpleType" minOccurs="0"
+            maxOccurs="1"/>
+         <xs:element name="AddGroups" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>A list of roles or permissions that have been added to an object.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="Group" type="evt:GroupComplexType" minOccurs="0"
+                     maxOccurs="unbounded">
+                     <xs:annotation>
+                        <xs:documentation>A role or permission that has been added to an object.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="RemoveGroups" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>A list of roles or permissions that have been removed from an object.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="Group" type="evt:GroupComplexType" minOccurs="0"
+                     maxOccurs="unbounded">
+                     <xs:annotation>
+                        <xs:documentation>A role or permission that has been removed from an object.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="Outcome" type="evt:OutcomeComplexType" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
    </xs:complexType>
 
-   <!-- https://stackoverflow.com/questions/5020313/polymorphism-in-xsd-schema-and-jaxb-classes -->
+   <!-- Added -->
    <xs:complexType name="SystemTagsComplexType">
       <xs:sequence minOccurs="1" maxOccurs="1">
          <xs:element name="Tag" type="evt:TagSimpleType" minOccurs="1" maxOccurs="unbounded">
@@ -2756,6 +2645,8 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
+
+   <!-- Added -->
    <xs:complexType name="MetaDataTagsComplexType">
       <xs:sequence minOccurs="1" maxOccurs="1">
          <xs:element name="Tag" type="evt:TagSimpleType" minOccurs="1" maxOccurs="unbounded">
@@ -2765,6 +2656,112 @@
          </xs:element>
       </xs:sequence>
    </xs:complexType>
+
+   <!-- Added -->
+   <xs:complexType name="PrintComplexType">
+      <xs:sequence minOccurs="1" maxOccurs="1">
+         <xs:element name="Action" type="evt:PrintActionSimpleType"
+            minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The print action that was performed, e.g. CreateJob.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="PrintJob" minOccurs="1" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Describes the print job that the event relates to.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="Document" type="evt:DocumentComplexType"
+                     minOccurs="1" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>Describes the document being printed.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Pages" type="xs:nonNegativeInteger"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The number of pages being printed.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Size" type="xs:nonNegativeInteger"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The size of the print job in bytes.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Submitted" type="evt:DateTimeSimpleType"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The time that the print job was submitted.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="PrintSettings" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>The printer settings that are to be used for the print job.</xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+               <xs:sequence minOccurs="1" maxOccurs="1">
+                  <xs:element name="PaperSize" type="xs:string"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The paper size, e.g. A4.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Orientation"
+                     type="evt:PrintSettingsOrientationSimpleType"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>The paper orientation, e.g. Portrait, Landscape.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Colour" type="xs:boolean" minOccurs="0"
+                     maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>True if printing in colour. Most printing is performed in black and white so this defaults to false and can therefore be omitted if printing in black and white.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="DeviceFonts" type="xs:boolean"
+                     minOccurs="0" maxOccurs="1">
+                     <xs:annotation>
+                        <xs:documentation>True if fonts are to be used on the printing device. Using device fonts reduces the size of the print job as no font information needs to be supplied to the printer. However, using device fonts will result in different output on different printers. Most print jobs will not use device fonts so this defaults to false and can therefore be omitted if device fonts are not being used.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Data" type="evt:DataComplexType"
+                     minOccurs="0" maxOccurs="unbounded">
+                     <xs:annotation>
+                        <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
+                     </xs:annotation>
+                  </xs:element>
+               </xs:sequence>
+            </xs:complexType>
+         </xs:element>
+         <xs:element name="Printer" type="evt:DeviceComplexType"
+            minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Describes the printer to use for the print job.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Outcome" type="evt:OutcomeComplexType"
+            minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+               <xs:documentation>Used to determine if the action was successful. If omitted it is assumed that the event was successful and was permitted.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+         <xs:element name="Data" type="evt:DataComplexType" minOccurs="0"
+            maxOccurs="unbounded">
+            <xs:annotation>
+               <xs:documentation>Any other event data that does not fit into a schema element but may be useful for the purpose of audit.</xs:documentation>
+            </xs:annotation>
+         </xs:element>
+      </xs:sequence>
+   </xs:complexType>
+
+
+
    <xs:group name="InstallationGroup">
       <xs:sequence>
          <xs:choice minOccurs="1" maxOccurs="1">
