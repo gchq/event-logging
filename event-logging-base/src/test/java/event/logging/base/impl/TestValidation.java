@@ -181,7 +181,7 @@ public class TestValidation {
 
             final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
             authenticateEventAction.setAction(AuthenticateAction.LOGON);
-            authenticateEventAction.setUser(authUser);
+            authenticateEventAction.setAuthenticationEntity(authUser);
 
             event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
             event.getEventTime().setTimeCreated(new Date());

@@ -41,7 +41,7 @@ public final class AuthenticateUtil {
             final AuthenticateEventAction authenticateEvent = new AuthenticateEventAction();
             authenticateEvent.setAction(AuthenticateAction.LOGON);
             if (userId != null) {
-                authenticateEvent.setUser(EventLoggingUtil.createUser(userId));
+                authenticateEvent.setAuthenticationEntity(EventLoggingUtil.createUser(userId));
             }
             if (!successful) {
                 final AuthenticateOutcome outcome = new AuthenticateOutcome();
@@ -75,7 +75,7 @@ public final class AuthenticateUtil {
             final AuthenticateEventAction authenticateEvent = new AuthenticateEventAction();
             authenticateEvent.setAction(AuthenticateAction.LOGOFF);
             if (userId != null) {
-                authenticateEvent.setUser(EventLoggingUtil.createUser(userId));
+                authenticateEvent.setAuthenticationEntity(EventLoggingUtil.createUser(userId));
             }
             if (!successful) {
                 final AuthenticateOutcome outcome = new AuthenticateOutcome();

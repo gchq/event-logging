@@ -28,7 +28,8 @@
             localScoping="toplevel">
             <!--choiceContentProperty="true">-->
 
-            <!-- <xjc:simple /> -->
+             <!--<xjc:simple /> -->
+
             <jaxb:javaType 
                 name="java.util.Date" 
                 xmlType="xs:date" 
@@ -53,10 +54,16 @@
 
                 <!-- bindings for 'event action' choice elements -->
                 <jaxb:bindings node="xs:choice">
+
+                    <jaxb:property name="eventAction" >
+                        <jaxb:baseType name="event.logging.EventAction" />
+                    </jaxb:property>
+
                     <!-- Rename the java property for each of the schema actions to ...EventAction
                         to make it a bit clearer.  Can't use ...Action as that will conflict with some
                         existing classes.
                     -->
+                    <!--
                     <jaxb:bindings node="xs:element[@name='Authenticate']">
                         <jaxb:property name="authenticateEventAction" />
                     </jaxb:bindings>
@@ -78,9 +85,16 @@
                     <jaxb:bindings node="xs:element[@name='View']">
                         <jaxb:property name="viewEventAction" />
                     </jaxb:bindings>
+                    -->
+
                     <jaxb:bindings node="xs:element[@name='Import']">
-                        <jaxb:property name="importEventAction" />
+                        <!--<jaxb:property name="importEventAction" />-->
+                        <jaxb:nameXmlTransform>
+                            <jaxb:elementName suffix="xxx" />
+                            <jaxb:typeName suffix="yyy" />
+                        </jaxb:nameXmlTransform>
                     </jaxb:bindings>
+                    <!--
                     <jaxb:bindings node="xs:element[@name='Export']">
                         <jaxb:property name="exportEventAction" />
                     </jaxb:bindings>
@@ -108,8 +122,9 @@
                     <jaxb:bindings node="xs:element[@name='Alert']">
                         <jaxb:property name="alertEventAction" />
                     </jaxb:bindings>
+                    -->
                     <jaxb:bindings node="xs:element[@name='Send']">
-                        <jaxb:property name="sendEventAction" />
+                        <!--<jaxb:property name="sendEventAction" />-->
 
                         <jaxb:bindings node="xs:complexType">
                             <jaxb:factoryMethod name="SendEventAction"/>
@@ -119,18 +134,21 @@
                     </jaxb:bindings>
 
                     <jaxb:bindings node="xs:element[@name='Receive']">
-                        <jaxb:property name="receiveEventAction" />
+                        <!--<jaxb:property name="receiveEventAction" />-->
+
                         <jaxb:bindings node="xs:complexType">
                             <jaxb:factoryMethod name="ReceiveEventAction"/>
                             <jaxb:class name="ReceiveEventAction" />
                             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
                         </jaxb:bindings>
                     </jaxb:bindings>
+                    <!--
                     <jaxb:bindings node="xs:element[@name='Approval']">
                         <jaxb:property name="approvalEventAction" />
                     </jaxb:bindings>
+                    -->
                     <jaxb:bindings node="xs:element[@name='Unknown']">
-                        <jaxb:property name="unknownEventAction" />
+                        <!--<jaxb:property name="unknownEventAction" />-->
 
                         <jaxb:bindings node="xs:complexType">
                             <jaxb:factoryMethod name="UnknownEventAction"/>
@@ -190,9 +208,9 @@
             <jaxb:bindings node="xs:complexType/xs:sequence">
                 <jaxb:bindings node="xs:choice">
                     <!-- TODO when plugin is fixed uncomment this -->
-                    <!--<jaxb:property name="permissionEntity" >-->
-                        <!--<jaxb:baseType name="event.logging.PermissionEntity" />-->
-                    <!--</jaxb:property>-->
+                    <jaxb:property name="permissionEntity" >
+                        <jaxb:baseType name="event.logging.PermissionEntity" />
+                    </jaxb:property>
                 </jaxb:bindings>
                 <!-- Make the property name plural -->
                 <jaxb:bindings node="xs:element[@name='Allow']">
@@ -254,9 +272,9 @@
 
         <jaxb:bindings node="xs:group[@name='InstallationGroup']/xs:sequence/xs:choice">
             <!-- TODO when plugin is fixed uncomment this -->
-            <!--<jaxb:property name="installationEntity" >-->
-                <!--<jaxb:baseType name="event.logging.InstallationEntity" />-->
-            <!--</jaxb:property>-->
+            <jaxb:property name="installationEntity" >
+                <jaxb:baseType name="event.logging.InstallationEntity" />
+            </jaxb:property>
         </jaxb:bindings>
 
         <!-- Make all query items implement the same marker interface so we can have a List<AdvancedQueryItem> -->
@@ -290,9 +308,9 @@
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
             <jaxb:bindings node="xs:sequence/xs:choice">
                  <!--TODO when plugin is fixed uncomment this -->
-                <!--<jaxb:property name="authenticationEntity" >-->
-                    <!--<jaxb:baseType name="event.logging.AuthenticationEntity" />-->
-                <!--</jaxb:property>-->
+                <jaxb:property name="authenticationEntity" >
+                    <jaxb:baseType name="event.logging.AuthenticationEntity" />
+                </jaxb:property>
             </jaxb:bindings>
         </jaxb:bindings>
 
@@ -303,9 +321,9 @@
 
             <jaxb:bindings node="xs:sequence/xs:group[@ref='evt:MultiObjectGroup']">
                 <!-- TODO when plugin is fixed uncomment this -->
-                <!--<jaxb:property name="objects" >-->
-                    <!--<jaxb:baseType name="event.logging.BaseObject" />-->
-                <!--</jaxb:property>-->
+                <jaxb:property name="objects" >
+                    <jaxb:baseType name="event.logging.BaseObject" />
+                </jaxb:property>
             </jaxb:bindings>
 
         </jaxb:bindings>

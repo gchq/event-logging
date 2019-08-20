@@ -91,7 +91,7 @@ public class EventLoggingServiceIT {
 
         final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
         authenticateEventAction.setAction(AuthenticateAction.LOGON);
-        authenticateEventAction.setUser(user);
+        authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
         event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
@@ -137,7 +137,7 @@ public class EventLoggingServiceIT {
 
                             final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
                             authenticateEventAction.setAction(AuthenticateAction.LOGON);
-                            authenticateEventAction.setUser(user);
+                            authenticateEventAction.setAuthenticationEntity(user);
 
                             final Event event = createBasicEvent("LOGIN", "LOGIN");
                             event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
@@ -200,7 +200,7 @@ public class EventLoggingServiceIT {
 
         final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
         authenticateEventAction.setAction(AuthenticateAction.LOGON);
-        authenticateEventAction.setUser(user);
+        authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
         event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
