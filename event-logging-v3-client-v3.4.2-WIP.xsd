@@ -237,13 +237,13 @@
                               <xs:documentation>All events related to moving data should use this element.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
-                        <xs:element name="Create" type="evt:ObjectOutcomeComplexType" minOccurs="1"
+                        <xs:element name="Create" type="evt:CreateComplexType" minOccurs="1"
                            maxOccurs="1">
                            <xs:annotation>
                               <xs:documentation>All events related to creating data should use this element.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
-                        <xs:element name="View" type="evt:ObjectOutcomeComplexType" minOccurs="1"
+                        <xs:element name="View" type="evt:ViewComplexType" minOccurs="1"
                            maxOccurs="1">
                            <xs:annotation>
                               <xs:documentation>All events related to viewing data should use this element. Note that viewing data is subtly different from reading data. This event is to be used when data is displayed to an end user and not for data read by an application.</xs:documentation>
@@ -267,7 +267,7 @@
                               <xs:documentation>All events related to updating data should use this element.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
-                        <xs:element name="Delete" type="evt:ObjectOutcomeComplexType" minOccurs="1"
+                        <xs:element name="Delete" type="evt:DeleteComplexType" minOccurs="1"
                            maxOccurs="1">
                            <xs:annotation>
                               <xs:documentation>All events related to deleting data should use this element.</xs:documentation>
@@ -313,21 +313,15 @@
                               <xs:documentation>An alert event according to the system producing the event, e.g. an event raised when an anti-malware system finds malware.</xs:documentation>
                            </xs:annotation>
                         </xs:element>
-                        <xs:element name="Send" minOccurs="1" maxOccurs="1">
+                        <xs:element name="Send" minOccurs="1" maxOccurs="1" type="evt:SendComplexType">
                            <xs:annotation>
                               <xs:documentation>Used for send events that are at a higher level than a network/send event, e.g. sending an email</xs:documentation>
                            </xs:annotation>
-                           <xs:complexType>
-                              <xs:group ref="evt:SendReceiveGroup"/>
-                           </xs:complexType>
                         </xs:element>
-                        <xs:element name="Receive" minOccurs="1" maxOccurs="1">
+                        <xs:element name="Receive" minOccurs="1" maxOccurs="1" type="evt:ReceiveComplexType">
                            <xs:annotation>
                               <xs:documentation>Used for receive events that are at a higher level than a network/receive event, e.g. receiving an email</xs:documentation>
                            </xs:annotation>
-                           <xs:complexType>
-                              <xs:group ref="evt:SendReceiveGroup"/>
-                           </xs:complexType>
                         </xs:element>
                         <xs:element name="Approval" type="evt:ApprovalComplexType" minOccurs="1"
                            maxOccurs="1">
@@ -2927,6 +2921,46 @@
          <xs:element name="Permit" type="evt:NetworkOutcomeComplexType" minOccurs="1" maxOccurs="1"/>
          <xs:element name="Deny" type="evt:NetworkOutcomeComplexType" minOccurs="1" maxOccurs="1"/>
       </xs:choice>
+   </xs:complexType>
+
+
+   <!-- Added -->
+   <!-- Here to provide a unique type for JAXB -->
+   <xs:complexType name="CreateComplexType">
+      <xs:complexContent>
+         <xs:extension base="evt:ObjectOutcomeComplexType">
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Added -->
+   <!-- Here to provide a unique type for JAXB -->
+   <xs:complexType name="ViewComplexType">
+      <xs:complexContent>
+         <xs:extension base="evt:ObjectOutcomeComplexType">
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Added -->
+   <!-- Here to provide a unique type for JAXB -->
+   <xs:complexType name="DeleteComplexType">
+      <xs:complexContent>
+         <xs:extension base="evt:ObjectOutcomeComplexType">
+         </xs:extension>
+      </xs:complexContent>
+   </xs:complexType>
+
+   <!-- Added -->
+   <!-- Here to provide a unique type for JAXB -->
+   <xs:complexType name="SendComplexType">
+      <xs:group ref="evt:SendReceiveGroup"/>
+   </xs:complexType>
+
+   <!-- Added -->
+   <!-- Here to provide a unique type for JAXB -->
+   <xs:complexType name="ReceiveComplexType">
+      <xs:group ref="evt:SendReceiveGroup"/>
    </xs:complexType>
 
 </xs:schema>

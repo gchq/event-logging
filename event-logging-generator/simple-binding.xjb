@@ -89,10 +89,10 @@
 
                     <jaxb:bindings node="xs:element[@name='Import']">
                         <!--<jaxb:property name="importEventAction" />-->
-                        <jaxb:nameXmlTransform>
-                            <jaxb:elementName suffix="xxx" />
-                            <jaxb:typeName suffix="yyy" />
-                        </jaxb:nameXmlTransform>
+                        <!--<jaxb:nameXmlTransform>-->
+                            <!--<jaxb:elementName suffix="xxx" />-->
+                            <!--<jaxb:typeName suffix="yyy" />-->
+                        <!--</jaxb:nameXmlTransform>-->
                     </jaxb:bindings>
                     <!--
                     <jaxb:bindings node="xs:element[@name='Export']">
@@ -123,25 +123,25 @@
                         <jaxb:property name="alertEventAction" />
                     </jaxb:bindings>
                     -->
-                    <jaxb:bindings node="xs:element[@name='Send']">
-                        <!--<jaxb:property name="sendEventAction" />-->
+                    <!--<jaxb:bindings node="xs:element[@name='Send']">-->
+                        <!--[><jaxb:property name="sendEventAction" /><]-->
 
-                        <jaxb:bindings node="xs:complexType">
-                            <jaxb:factoryMethod name="SendEventAction"/>
-                            <jaxb:class name="SendEventAction" />
-                            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
-                        </jaxb:bindings>
-                    </jaxb:bindings>
+                        <!--<jaxb:bindings node="xs:complexType">-->
+                            <!--<jaxb:factoryMethod name="SendEventAction"/>-->
+                            <!--<jaxb:class name="SendEventAction" />-->
+                            <!--<inheritance:implements>event.logging.EventAction</inheritance:implements> -->
+                        <!--</jaxb:bindings>-->
+                    <!--</jaxb:bindings>-->
 
-                    <jaxb:bindings node="xs:element[@name='Receive']">
-                        <!--<jaxb:property name="receiveEventAction" />-->
+                    <!--<jaxb:bindings node="xs:element[@name='Receive']">-->
+                        <!--[><jaxb:property name="receiveEventAction" /><]-->
 
-                        <jaxb:bindings node="xs:complexType">
-                            <jaxb:factoryMethod name="ReceiveEventAction"/>
-                            <jaxb:class name="ReceiveEventAction" />
-                            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
-                        </jaxb:bindings>
-                    </jaxb:bindings>
+                        <!--<jaxb:bindings node="xs:complexType">-->
+                            <!--<jaxb:factoryMethod name="ReceiveEventAction"/>-->
+                            <!--<jaxb:class name="ReceiveEventAction" />-->
+                            <!--<inheritance:implements>event.logging.EventAction</inheritance:implements> -->
+                        <!--</jaxb:bindings>-->
+                    <!--</jaxb:bindings>-->
                     <!--
                     <jaxb:bindings node="xs:element[@name='Approval']">
                         <jaxb:property name="approvalEventAction" />
@@ -340,6 +340,18 @@
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
+        <jaxb:bindings node="xs:complexType[@name='Create']">
+            <jaxb:factoryMethod name="CreateEventAction"/>
+            <jaxb:class name="CreateEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='View']">
+            <jaxb:factoryMethod name="ViewEventAction"/>
+            <jaxb:class name="ViewEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
         <jaxb:bindings node="//xs:complexType[@name='Search']">
             <jaxb:factoryMethod name="SearchEventAction"/>
             <jaxb:class name="SearchEventAction" />
@@ -365,6 +377,12 @@
         <jaxb:bindings node="xs:complexType[@name='Update']">
             <jaxb:factoryMethod name="UpdateEventAction"/>
             <jaxb:class name="UpdateEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='Delete']">
+            <jaxb:factoryMethod name="DeleteEventAction"/>
+            <jaxb:class name="DeleteEventAction" />
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
@@ -403,6 +421,17 @@
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
+        <jaxb:bindings node="xs:complexType[@name='Send']">
+            <jaxb:factoryMethod name="SendEventAction"/>
+            <jaxb:class name="SendEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='Receive']">
+            <jaxb:factoryMethod name="ReceiveEventAction"/>
+            <jaxb:class name="ReceiveEventAction" />
+            <inheritance:implements>event.logging.EventAction</inheritance:implements> 
+        </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Approval']">
             <jaxb:factoryMethod name="ApprovalEventAction"/>
