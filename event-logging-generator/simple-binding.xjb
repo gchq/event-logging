@@ -358,7 +358,7 @@
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
-        <jaxb:bindings node="//xs:complexType[@name='ObjectOutcome']">
+        <jaxb:bindings node="//xs:complexType[@name='BaseObjectOutcome']">
             <inheritance:implements>event.logging.EventAction</inheritance:implements> 
         </jaxb:bindings>
 
@@ -460,7 +460,7 @@
         </jaxb:bindings>
 
 
-        <jaxb:bindings node="xs:complexType[@name='ObjectOutcome']//xs:group[@ref='evt:MultiObjectGroup']">
+        <jaxb:bindings node="xs:complexType[@name='BaseObjectOutcome']//xs:group[@ref='evt:MultiObjectGroup']">
             <jaxb:property name="objects" >
                 <jaxb:baseType name="event.logging.BaseObject" />
             </jaxb:property>

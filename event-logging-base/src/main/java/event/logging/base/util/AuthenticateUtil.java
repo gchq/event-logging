@@ -57,7 +57,7 @@ public final class AuthenticateUtil {
 
             // Create event detail.
             final EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGON, LOGON);
-            eventDetail.setAuthenticateEventAction(authenticateEvent);
+            eventDetail.setEventAction(authenticateEvent);
 
             if (userId != null) {
                 event.getEventSource().setUser(EventLoggingUtil.createUser(userId));
@@ -86,7 +86,7 @@ public final class AuthenticateUtil {
 
             // Create event detail.
             final EventDetail eventDetail = EventLoggingUtil.createEventDetail(LOGOFF, LOGOFF);
-            eventDetail.setAuthenticateEventAction(authenticateEvent);
+            eventDetail.setEventAction(authenticateEvent);
 
             if (userId != null) {
                 event.getEventSource().setUser(EventLoggingUtil.createUser(userId));

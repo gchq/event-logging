@@ -18,6 +18,7 @@ package event.logging.base.impl;
 import event.logging.AdvancedQuery;
 import event.logging.AuthenticateAction;
 import event.logging.AuthenticateEventAction;
+import event.logging.CreateEventAction;
 import event.logging.Criteria;
 import event.logging.Data;
 import event.logging.Destination;
@@ -31,7 +32,6 @@ import event.logging.ExportEventAction;
 import event.logging.File;
 import event.logging.ImportEventAction;
 import event.logging.MultiObject;
-import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import event.logging.Query;
 import event.logging.SearchEventAction;
@@ -94,7 +94,7 @@ public class EventLoggingServiceIT {
         authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
+        event.getEventDetail().setEventAction(authenticateEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -140,7 +140,7 @@ public class EventLoggingServiceIT {
                             authenticateEventAction.setAuthenticationEntity(user);
 
                             final Event event = createBasicEvent("LOGIN", "LOGIN");
-                            event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
+                            event.getEventDetail().setEventAction(authenticateEventAction);
                             event.getEventTime().setTimeCreated(new Date());
                             eventLoggingService.log(event);
                             done.incrementAndGet();
@@ -203,7 +203,7 @@ public class EventLoggingServiceIT {
         authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
+        event.getEventDetail().setEventAction(authenticateEventAction);
 
         for (int i = 0; i < 5; i++) {
             authenticateEventAction.getData().add(EventLoggingUtil.createData("somename" + i, "somevalue" + i));
@@ -240,12 +240,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreateEventAction(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -316,7 +316,7 @@ public class EventLoggingServiceIT {
         searchEventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEventAction(searchEventAction);
+        event.getEventDetail().setEventAction(searchEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -333,7 +333,7 @@ public class EventLoggingServiceIT {
         searcheventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEventAction(searcheventAction);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -359,7 +359,7 @@ public class EventLoggingServiceIT {
         searcheventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearchEventAction(searcheventAction);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -396,7 +396,7 @@ public class EventLoggingServiceIT {
         sendEventAction.setSource(source);
         sendEventAction.setDestination(destination);
 
-        event.getEventDetail().setSendEventAction(sendEventAction);
+        event.getEventDetail().setEventAction(sendEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -427,7 +427,7 @@ public class EventLoggingServiceIT {
         importElmAction.setSource(source);
         importElmAction.setDestination(dest);
 
-        event.getEventDetail().setImportEventAction(importElmAction);
+        event.getEventDetail().setEventAction(importElmAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -458,7 +458,7 @@ public class EventLoggingServiceIT {
         final SearchEventAction searcheventAction = new SearchEventAction();
         searcheventAction.setQuery(query);
 
-        event.getEventDetail().setSearchEventAction(searcheventAction);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -496,7 +496,7 @@ public class EventLoggingServiceIT {
 
         exportEventAction.getData().add(data);
 
-        event.getEventDetail().setExportEventAction(exportEventAction);
+        event.getEventDetail().setEventAction(exportEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -520,12 +520,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreateEventAction(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -558,12 +558,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreateEventAction(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 

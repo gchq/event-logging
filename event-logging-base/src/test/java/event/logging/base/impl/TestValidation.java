@@ -183,7 +183,7 @@ public class TestValidation {
             authenticateEventAction.setAction(AuthenticateAction.LOGON);
             authenticateEventAction.setAuthenticationEntity(authUser);
 
-            event.getEventDetail().setAuthenticateEventAction(authenticateEventAction);
+            event.getEventDetail().setEventAction(authenticateEventAction);
             event.getEventTime().setTimeCreated(new Date());
         }
 

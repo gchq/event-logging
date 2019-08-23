@@ -1582,7 +1582,7 @@
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
-   <xs:complexType name="ObjectOutcomeComplexType">
+   <xs:complexType name="BaseObjectOutcomeComplexType" abstract="true">
       <xs:annotation>
          <xs:documentation>Contains an item of data, e.g. a file, document, etc, and describes the outcome of the event as well as providing for additional event data that does not fit into the item of data element.</xs:documentation>
       </xs:annotation>
@@ -2928,7 +2928,7 @@
    <!-- Here to provide a unique type for JAXB -->
    <xs:complexType name="CreateComplexType">
       <xs:complexContent>
-         <xs:extension base="evt:ObjectOutcomeComplexType">
+         <xs:extension base="evt:BaseObjectOutcomeComplexType">
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
@@ -2937,7 +2937,7 @@
    <!-- Here to provide a unique type for JAXB -->
    <xs:complexType name="ViewComplexType">
       <xs:complexContent>
-         <xs:extension base="evt:ObjectOutcomeComplexType">
+         <xs:extension base="evt:BaseObjectOutcomeComplexType">
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>
@@ -2946,7 +2946,7 @@
    <!-- Here to provide a unique type for JAXB -->
    <xs:complexType name="DeleteComplexType">
       <xs:complexContent>
-         <xs:extension base="evt:ObjectOutcomeComplexType">
+         <xs:extension base="evt:BaseObjectOutcomeComplexType">
          </xs:extension>
       </xs:complexContent>
    </xs:complexType>

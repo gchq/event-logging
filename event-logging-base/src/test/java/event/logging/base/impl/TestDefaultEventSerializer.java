@@ -15,10 +15,10 @@
  */
 package event.logging.base.impl;
 
+import event.logging.CreateEventAction;
 import event.logging.Data;
 import event.logging.Event;
 import event.logging.EventDetail;
-import event.logging.ObjectOutcome;
 import event.logging.Outcome;
 import org.junit.jupiter.api.Test;
 
@@ -49,16 +49,16 @@ public class TestDefaultEventSerializer {
 
         final EventDetail eventDetail = new EventDetail();
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
+        final CreateEventAction createEventAction = new CreateEventAction();
         final Outcome outcome = new Outcome();
         outcome.setDescription("This is my desc with a \"quoted\"text");
         final Data data = new Data();
         data.setName("MyName");
         data.setValue("This is my attr with a \"quoted\"text");
         outcome.getData().add(data);
-        objectOutcome.setOutcome(outcome);
+        createEventAction.setOutcome(outcome);
 
-        eventDetail.setCreateEventAction(objectOutcome);
+        eventDetail.setEventAction(createEventAction);
         event.setEventDetail(eventDetail);
 
         return event;
