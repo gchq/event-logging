@@ -70,6 +70,78 @@ class FluentEventLoggingServiceIT {
                 ValidationExceptionBehaviourMode.THROW);
     }
 
+    @Test
+    void testPartiallyFluentExample() {
+        final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
+
+        final Event event = eventLoggingService.buildEvent()
+                .withEventTime(EventTime.builder()
+                        .withTimeCreated(new Date())
+                        .build())
+                .withEventSource(EventSource.builder()
+                        .withSystem(SystemDetail.builder()
+                                .withName("Test System")
+                                .withEnvironment("Test")
+                                .build())
+                        .withGenerator("JUnit")
+                        .withDevice(Device.builder()
+                                .withIPAddress("123.123.123.123")
+                                .build())
+                        .withUser(User.builder()
+                                .withId("someuser")
+                                .build())
+                        .build())
+                .withEventDetail(EventDetail.builder()
+                        .withTypeId("LOGON")
+                        .withDescription("A user logon")
+                        .withAuthenticate(AuthenticateEventAction.builder()
+                                .withAction(AuthenticateAction.LOGON)
+                                .withUser(User.builder()
+                                        .withId("someuser")
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+
+        eventLoggingService.log(event);
+    }
+
+    @Test
+    void testFullyFluentExample() {
+        final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
+
+        final Event event = eventLoggingService.buildEvent()
+                .withEventTime()
+                        .withTimeCreated(new Date())
+                        .end()
+                .withEventSource()
+                        .withSystem()
+                                .withName("Test System")
+                                .withEnvironment("Test")
+                                .end()
+                        .withGenerator("JUnit")
+                        .withDevice()
+                                .withIPAddress("123.123.123.123")
+                                .end()
+                        .withUser()
+                                .withId("someuser")
+                                .end()
+                        .end()
+                .withEventDetail()
+                        .withTypeId("LOGON")
+                        .withDescription("A user logon")
+                        .withAuthenticate()
+                                .withAction(AuthenticateAction.LOGON)
+                                .withUser()
+                                        .withId("someuser")
+                                        .end()
+                                .end()
+                        .end()
+                .build();
+
+        eventLoggingService.log(event);
+    }
+
     /**
      * Tests the creation of some events using paths.
      *
