@@ -63,16 +63,6 @@ public class DefaultEventLoggingService implements EventLoggingService {
     }
 
     /**
-     * Creates an empty event.
-     * 
-     * @return An event that is ready to have additional elements added.
-     */
-    @Override
-    public Event createEvent() {
-        return new Event();
-    }
-
-    /**
      * Logs an event to the log.
      * 
      * @param event
