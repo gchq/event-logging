@@ -33,6 +33,19 @@ The Gradle build will generate the JAXB artefacts and go onto build the API jar.
 
 The _Event Logging_ XML schema is authored in [github.com/gchq/event-logging-schema](https://github.com/gchq/event-logging-schema). The _Event Logging XML Schema_ in _event-logging-generator/schema/_ should never be edited directly. It should always be a copy of the desired version from _event-loggin-schema_.
 
+### Developing the schema in conjunction with the JAXB library
+
+By default the build will download the _-client_ variant of the schema from github.
+This is not ideal when you are making changes to the schema and want to see the impact on the JAXB library.
+If you want to run the build using a local copy of the schema you can do something like the following:
+
+```bash
+# Replace /home/dev/git_work/event-logging-schema with the path to your event-logging-schema repo.
+gwcb -PschemaFilePath=/home/dev/git_work/event-logging-schema/event-logging-transformer-main/pipelines/generated/event-logging-v3-client.xsd
+```
+
+This assumes that you have first run the gradle build within _event-logging_ to generate the _-client_ variant of the schema.
+
 ## Building the _Event Logging_ API jar
 
 The API jar is built using Gradle. This will generate the JAXB artefacts, as well as copying the API classes, test classes and XML schema from the base module into the event-logging-api module.
@@ -67,51 +80,81 @@ Examples of how to construct various types of events and log them can be found i
 
 The following is a very simple example of logging an _Authentication_ type event.
 
-``` java 
-//Create the logging service
+```java
+// Create the logging service
 final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
-//Create the system that is logging the authenticat event
-final System system = new System();
-system.setName("Test System");
-system.setEnvironment("Test");
+// Create the event object
+final Event event = eventLoggingService.buildEvent()
+        .withEventTime(EventTime.builder()
+                .withTimeCreated(new Date())
+                .build())
+        .withEventSource(EventSource.builder()
+                .withSystem(SystemDetail.builder()
+                        .withName("Test System")
+                        .withEnvironment("Test")
+                        .build())
+                .withGenerator("JUnit")
+                .withDevice(Device.builder()
+                        .withIPAddress("123.123.123.123")
+                        .build())
+                .withUser(User.builder()
+                        .withId("someuser")
+                        .build())
+                .build())
+        .withEventDetail(EventDetail.builder()
+                .withTypeId("LOGON")
+                .withDescription("A user logon")
+                .withAuthenticate(AuthenticateEventAction.builder()
+                        .withAction(AuthenticateAction.LOGON)
+                        .withUser(User.builder()
+                                .withId("someuser")
+                                .build())
+                        .build())
+                .build())
+        .build();
 
-//Describe the device the event occurred on 
-final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
-
-//Create the user involved in the authenticate action (possibly different from
-//the eventSource user)
-final User user = EventLoggingUtil.createUser("someuser");
-
-//Provide details of where the event came from
-final Event.EventSource eventSource = new Event.EventSource();
-eventSource.setSystem(system);
-eventSource.setGenerator("JUnit");
-eventSource.setDevice(device);
-eventSource.setUser(user);
-
-//Create the authenticate object to describe the authentication specific details
-final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-authenticate.setAction(AuthenticateAction.LOGON);
-authenticate.setUser(user);
-
-//Create the detail of what happened
-//TypeId is typically a system specific code that is unique to a use case in that system
-final Event.EventDetail eventDetail = new Event.EventDetail();
-eventDetail.setTypeId("LOGON");
-eventDetail.setDescription("A user logon");
-eventDetail.setAuthenticate(authenticate);
-
-//Define the time the event happened
-final Event.EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
-
-//Combine the sub-objects together
-final Event event = eventLoggingService.createEvent();
-event.setEventTime(eventTime);
-event.setEventSource(eventSource);
-event.setEventDetail(eventDetail);
-
-//Send the event
+// Send the event 
 eventLoggingService.log(event);
 ```
 
+Alternatively you can use the fully fluent style (using the `end()` methods on the `Builder` classes) to build the event.
+While more compact, this is heavily reliant on careful indentation to ensure readability.
+
+```java
+// Create the logging service
+final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
+
+// Create the event object
+final Event event = eventLoggingService.buildEvent()
+        .withEventTime()
+                .withTimeCreated(new Date())
+                .end()
+        .withEventSource()
+                .withSystem()
+                        .withName("Test System")
+                        .withEnvironment("Test")
+                        .end()
+                .withGenerator("JUnit")
+                .withDevice()
+                        .withIPAddress("123.123.123.123")
+                        .end()
+                .withUser()
+                        .withId("someuser")
+                        .end()
+                .end()
+        .withEventDetail()
+                .withTypeId("LOGON")
+                .withDescription("A user logon")
+                .withAuthenticate()
+                        .withAction(AuthenticateAction.LOGON)
+                        .withUser()
+                                .withId("someuser")
+                                .end()
+                        .end()
+                .end()
+        .build();
+
+// Send the event
+eventLoggingService.log(event);
+```
