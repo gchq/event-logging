@@ -4,10 +4,14 @@ buildscript {
     repositories {
         mavenLocal()
         jcenter()
+        maven { url "https://dl.bintray.com/stroom/stroom" }
     }
     dependencies {
+        // A fork of https://github.com/wfhartford/gradle-dependency-analyze that works with Java 10
+        //classpath 'stroom:gradle-dependency-analyze:v2.2.2'
         classpath 'ca.cutterslade.gradle:gradle-dependency-analyze:1.2.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        //classpath "org.javamodularity:moduleplugin:1.6.0"
     }
 }
 
@@ -113,7 +117,7 @@ ext.versions = [
         jaxb_xjc             : '2.3.2',
         jaxb_api             : '2.3.1',
         //jaxb_rich_contract   : '2.0.1',
-        jaxb_rich_contract   : '2.1.0-SNAPSHOT',
+        jaxb_rich_contract   : '2.1.0-SNAPSHOT', // TODO using this local snapshot till my PRs get merged and a new version is released
         jaxb2_basics         : '0.12.0',
         junit                : '5.2.0',
         logback              : '1.2.3',
@@ -135,12 +139,13 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-//    apply plugin: 'ca.cutterslade.analyze'
+    apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
+    //apply plugin: "org.javamodularity.moduleplugin"
 
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenLocal()
@@ -186,6 +191,63 @@ subprojects {
         //clear out the 'out' dirs used by intelliJ
         delete "out"
     }
+
+    //modularity.mixedJavaRelease 8
+
+    /* This is for Java9+
+    afterEvaluate {
+        repositories {
+            jcenter()
+        }
+
+        compileJava {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        compileTestJava {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath,
+                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        test {
+            inputs.property("moduleName", moduleName)
+            doFirst {
+                jvmArgs = [
+                        '--module-path', classpath.asPath,
+                        '--add-modules', 'ALL-MODULE-PATH',
+                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+                ]
+                classpath = files()
+            }
+        }
+
+        javadoc {
+            options.addStringOption('-module-path', classpath.asPath)
+            options.addStringOption('Xdoclint:all,-missing', '-html5')
+        }
+
+        jar {
+            inputs.property("moduleName", moduleName)
+            manifest {
+                attributes(
+                        "Automatic-Module-Name": moduleName,
+                )
+            }
+        }
+    }
+    */
 }
 
 

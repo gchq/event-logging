@@ -10,7 +10,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+* Generate javadoc from the schema annotations.
+
+* Issue **5** : Add fluent builder api code.
+
+* Issue **3** : Change xjc bindings to force all top level classes [BREAKING CHANGE].
+
 * Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+
+* Revert to Java 8
+
+
+## [v4.0.7_schema-v3.2.4] - 2018-09-07
+
+* Update to Java 10
+
+* Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+
+
+## [v4.0.5_schema-v3.2.4] - 2018-09-05
+
+* Added automatic module name for Java 9 builds.
 
 
 ## [v3.2.4_schema-v3.2.4] - 2018-05-30
@@ -64,9 +84,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
+<<<<<<< HEAD
 [Unreleased]: https://github.com/gchq/event-logging/compare/v3.2.4_schema-v3.2.4...HEAD
 [v3.2.4_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.3_schema-v3.2.0...v3.2.4_schema-v3.2.4
 [v3.2.3_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v3.2.3_schema-v3.2.4
+=======
+[Unreleased]: https://github.com/gchq/event-logging/compare/v4.0.2_schema-v3.2.4...HEAD
+[v4.0.5_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v4.0.1...v4.0.5_schema-v3.2.4
+[v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
+[v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
+>>>>>>> master
 [v3.2.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.0_schema-v3.2.0...v3.2.1_schema-v3.2.4
 [v3.2.0_schema-v3.2.0]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...v3.2.0_schema-v3.2.0
 [v3.1.2_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.1_schema-v3.1.2...v3.1.2_schema-v3.1.2
