@@ -39,35 +39,6 @@
                 printMethod="event.logging.jaxb.DateAdaptor.printDate" />
         </jaxb:globalBindings>
 
-        <!-- bindings for Event elements -->
-        <jaxb:bindings node="xs:element[@name='Event']/xs:complexType/xs:sequence">
-
-            <!-- bindings for EventSource elements -->
-            <jaxb:bindings node="xs:element[@name='EventSource']/xs:complexType/xs:sequence">
-            </jaxb:bindings>
-
-            <!-- bindings for EventDetail elements -->
-            <jaxb:bindings node="xs:element[@name='EventDetail']/xs:complexType/xs:sequence">
-
-                <!-- bindings for 'event action' choice elements -->
-                <jaxb:bindings node="xs:choice">
-
-                    <jaxb:property name="eventAction" >
-                        <jaxb:baseType name="EventAction" />
-                    </jaxb:property>
-
-                    <jaxb:bindings node="xs:element[@name='Unknown']">
-                        <jaxb:bindings node="xs:complexType">
-                            <jaxb:factoryMethod name="UnknownEventAction"/>
-                            <jaxb:class name="UnknownEventAction" />
-                            <inheritance:implements>EventAction</inheritance:implements> 
-                        </jaxb:bindings>
-                    </jaxb:bindings>
-
-                </jaxb:bindings>
-            </jaxb:bindings>
-
-        </jaxb:bindings>
 
         <!-- Make the property name plural -->
         <jaxb:bindings node="xs:complexType[@name='AccessControlGroups']/xs:sequence/xs:element[@name='AccessControlGroup']">
@@ -75,7 +46,7 @@
         </jaxb:bindings>
 
         <!-- Make the property name plural -->
-        <jaxb:bindings node="//xs:element[@name='Event']//xs:element[@name='EventSource']//xs:element[@name='Door']//xs:element[@name='AddAccess']/xs:complexType/xs:sequence/xs:element[@name='AccessZone']">
+        <jaxb:bindings node="xs:complexType[@name='EventSource']//xs:element[@name='Door']//xs:element[@name='AddAccess']/xs:complexType/xs:sequence/xs:element[@name='AccessZone']">
             <jaxb:property name="accessZones" />
         </jaxb:bindings>
 
@@ -181,27 +152,6 @@
         </jaxb:bindings>
 
 
-        <!-- Make all query items implement the same marker interface so we can have a List<AdvancedQueryItem> -->
-        <jaxb:bindings multiple="true" node="xs:complexType[@name='Term' or @name='And' or @name='Or' or @name='Not']">
-            <inheritance:implements>AdvancedQueryItem</inheritance:implements> 
-        </jaxb:bindings>
-
-        <jaxb:bindings 
-            multiple="true" 
-            node="xs:complexType[@name='And' or @name='Or' or @name='Not']/xs:group[@ref='evt:AdvancedQueryOperatorGroup']">
-
-            <jaxb:property name="queryItems" >
-                <!-- Force it to be List<AdvancedQueryItem> instead of List<java.lang.Object> -->
-                <jaxb:baseType name="AdvancedQueryItem" />
-            </jaxb:property>
-        </jaxb:bindings>
-
-        <jaxb:bindings node="xs:complexType[@name='Query']//xs:element[@name='Advanced']/xs:complexType/xs:group">
-            <jaxb:property name="queryItems" >
-                <!-- Force it to be List<AdvancedQueryItem> instead of List<java.lang.Object> -->
-                <jaxb:baseType name="AdvancedQueryItem" />
-            </jaxb:property>
-        </jaxb:bindings>      
 
         <!-- 
             Rename all the choices in EventDetail (i.e the schema actions) to
@@ -211,27 +161,41 @@
             we can have a single eventAction property.
         -->
 
+        <jaxb:bindings node="xs:complexType[@name='EventDetail']/xs:sequence/xs:choice">
+
+            <!-- Rename the property for the event action and make it use the marker interface -->
+            <jaxb:property name="eventAction" >
+                <jaxb:baseType name="EventAction" />
+            </jaxb:property>
+
+            <jaxb:bindings node="xs:element[@name='Unknown']">
+                <jaxb:bindings node="xs:complexType">
+                    <jaxb:factoryMethod name="UnknownEventAction"/>
+                    <jaxb:class name="UnknownEventAction" />
+                    <inheritance:implements>EventAction</inheritance:implements> 
+                </jaxb:bindings>
+            </jaxb:bindings>
+
+        </jaxb:bindings>
+
         <jaxb:bindings node="xs:complexType[@name='Authenticate']">
             <jaxb:factoryMethod name="AuthenticateEventAction"/>
             <jaxb:class name="AuthenticateEventAction" />
             <inheritance:implements>EventAction</inheritance:implements> 
+
+            <!-- Change the property name and type for the user|device|group choice -->
             <jaxb:bindings node="xs:sequence/xs:choice">
                 <jaxb:property name="authenticationEntity" >
                     <jaxb:baseType name="AuthenticationEntity" />
                 </jaxb:property>
             </jaxb:bindings>
+
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Authorise']">
             <jaxb:factoryMethod name="AuthoriseEventAction"/>
             <jaxb:class name="AuthoriseEventAction" />
             <inheritance:implements>EventAction</inheritance:implements> 
-
-            <jaxb:bindings node="xs:sequence/xs:group[@ref='evt:MultiObjectGroup']">
-                <jaxb:property name="objects" >
-                    <jaxb:baseType name="BaseObject" />
-                </jaxb:property>
-            </jaxb:bindings>
 
         </jaxb:bindings>
 
@@ -361,19 +325,43 @@
             <jaxb:class name="OtherObject" />
         </jaxb:bindings>
 
-        <!-- Change the property names to a more sensible 'objects' -->
+        <!-- Change the property name and type for the multi object group -->
         <jaxb:bindings 
             multiple="true" 
-            node="xs:complexType[@name='MultiObject' or @name='BaseObjectOutcome']//xs:group[@ref='evt:MultiObjectGroup']">
+            node="xs:complexType[@name='MultiObject' or @name='BaseObjectOutcome' or @name='Authorise']//xs:group[@ref='evt:MultiObjectGroup']">
 
             <jaxb:property name="objects" >
                 <jaxb:baseType name="BaseObject" />
             </jaxb:property>
         </jaxb:bindings>
 
+        <!-- Make all query items implement the same marker interface so we can have a List<AdvancedQueryItem> -->
+        <jaxb:bindings multiple="true" node="xs:complexType[@name='Term' or @name='And' or @name='Or' or @name='Not']">
+            <inheritance:implements>AdvancedQueryItem</inheritance:implements> 
+        </jaxb:bindings>
+
+        <jaxb:bindings 
+            multiple="true" 
+            node="xs:complexType[@name='And' or @name='Or' or @name='Not']/xs:group[@ref='evt:AdvancedQueryOperatorGroup']">
+
+            <jaxb:property name="queryItems" >
+                <!-- Force it to be List<AdvancedQueryItem> instead of List<java.lang.Object> -->
+                <jaxb:baseType name="AdvancedQueryItem" />
+            </jaxb:property>
+        </jaxb:bindings>
+
+
         <jaxb:bindings node="xs:complexType[@name='Query']">
 
             <jaxb:bindings node="xs:sequence/xs:element[@name='Advanced']/xs:complexType">
+
+                <jaxb:bindings node="xs:group">
+                    <jaxb:property name="queryItems" >
+                        <!-- Force it to be List<AdvancedQueryItem> instead of List<java.lang.Object> -->
+                        <jaxb:baseType name="AdvancedQueryItem" />
+                    </jaxb:property>
+                </jaxb:bindings>      
+
                 <jaxb:factoryMethod name="AdvancedQuery"/>
                 <jaxb:class name="AdvancedQuery" />
             </jaxb:bindings>
@@ -392,4 +380,5 @@
 
     </jaxb:bindings> <!-- /xs:schema -->
 </jaxb:bindings> 
+
 <!-- vim:set expandtab shiftwidth=4 tabstop=4: -->
