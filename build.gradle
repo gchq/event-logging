@@ -55,7 +55,7 @@ def eventLoggingSchemaVer = "v3.5.2"
 // Set this to the last release of this repo on this branch, or earlier branches
 // It is used to diff the current jaxb code against the last release
 // *****************************************************************************
-ext.previousReleaseVersion = "v3.2.4_schema-v3.2.4"
+ext.previousReleaseVersion = "v4.0.7_schema-v3.2.4"
 // *****************************************************************************
 
 
@@ -132,9 +132,8 @@ subprojects {
     apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
 
-
-    sourceCompatibility = JavaVersion.VERSION_1_10
-    targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenLocal()
@@ -181,45 +180,37 @@ subprojects {
             jcenter()
         }
 
-        compileJava {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                options.compilerArgs = [
-                        '--module-path', classpath.asPath,
-                ]
-                classpath = files()
-            }
-        }
 
-        compileTestJava {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                options.compilerArgs = [
-                        '--module-path', classpath.asPath,
-                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
-                ]
-                classpath = files()
-            }
-        }
+        // These commented blocks are for compiling on j9+
+        //compileJava {
+            //inputs.property("moduleName", moduleName)
+            //doFirst {
+                //options.compilerArgs = [
+                        //'--module-path', classpath.asPath,
+                //]
+                //classpath = files()
+            //}
+        //}
 
-        test {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                jvmArgs = [
-                        '--module-path', classpath.asPath,
-                        '--add-modules', 'ALL-MODULE-PATH',
-                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
-                ]
-                classpath = files()
-            }
-        }
+        //compileTestJava {
+            //inputs.property("moduleName", moduleName)
+            //doFirst {
+                //options.compilerArgs = [
+                        //'--module-path', classpath.asPath,
+                        //'--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+                //]
+                //classpath = files()
+            //}
+        //}
 
-        javadoc {
-            options.addStringOption('-module-path', classpath.asPath)
-            options.addStringOption('Xdoclint:all,-missing', '-html5')
-        }
+
+        //javadoc {
+            //options.addStringOption('-module-path', classpath.asPath)
+            //options.addStringOption('Xdoclint:all,-missing', '-html5')
+        //}
 
         jar {
+            // Add in the auto module name for j9+ clients
             inputs.property("moduleName", moduleName)
             manifest {
                 attributes(
