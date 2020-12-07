@@ -39,18 +39,20 @@ main() {
 
   # GH_USER_AND_TOKEN decalred in .travis.yml env:/global/:secure
   extraCurlArgs=()
-  if [ ! "${GH_USER_AND_TOKEN}x" = "x" ]; then 
+  if [[ -n "${GH_USER_AND_TOKEN}" ]]; then 
     # running in travis so use authentication
     extraCurlArgs=( --user "${GH_USER_AND_TOKEN}" )
   fi
 
   apiUrl="${API_URL_BASE}/${prevVersionTag}"
+  prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
 
   echo "Using API URL: ${apiUrl}"
+  echo "Searching for file: ${prevVersionJar}"
 
   jqScript=".assets[]
       | select( .name 
-      | contains(\"event-logging-${prevVersionTag}-sources.jar\")) 
+      | contains(\"${prevVersionJar}\")) 
       | .browser_download_url"
 
   #echo "Using jqScript: ${jqScript}"
