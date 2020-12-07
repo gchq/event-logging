@@ -8,16 +8,48 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
 
+* Uplifted schema to v3.5.2
+
+* Issue **gchq/event-logging-schema#54** : Remove `Outcome` from `Network`, add new `NetworkOutcome` class.
+
+* Issue **gchq/event-logging-schema#63**: Allow `EventSource/Door` to be combined with `Device`, `Client` and `Server`.
+
+* Issue **gchq/event-logging-schema#64**: Change `Door` sub-element constraints to be consistent with documentation.
+
+* Issue **gchq/event-logging-schema#65**: Add enum values to `AuthenticateActionSimpleType` and `AuthenticateLogonTypeSimpleType` to better describe physical access events
+
+* Issue **gchq/event-logging-schema#10** : Add `SearchResults` to `BaseMultiObjectComplexType` to allow for use cases like `View/SearchResults`. 
+
+* Issue **gchq/event-logging-schema#10** : Add `Id`, `Name` and `Description` to `QueryComplexType` to allow the linking of query to results.
+
+* Issue **gchq/event-logging-schema#39** : Add `TimeZoneName` element to `LocationComplexType` to improve the recording of time zone information.
+
+* Issue **gchq/event-logging-schema#44** : Add `Approval` schema action.
+
+* Issue **gchq/event-logging-schema#47** : Add `CachedInteractive`, `CachedRemoteInteractive`, `Proxy` and `Other` logon types to `AuthenticateLogonTypeSimpleType`.
+
+* Issue **gchq/event-logging-schema#40**: Add `State`, `City` and `Town` elements to provide more Location detail.
+
+* Issue **gchq/event-logging-schema#3** : Add `Type` attribute to `Hash` element in `BaseFileComplexType`.
+
+* Issue **gchq/event-logging-schema#35** : Add `Meta` element to `Event` and `BaseObjectGroup` to allow extension/decoration.
+
+* Issue **gchq/event-logging-schema#31** : Add `Tags` element to `BaseObjectGroup`.
+
+* Issue **gchq/event-logging-schema#37** : Add `Tags` element to `SystemComplexType`.
+
+
 ## [v4.0.7_schema-v3.2.4] - 2018-09-07
 
 * Update to Java 10
 
-* Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+* Issue **gchq/event-logging-schema#33** : Add content to `ClassificationComplexType` to support richer protective marking schemes
 
 
 ## [v4.0.5_schema-v3.2.4] - 2018-09-05
 
 * Added automatic module name for Java 9 builds.
+
 
 ## [v3.2.4_schema-v3.2.4] - 2018-05-30
 

@@ -49,10 +49,13 @@ public class GenClasses {
 
     private static final String USER_HOME = System.getProperty("user.home");
     private static final String XJC_PATH_1 = "/usr/bin/xjc";
-    private static final String XJC_PATH_2 = USER_HOME + "/.sdkman/candidates/java/current/bin/xjc";
+    private static final String SDKMAN_JAVA_CANDIDATES_PATH = USER_HOME + "/.sdkman/candidates/java";
+    private static final String XJC_PATH_2 = SDKMAN_JAVA_CANDIDATES_PATH + "/8.0.272-zulu/bin/xjc";
+    private static final String XJC_PATH_3 = SDKMAN_JAVA_CANDIDATES_PATH + "/8.0.181-zulu/bin/xjc";
     private static final List<String> XJC_PATHS = Arrays.asList(
             XJC_PATH_1,
-            XJC_PATH_2
+            XJC_PATH_2,
+            XJC_PATH_3
     );
 
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
@@ -244,10 +247,14 @@ public class GenClasses {
 
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
-        copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"), apiProjectDir.resolve("src/main/java/event/logging"));
-        copyAll(baseProjectDir.resolve("src/main/resources"), apiProjectDir.resolve("src/main/resources"));
-        copyAll(baseProjectDir.resolve("src/test/java/event/logging/base"), apiProjectDir.resolve("src/test/java/event/logging"));
-        copyAll(baseProjectDir.resolve("src/test/resources"), apiProjectDir.resolve("src/test/resources"));
+        copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"),
+                apiProjectDir.resolve("src/main/java/event/logging"));
+        copyAll( baseProjectDir.resolve("src/main/resources"),
+                apiProjectDir.resolve("src/main/resources"));
+        copyAll(baseProjectDir.resolve("src/test/java/event/logging/base"),
+                apiProjectDir.resolve("src/test/java/event/logging"));
+        copyAll(baseProjectDir.resolve("src/test/resources"),
+                apiProjectDir.resolve("src/test/resources"));
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
@@ -256,7 +263,7 @@ public class GenClasses {
     }
 
     private Path getXjcPath() {
-        return XJC_PATHS.stream()
+        final Path xjcPath = XJC_PATHS.stream()
                 .map(Paths::get)
                 .filter(Files::exists)
                 .findFirst()
@@ -264,6 +271,9 @@ public class GenClasses {
                         new RuntimeException(String.format(
                                 "xjc binary not found in the following locations %s",
                                 XJC_PATHS.toString())));
+
+        System.out.println("Found xjc binary in " + xjcPath.toAbsolutePath().normalize().toString());
+        return xjcPath;
     }
 
     private void clean(Path path) throws IOException {
