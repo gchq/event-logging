@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -45,7 +46,15 @@ public class GenClasses {
 
     private static final String PUBLIC_CLASS = "public class ";
 
-    private static final String XJC_PATH = "/usr/bin/xjc";
+
+    private static final String USER_HOME = System.getProperty("user.home");
+    private static final String XJC_PATH_1 = "/usr/bin/xjc";
+    private static final String XJC_PATH_2 = USER_HOME + "/.sdkman/candidates/java/current/bin/xjc";
+    private static final List<String> XJC_PATHS = Arrays.asList(
+            XJC_PATH_1,
+            XJC_PATH_2
+    );
+
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
     private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
 
@@ -192,7 +201,9 @@ public class GenClasses {
         clean(srcDir.resolve("main/resources/event/logging"));
         clean(srcDir.resolve("test/java/event/logging"));
 
-        final String command = XJC_PATH +
+        final String xjcBinary = getXjcPath().toAbsolutePath().toString();
+
+        final String command = xjcBinary +
                 " -xmlschema" +
                 " -extension" +
                 " -p " + PACKAGE_NAME +
@@ -242,6 +253,17 @@ public class GenClasses {
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
         Files.copy(modXsd, schemaPath.resolve("schema.xsd"));
+    }
+
+    private Path getXjcPath() {
+        return XJC_PATHS.stream()
+                .map(Paths::get)
+                .filter(Files::exists)
+                .findFirst()
+                .orElseThrow(() ->
+                        new RuntimeException(String.format(
+                                "xjc binary not found in the following locations %s",
+                                XJC_PATHS.toString())));
     }
 
     private void clean(Path path) throws IOException {

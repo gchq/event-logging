@@ -47,7 +47,7 @@ ext.getMajorVersion = { versionStr ->
 
 //Set this to the desired release version of the event-logging schema on github
 //*****************************************************************************
-def eventLoggingSchemaVer = "v3.2.4"
+def eventLoggingSchemaVer = "v3.4.0"
 //*****************************************************************************
 
 

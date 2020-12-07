@@ -6,15 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-### Changed
+* Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
 
 ## [v4.0.7_schema-v3.2.4] - 2018-09-07
 
 * Update to Java 10
 
 * Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+
 
 ## [v4.0.5_schema-v3.2.4] - 2018-09-05
 
@@ -24,7 +23,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Fix for log receiver class name.
 
+
 ## [v3.2.3_schema-v3.2.4] - 2018-05-22
+
 
 ## [v3.2.1_schema-v3.2.4] - 2018-02-15
 
@@ -33,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Uplifted schema to v3.2.4
 
 * Add _-client_ to the end of the `id` attribute value on the `schema` element.
+
 
 ## [v3.2.0_schema-v3.2.0] - 2017-12-21
 
@@ -44,11 +46,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Uplifted schema to v3.2.0
 
+
 ## [v3.1.2_schema-v3.1.2] - 2017-11-28
 
 ### Added
 
 * Add Bintray deployment
+
 
 ## [v3.1.1_schema-v3.1.2] - 2017-11-14
 
@@ -61,6 +65,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Uplift schema to v3.1.2
 
 * Change build to Gradle
+
 
 ## [v3.1.0] - 2017-04-05
 Intial open source release
