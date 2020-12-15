@@ -1,10 +1,14 @@
 # Event Logging
 
-_Event Logging_ is a Java JAXB implementation of the [_Event Logging XML Schema_](https://github.com/gchq/event-logging-schema) and an API for logging events conforming to the _Event Logging XML Schema_. _Event Logging_ can be incorporated into your Java application to provide a means of recording and outputting audit events.
+
+_Event Logging_ is an API for logging events conforming to the [_Event Logging XML Schema_](https://github.com/gchq/event-logging-schema).
+The API uses a generated Java JAXB model of _Event Logging XML Schema_.
+_Event Logging_ can be incorporated into your Java application to provide a means of recording and outputting audit events.
 
 ## Using the API
 
-The Event Logging API is available as a Maven/Gradle depenndency on [Bintray](https://bintray.com/stroom/event-logging/event-logging). To include it in your Gradle build add the following:
+The Event Logging API is available as a Maven/Gradle depenndency on [Bintray](https://bintray.com/stroom/event-logging/event-logging).
+To include it in your Gradle build add the following:
 
 ```groovy
 repositories {
