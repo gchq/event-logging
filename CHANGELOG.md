@@ -6,9 +6,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Added
+* Uplifted schema to v3.5.2
 
-### Changed
+* Issue **gchq/event-logging-schema#54** : Remove `Outcome` from `Network`, add new `NetworkOutcome` class.
+
+* Issue **gchq/event-logging-schema#63**: Allow `EventSource/Door` to be combined with `Device`, `Client` and `Server`.
+
+* Issue **gchq/event-logging-schema#64**: Change `Door` sub-element constraints to be consistent with documentation.
+
+* Issue **gchq/event-logging-schema#65**: Add enum values to `AuthenticateActionSimpleType` and `AuthenticateLogonTypeSimpleType` to better describe physical access events
+
+* Issue **gchq/event-logging-schema#10** : Add `SearchResults` to `BaseMultiObjectComplexType` to allow for use cases like `View/SearchResults`. 
+
+* Issue **gchq/event-logging-schema#10** : Add `Id`, `Name` and `Description` to `QueryComplexType` to allow the linking of query to results.
+
+* Issue **gchq/event-logging-schema#39** : Add `TimeZoneName` element to `LocationComplexType` to improve the recording of time zone information.
+
+* Issue **gchq/event-logging-schema#44** : Add `Approval` schema action.
+
+* Issue **gchq/event-logging-schema#47** : Add `CachedInteractive`, `CachedRemoteInteractive`, `Proxy` and `Other` logon types to `AuthenticateLogonTypeSimpleType`.
+
+* Issue **gchq/event-logging-schema#40**: Add `State`, `City` and `Town` elements to provide more Location detail.
+
+* Issue **gchq/event-logging-schema#3** : Add `Type` attribute to `Hash` element in `BaseFileComplexType`.
+
+* Issue **gchq/event-logging-schema#35** : Add `Meta` element to `Event` and `BaseObjectGroup` to allow extension/decoration.
+
+* Issue **gchq/event-logging-schema#31** : Add `Tags` element to `BaseObjectGroup`.
+
+* Issue **gchq/event-logging-schema#37** : Add `Tags` element to `SystemComplexType`.
 
 * Generate javadoc from the schema annotations.
 
@@ -25,7 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Update to Java 10
 
-* Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+* Issue **gchq/event-logging-schema#33** : Add content to `ClassificationComplexType` to support richer protective marking schemes
 
 
 ## [v4.0.5_schema-v3.2.4] - 2018-09-05
@@ -84,17 +110,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-<<<<<<< HEAD
-[Unreleased]: https://github.com/gchq/event-logging/compare/v3.2.4_schema-v3.2.4...HEAD
-[v3.2.4_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.3_schema-v3.2.0...v3.2.4_schema-v3.2.4
-[v3.2.3_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v3.2.3_schema-v3.2.4
-=======
-[Unreleased]: https://github.com/gchq/event-logging/compare/v4.0.2_schema-v3.2.4...HEAD
-[v4.0.5_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v4.0.1...v4.0.5_schema-v3.2.4
-[v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
-[v4.0.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v4.0.1_schema-v3.2.4
->>>>>>> master
-[v3.2.1_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.0_schema-v3.2.0...v3.2.1_schema-v3.2.4
-[v3.2.0_schema-v3.2.0]: https://github.com/gchq/event-logging/compare/v3.1.2_schema-v3.1.2...v3.2.0_schema-v3.2.0
-[v3.1.2_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.1_schema-v3.1.2...v3.1.2_schema-v3.1.2
-[v3.1.1_schema-v3.1.2]: https://github.com/gchq/event-logging/compare/v3.1.0...v3.1.1_schema-v3.1.2
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v3.5.2...HEAD
+[v5.0-beta.1_schema-v3.5.2]: https://github.com/gchq/event-logging/compare/v4.0.7_schema-v3.2.4...v3.2.4_schema-v3.2.4
+

@@ -20,6 +20,7 @@ import com.sun.tools.xjc.Driver;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,9 +41,7 @@ import java.util.stream.Collectors;
  * event-logging-api
  */
 public class GenClasses {
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
-    private static final String PUBLIC_CLASS = "public class ";
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
     private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
@@ -90,14 +89,14 @@ public class GenClasses {
 
         Path xsdFile = null;
         if (sourceSchemas.size() == 0) {
-            System.out.println(String.format("ERROR - No source schema found in %s matching '%s'",
+            System.out.printf("ERROR - No source schema found in %s matching '%s'%n",
                     schemaDir.toAbsolutePath().toString(),
-                    SOURCE_SCHEMA_REGEX));
+                    SOURCE_SCHEMA_REGEX);
             System.exit(1);
         } else if (sourceSchemas.size() > 1) {
-            System.out.println(String.format("ERROR - Too many source schemas found in %s matching '%s'",
+            System.out.printf("ERROR - Too many source schemas found in %s matching '%s'%n",
                     schemaDir.toAbsolutePath().toString(),
-                    SOURCE_SCHEMA_REGEX));
+                    SOURCE_SCHEMA_REGEX);
             System.exit(1);
         } else {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
@@ -182,7 +181,6 @@ public class GenClasses {
                 "com.kscs.util.jaxb",
                 "event.logging.jaxb.fluent");
 
-
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
         Files.createDirectories(schemaPath);
@@ -247,10 +245,10 @@ public class GenClasses {
         final Path to = projectDir.resolve("src/main/java/" + destPackage.replace(".", "/"));
         final Path allJava = projectDir.resolve("src/main/java");
 
-        System.out.println(String.format("Relocating packages - projectDir: %s, from: %s, to: %s",
+        System.out.printf("Relocating packages - projectDir: %s, from: %s, to: %s%n",
                 projectDir.resolve("..").relativize(projectDir),
                 projectDir.relativize(from),
-                projectDir.relativize(to)));
+                projectDir.relativize(to));
 
         if (Files.exists(from)) {
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
@@ -268,8 +266,8 @@ public class GenClasses {
                     Path dest = to.resolve(rel);
                     if (!Files.exists(dest)) {
                         Files.move(file, dest);
-                        System.out.println(String.format("  Moved file: %s",
-                                file.getFileName().toString()));
+                        System.out.printf("  Moved file: %s%n",
+                                file.getFileName().toString());
 
                         // CHANGE OUTPUT PACKAGES.
                         byte[] data = Files.readAllBytes(dest);
@@ -297,10 +295,10 @@ public class GenClasses {
                         Files.write(file, newContent.getBytes(UTF8));
 
                         if (!newContent.equals(originalContent)) {
-                            System.out.println(String.format("  Replaced %s with %s in file: %s",
+                            System.out.printf("  Replaced %s with %s in file: %s%n",
                                     sourcePackage,
                                     destPackage,
-                                    file.getFileName().toString()));
+                                    file.getFileName().toString());
                         }
                     }
                     return FileVisitResult.CONTINUE;

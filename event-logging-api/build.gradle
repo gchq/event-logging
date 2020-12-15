@@ -134,7 +134,7 @@ tasks.compileJava.dependsOn ':event-logging-generator:runGenClasses'
 //we can see what impact schema changes have had on the library
 task diffAgainstLatest(type: Exec) {
     executable "../diffAgainstLatestRelease.sh"
-    args "build"
+    args "build", previousReleaseVersion
 }
 
 tasks.build.dependsOn diffAgainstLatest
