@@ -15,7 +15,7 @@
 
         This binding file operates on the transient schema.mod.xsd file that is derived from the
         source schema (event-logging.xsd in the event-logging repo).  All types named 
-        XxxCompleType are renamed to Xxx in GenClasses.java.  This is to provide better java 
+        XxxComplexType are renamed to Xxx in GenClasses.java.  This is to provide better java 
         class names. E.g FooBarComplexType becomes FooBar. Thus any xpath queries in here 
         must use the shorter form of the complex type names.
     -->
