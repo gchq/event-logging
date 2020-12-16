@@ -50,7 +50,7 @@ ext.getMajorVersion = { versionStr ->
 
 // Set this to the desired release version of the event-logging XML schema on github
 // *****************************************************************************
-def eventLoggingSchemaVer = "v3.5.2"
+def eventLoggingSchemaVer = "v4.0-beta.1"
 // *****************************************************************************
 
 
