@@ -126,8 +126,7 @@ ext.versions = [
         jackson              : '2.9.0',
         jaxb_xjc             : '2.3.2',
         jaxb_api             : '2.3.1',
-        //jaxb_rich_contract   : '2.0.1',
-        jaxb_rich_contract   : '2.1.0-SNAPSHOT', // TODO using this local snapshot till my PRs get merged and a new version is released
+        jaxb_rich_contract   : '2.1.0',
         jaxb2_basics         : '0.12.0',
         junit                : '5.2.0',
         logback              : '1.2.3',
