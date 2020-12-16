@@ -62,7 +62,7 @@ main() {
     curl -sL -o /dev/null -w "%{http_code}" "${extraCurlArgs[@]}" "${apiUrl}")"
 
   if [[ "${status_code}" -ne 200 ]]; then
-    curl -IL "${extraCurlArgs[@]}" "${apiUrl}"
+    curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
   fi
 
   # Call the github API to git the json for the latest release, 
