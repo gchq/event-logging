@@ -278,6 +278,11 @@ If you want to run the build using a local copy of the schema you can do somethi
 
 This will build the _client_ variant of the schema from whatever version of the master `event-logging.xsd` schema is in the local `event-logging-schema` repo, then build _event-logging_ from it.
 
+#### Documentation
+
+The Javadoc for the library is automatically pulled from the schema annotations by `jaxb2-rich-contract-plugin`.
+Therefore it is important to ensure that all elements, types and complex types in the schema are fully annotated to provide a rich set of javadocs.
+
 ### Releasing the _Event Logging_ API jar
 
 To perform a release simply tag the _master_ branch as follows:
