@@ -38,6 +38,7 @@ main() {
   echo "Comparing current JAXB code to release ${prevVersionTag}"
 
   # GH_USER_AND_TOKEN decalred in .travis.yml env:/global/:secure
+  # DO NOT echo the token!
   extraCurlArgs=()
   if [[ -n "${GH_USER_AND_TOKEN}" ]]; then 
     # running in travis so use authentication
@@ -56,6 +57,13 @@ main() {
       | .browser_download_url"
 
   #echo "Using jqScript: ${jqScript}"
+
+  status_code="$( \
+    curl -sL -o /dev/null -w "%{http_code}" "${extraCurlArgs[@]}" "${apiUrl}")"
+
+  if [[ "${status_code}" -ne 200 ]]; then
+    curl -IL "${extraCurlArgs[@]}" "${apiUrl}"
+  fi
 
   # Call the github API to git the json for the latest release, 
   # then extract the sources jar binary url from it
