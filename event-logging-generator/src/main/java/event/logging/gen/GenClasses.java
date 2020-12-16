@@ -128,8 +128,8 @@ public class GenClasses {
                 "-d", mainJavaDir.toAbsolutePath().toString(),
                 "-b", bindingFile.toAbsolutePath().toString(),
                 "-quiet",
-                modXsd.toAbsolutePath().toString(), //the source schema to gen classes from
-                "-Xfluent-builder",
+                modXsd.toAbsolutePath().toString(), // the source schema to gen classes from
+                "-Xfluent-builder", // make builder classes/methods
                 "-generateJavadocFromAnnotations=true",
                 "-Xinheritance",
         };
@@ -139,6 +139,7 @@ public class GenClasses {
                 .map(str -> "  " + str)
                 .forEach(System.out::println);
 
+        // Run XJC to generate the classes
         final int exitStatus = Driver.run(xjcOptions, System.out, System.out);
 
         if (exitStatus != 0) {
@@ -176,10 +177,7 @@ public class GenClasses {
 
         // The jaxb2-rich-contract-plugin creates some classes in com.kscs.util.jaxb so move them into
         // event.logging.fluent
-        relocatePackage(
-                apiProjectDir,
-                "com.kscs.util.jaxb",
-                "event.logging.jaxb.fluent");
+        relocatePackage( apiProjectDir, "com.kscs.util.jaxb", "event.logging.jaxb.fluent");
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");
@@ -254,25 +252,25 @@ public class GenClasses {
             Files.walkFileTree(from, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Path rel = from.relativize(dir);
-                    Path dest = to.resolve(rel);
+                    final Path rel = from.relativize(dir);
+                    final Path dest = to.resolve(rel);
                     Files.createDirectories(dest);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path rel = from.relativize(file);
-                    Path dest = to.resolve(rel);
+                    final Path rel = from.relativize(file);
+                    final Path dest = to.resolve(rel);
                     if (!Files.exists(dest)) {
                         Files.move(file, dest);
-                        System.out.printf("  Moved file: %s%n",
-                                file.getFileName().toString());
+                        System.out.printf("  Moved file: %s to %s%n",
+                                file.getFileName().toString(),
+                                dest.toAbsolutePath().toString());
 
-                        // CHANGE OUTPUT PACKAGES.
-                        byte[] data = Files.readAllBytes(dest);
-                        String content = new String(data, UTF8);
-                        content = content.replace(sourcePackage, destPackage);
+                        // Change output packages.
+                        final byte[] data = Files.readAllBytes(dest);
+                        final String content = new String(data, UTF8).replace(sourcePackage, destPackage);
                         Files.write(dest, content.getBytes(UTF8));
                     }
                     return FileVisitResult.CONTINUE;
@@ -288,10 +286,10 @@ public class GenClasses {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     if (Files.exists(file)) {
 
-                        // CHANGE OUTPUT PACKAGES.
-                        byte[] data = Files.readAllBytes(file);
-                        String originalContent = new String(data, UTF8);
-                        String newContent = originalContent.replace(sourcePackage, destPackage);
+                        // Change output packages.
+                        final byte[] data = Files.readAllBytes(file);
+                        final String originalContent = new String(data, UTF8);
+                        final String newContent = originalContent.replace(sourcePackage, destPackage);
                         Files.write(file, newContent.getBytes(UTF8));
 
                         if (!newContent.equals(originalContent)) {
