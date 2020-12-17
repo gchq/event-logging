@@ -34,8 +34,11 @@ public final class AuthenticateUtil {
         // Utility class.
     }
 
-    public static void logon(final Event event, final String userId, final Boolean successful,
-                             final Boolean interactive, final AuthenticateOutcomeReason reason) {
+    public static void logon(final Event event,
+                             final String userId,
+                             final Boolean successful,
+                             final Boolean interactive,
+                             final AuthenticateOutcomeReason reason) {
         try {
             // Create authenticate object.
             final AuthenticateEventAction authenticateEvent = new AuthenticateEventAction();

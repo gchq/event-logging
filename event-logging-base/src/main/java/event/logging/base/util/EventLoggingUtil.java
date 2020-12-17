@@ -20,64 +20,68 @@ import event.logging.*;
 import java.util.Date;
 
 public final class EventLoggingUtil {
+
     private EventLoggingUtil() {
         // Utility class.
     }
 
     public static EventTime createEventTime(final Date date) {
-        final EventTime eventTime = new EventTime();
-        eventTime.setTimeCreated(date);
-        return eventTime;
+        return EventTime.builder()
+                .withTimeCreated(date)
+                .build();
     }
 
     public static User createUser(final String userId) {
-        final User user = new User();
-        user.setId(userId);
-        return user;
+        return User.builder()
+               .withId(userId)
+                .build();
     }
 
     public static EventDetail createEventDetail(final String typeId,
-                                                      final String description) {
-        final EventDetail eventDetail = new EventDetail();
-        eventDetail.setTypeId(typeId);
-        eventDetail.setDescription(description);
-        return eventDetail;
+                                                final String description) {
+        return EventDetail.builder()
+                .withTypeId(typeId)
+                .withDescription(description)
+                .build();
     }
 
     public static Data createData(final String name, final String value) {
-        final Data data = new Data();
-        data.setName(name);
-        data.setValue(value);
-        return data;
+        return Data.builder()
+                .withName(name)
+                .withValue(value)
+                .build();
     }
 
-    public static Term createTerm(final String name, final TermCondition condition,
+    public static Term createTerm(final String name,
+                                  final TermCondition condition,
                                   final String value) {
-        final Term term = new Term();
-        term.setName(name);
-        term.setCondition(condition);
-        term.setValue(value);
-        return term;
+        return Term.builder()
+                .withName(name)
+                .withCondition(condition)
+                .withValue(value)
+                .build();
     }
 
     public static Outcome createOutcome(final Throwable throwable) {
+        final Outcome outcome;
         if (throwable != null) {
-            if (throwable.getMessage() != null) {
-                return createOutcome(Boolean.FALSE, throwable.getMessage());
-            } else {
-                return createOutcome(Boolean.FALSE, throwable.getClass()
-                        .getName());
-            }
+            outcome = Outcome.builder()
+                    .withSuccess(false)
+                    .withDescription(throwable.getMessage() != null
+                            ? throwable.getMessage()
+                            : throwable.getClass().getName())
+                    .build();
+        } else {
+            outcome = null;
         }
-
-        return null;
+        return outcome;
     }
 
     public static Outcome createOutcome(final Boolean success,
-            final String description) {
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(success);
-        outcome.setDescription(description);
-        return outcome;
+                                        final String description) {
+        return Outcome.builder()
+                .withSuccess(success)
+                .withDescription(description)
+                .build();
     }
 }
