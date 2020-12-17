@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 #API_URL="https://api.github.com/repos/gchq/event-logging/releases/latest"
 API_URL_BASE="https://api.github.com/repos/gchq/event-logging/releases/tags"
@@ -42,7 +42,7 @@ main() {
   extraCurlArgs=()
   if [[ -n "${GH_USER_AND_TOKEN}" ]]; then 
     # running in travis so use authentication
-    extraCurlArgs=( --user "${GH_USER_AND_TOKEN}" )
+    extraCurlArgs=( -H "Authorization: token ${GH_TOKEN}" )
   fi
 
   apiUrl="${API_URL_BASE}/${prevVersionTag}"
@@ -59,7 +59,7 @@ main() {
   #echo "Using jqScript: ${jqScript}"
 
   status_code="$( \
-    curl -sL -o /dev/null -w "%{http_code}" "${extraCurlArgs[@]}" "${apiUrl}")"
+    curl "${extraCurlArgs[@]}" -sL -o /dev/null -w "%{http_code}" "${apiUrl}" )"
 
   if [[ "${status_code}" -ne 200 ]]; then
     curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
