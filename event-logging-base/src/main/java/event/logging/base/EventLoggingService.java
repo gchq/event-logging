@@ -21,13 +21,28 @@ import event.logging.Event;
  * A service for creating events.
  */
 public interface EventLoggingService {
+
     /**
      * Creates an event that may have some common values set by default depending on the particular EventLoggingService
-     * implementation being used.
+     * implementation being used. If this method is not implemented it will return an empty event by default.
      * 
      * @return An event that is ready to have additional properties set.
      */
-    Event createEvent();
+    default Event createEvent() {
+        return new Event();
+    }
+
+    /**
+     * Creates an event builder instance that may have some common values set by default depending on the particular
+     * EventLoggingService implementation being used. The event builder provides a fluent API for building a complete
+     * event object in a single command. If this method is not implemented it will return a fresh builder
+     * instance with no modifications applied.
+     *
+     * @return An event builder instance that is ready to have additional properties set.
+     */
+    default Event.Builder<Void> buildEvent() {
+        return Event.builder();
+    }
 
     /**
      * Logs an event.

@@ -16,9 +16,6 @@
 package event.logging.base.util;
 
 import event.logging.*;
-import event.logging.*;
-import event.logging.Event.EventDetail;
-import event.logging.Event.EventTime;
 
 import java.util.Date;
 
@@ -27,8 +24,8 @@ public final class EventLoggingUtil {
         // Utility class.
     }
 
-    public static Event.EventTime createEventTime(final Date date) {
-        final Event.EventTime eventTime = new Event.EventTime();
+    public static EventTime createEventTime(final Date date) {
+        final EventTime eventTime = new EventTime();
         eventTime.setTimeCreated(date);
         return eventTime;
     }
@@ -39,9 +36,9 @@ public final class EventLoggingUtil {
         return user;
     }
 
-    public static Event.EventDetail createEventDetail(final String typeId,
+    public static EventDetail createEventDetail(final String typeId,
                                                       final String description) {
-        final Event.EventDetail eventDetail = new Event.EventDetail();
+        final EventDetail eventDetail = new EventDetail();
         eventDetail.setTypeId(typeId);
         eventDetail.setDescription(description);
         return eventDetail;

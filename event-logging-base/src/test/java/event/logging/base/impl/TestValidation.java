@@ -16,9 +16,13 @@
 package event.logging.base.impl;
 
 import event.logging.AuthenticateAction;
+import event.logging.AuthenticateEventAction;
 import event.logging.Device;
 import event.logging.Event;
-import event.logging.System;
+import event.logging.EventDetail;
+import event.logging.EventSource;
+import event.logging.EventTime;
+import event.logging.SystemDetail;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
 import event.logging.base.util.DeviceUtil;
@@ -50,8 +54,8 @@ public class TestValidation {
 
 
     @BeforeAll
-    public void setupCustomLogAppender() {
-        java.lang.System.setProperty("event.logging.logreceiver", "TestLogReceiver");
+    public static void setupCustomLogAppender() {
+        java.lang.System.setProperty("event.logging.logreceiver", "event.logging.base.impl.TestLogReceiver");
 
 
 //        consoleWriter = new StringWriter();
@@ -68,7 +72,7 @@ public class TestValidation {
     }
 
     @AfterAll
-    public void removeCustomLogAppender() {
+    public static void removeCustomLogAppender() {
 //        LoggerFactory.getLogger(DefaultXMLValidator.class).removeAppender(JUNIT_CONSOLE_APPENDER);
 
         java.lang.System.setProperty("event.logging.logreceiver", "event.logging.impl.LoggerLogReceiver");
@@ -90,7 +94,7 @@ public class TestValidation {
 
         eventLoggingService.log(createBasicEvent(eventLoggingService, "LOGIN", "LOGIN", EventValidity.INVALID));
 
-        assertThat(event.logging.base.impl.TestLogReceiver.getCurrentMessage().isEmpty()).isTrue();
+        assertThat(event.logging.base.impl.TestLogReceiver.getCurrentMessage().isEmpty()).isFalse();
     }
 
     @Test
@@ -147,21 +151,21 @@ public class TestValidation {
     private Event createBasicEvent(final EventLoggingService eventLoggingService, final String typeId,
                                    final String description, final EventValidity eventValidState) {
 
-        final Event.EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final System system = new System();
+        final SystemDetail system = new SystemDetail();
         system.setName("Test System");
         system.setEnvironment("Test");
 
-        final Event.EventSource eventSource = new Event.EventSource();
+        final EventSource eventSource = new EventSource();
         eventSource.setSystem(system);
         eventSource.setGenerator("JUnit");
         eventSource.setDevice(device);
         eventSource.setUser(user);
 
-        final Event.EventDetail eventDetail = new Event.EventDetail();
+        final EventDetail eventDetail = new EventDetail();
         eventDetail.setTypeId(typeId);
         eventDetail.setDescription(description);
 
@@ -175,11 +179,11 @@ public class TestValidation {
             final User authUser = new User();
             authUser.setId("someuser");
 
-            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-            authenticate.setAction(AuthenticateAction.LOGON);
-            authenticate.setUser(authUser);
+            final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+            authenticateEventAction.setAction(AuthenticateAction.LOGON);
+            authenticateEventAction.setAuthenticationEntity(authUser);
 
-            event.getEventDetail().setAuthenticate(authenticate);
+            event.getEventDetail().setEventAction(authenticateEventAction);
             event.getEventTime().setTimeCreated(new Date());
         }
 

@@ -15,29 +15,34 @@
  */
 package event.logging.base.impl;
 
+import event.logging.AdvancedQuery;
 import event.logging.AuthenticateAction;
-import event.logging.BaseAntiMalware;
+import event.logging.AuthenticateEventAction;
+import event.logging.CreateEventAction;
 import event.logging.Criteria;
 import event.logging.Data;
+import event.logging.Destination;
 import event.logging.Device;
 import event.logging.Document;
 import event.logging.Event;
-import event.logging.base.EventLoggingService;
-import event.logging.Export;
+import event.logging.EventDetail;
+import event.logging.EventSource;
+import event.logging.EventTime;
+import event.logging.ExportEventAction;
 import event.logging.File;
-import event.logging.Import;
+import event.logging.ImportEventAction;
 import event.logging.MultiObject;
-import event.logging.ObjectOutcome;
 import event.logging.Outcome;
-import event.logging.base.Payload;
 import event.logging.Query;
-import event.logging.Search;
-import event.logging.SendReceive;
-import event.logging.Software;
-import event.logging.System;
+import event.logging.SearchEventAction;
+import event.logging.SendEventAction;
+import event.logging.Source;
+import event.logging.SystemDetail;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
+import event.logging.base.EventLoggingService;
+import event.logging.base.Payload;
 import event.logging.base.util.DeviceUtil;
 import event.logging.base.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
@@ -78,18 +83,18 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testBasic() throws Exception {
+    void testBasic() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final User user = new User();
         user.setId("someuser");
 
-        final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-        authenticate.setAction(AuthenticateAction.LOGON);
-        authenticate.setUser(user);
+        final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+        authenticateEventAction.setAction(AuthenticateAction.LOGON);
+        authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticate(authenticate);
+        event.getEventDetail().setEventAction(authenticateEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -111,7 +116,7 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMultiThread() throws Exception {
+    void testMultiThread() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREADS);
@@ -130,12 +135,12 @@ public class EventLoggingServiceIT {
                             final User user = new User();
                             user.setId("someuser");
 
-                            final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-                            authenticate.setAction(AuthenticateAction.LOGON);
-                            authenticate.setUser(user);
+                            final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+                            authenticateEventAction.setAction(AuthenticateAction.LOGON);
+                            authenticateEventAction.setAuthenticationEntity(user);
 
                             final Event event = createBasicEvent("LOGIN", "LOGIN");
-                            event.getEventDetail().setAuthenticate(authenticate);
+                            event.getEventDetail().setEventAction(authenticateEventAction);
                             event.getEventTime().setTimeCreated(new Date());
                             eventLoggingService.log(event);
                             done.incrementAndGet();
@@ -156,21 +161,21 @@ public class EventLoggingServiceIT {
     }
 
     private Event createBasicEvent(final String typeId, final String description) {
-        final Event.EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final System system = new System();
+        final SystemDetail system = new SystemDetail();
         system.setName("Test System");
         system.setEnvironment("Test");
 
-        final Event.EventSource eventSource = new Event.EventSource();
+        final EventSource eventSource = new EventSource();
         eventSource.setSystem(system);
         eventSource.setGenerator("JUnit");
         eventSource.setDevice(device);
         eventSource.setUser(user);
 
-        final Event.EventDetail eventDetail = new Event.EventDetail();
+        final EventDetail eventDetail = new EventDetail();
         eventDetail.setTypeId(typeId);
         eventDetail.setDescription(description);
 
@@ -188,21 +193,21 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testAttributes() throws Exception {
+    void testAttributes() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final User user = EventLoggingUtil.createUser("someuser");
 
-        final Event.EventDetail.Authenticate authenticate = new Event.EventDetail.Authenticate();
-        authenticate.setAction(AuthenticateAction.LOGON);
-        authenticate.setUser(user);
+        final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+        authenticateEventAction.setAction(AuthenticateAction.LOGON);
+        authenticateEventAction.setAuthenticationEntity(user);
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
-        event.getEventDetail().setAuthenticate(authenticate);
+        event.getEventDetail().setEventAction(authenticateEventAction);
 
         for (int i = 0; i < 5; i++) {
-            authenticate.getData().add(EventLoggingUtil.createData("somename" + i, "somevalue" + i));
-            authenticate.getData().add(EventLoggingUtil.createData("someothername" + i, "someothervalue" + i));
+            authenticateEventAction.getData().add(EventLoggingUtil.createData("somename" + i, "somevalue" + i));
+            authenticateEventAction.getData().add(EventLoggingUtil.createData("someothername" + i, "someothervalue" + i));
         }
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
@@ -225,7 +230,7 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testCreateEvent() throws Exception {
+    void testCreateEvent() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final Document document = new Document();
@@ -235,12 +240,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -257,61 +262,61 @@ public class EventLoggingServiceIT {
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
 
+//    @Test
+//    void testAntiMalware() throws Exception {
+//        final long time = java.lang.System.currentTimeMillis();
+//
+//        final Document document = new Document();
+//        document.setId("Test Id");
+//        document.setTitle("Test Title");
+//
+//        final Outcome outcome = new Outcome();
+//        outcome.setSuccess(Boolean.TRUE);
+//
+//        final Software software = new Software();
+//        software.setManufacturer("AVToolsInc.");
+//        software.setName("Anti-virus");
+//
+//        final Signature signature = new Signature();
+//        signature.setUpdated(new Date());
+//        signature.setVersion("1.5");
+//
+//        final AntiMalware value = new AntiMalware();
+//        value.setProduct(software);
+//        value.setSignature(signature);
+//
+//        final AntiMalwareEventAction antiMalwareAction = new AntiMalwareEventAction();
+//        antiMalwareAction.setScanEngineUpdated(value);
+//
+//        final Event event = createBasicEvent("Create", "Create object");
+//        event.getEventDetail().setAntiMalwareEventAction(antiMalwareAction);
+//
+//        final EventLoggingService eventLoggingService = getEventLoggingService();
+//
+//        eventLoggingService.setValidate(true);
+//        eventLoggingService.log(event);
+//
+//        for (int i = 0; i < NUM_OF_RECORDS; i++) {
+//            event.getEventTime().setTimeCreated(new Date());
+//            eventLoggingService.log(event);
+//
+//            Thread.sleep(WAIT_BETWEEN_RECORDS);
+//        }
+//
+//        java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
+//    }
+
     @Test
-    public void testAntiMalware() throws Exception {
-        final long time = java.lang.System.currentTimeMillis();
-
-        final Document document = new Document();
-        document.setId("Test Id");
-        document.setTitle("Test Title");
-
-        final Outcome outcome = new Outcome();
-        outcome.setSuccess(Boolean.TRUE);
-
-        final Software software = new Software();
-        software.setManufacturer("AVToolsInc.");
-        software.setName("Anti-virus");
-
-        final BaseAntiMalware.Signature signature = new BaseAntiMalware.Signature();
-        signature.setUpdated(new Date());
-        signature.setVersion("1.5");
-
-        final event.logging.AntiMalware value = new event.logging.AntiMalware();
-        value.setProduct(software);
-        value.setSignature(signature);
-
-        final Event.EventDetail.AntiMalware antiMalware = new Event.EventDetail.AntiMalware();
-        antiMalware.setScanEngineUpdated(value);
-
-        final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setAntiMalware(antiMalware);
-
-        final EventLoggingService eventLoggingService = getEventLoggingService();
-
-        eventLoggingService.setValidate(true);
-        eventLoggingService.log(event);
-
-        for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
-            eventLoggingService.log(event);
-
-            Thread.sleep(WAIT_BETWEEN_RECORDS);
-        }
-
-        java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
-    }
-
-    @Test
-    public void testNastyChars() throws Exception {
+    void testNastyChars() {
         final Query query = new Query();
         query.setRaw(
                 "(?'v?v&amp;?6?#46?R?6????????r????????-w?)::TYPE_TDI| additionalSearchParameters={includeAutoExpIdentifiers=SELECTED, caseInsensitiveMatching=SELECTED, allowWildcards=SELECTED}");
 
-        final Search search = new Search();
-        search.setQuery(query);
+        final SearchEventAction searchEventAction = new SearchEventAction();
+        searchEventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setEventAction(searchEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -320,15 +325,15 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testSmartQuotes() throws Exception {
+    void testSmartQuotes() {
         final Query query = new Query();
         query.setRaw("Daves quote");
 
-        final Search search = new Search();
-        search.setQuery(query);
+        final SearchEventAction searcheventAction = new SearchEventAction();
+        searcheventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -337,7 +342,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testNastyChars2() throws Exception {
+    void testNastyChars2() {
         final Query query = new Query();
 
         final StringBuilder sb = new StringBuilder();
@@ -350,11 +355,11 @@ public class EventLoggingServiceIT {
 
         query.setRaw(sb.toString());
 
-        final Search search = new Search();
-        search.setQuery(query);
+        final SearchEventAction searcheventAction = new SearchEventAction();
+        searcheventAction.setQuery(query);
 
         final Event event = createBasicEvent("Search", "Nasty search");
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -363,7 +368,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testSendReceive() throws Exception {
+    void testSendReceive() {
 
         final Event event = createBasicEvent("Send", "Send event");
 
@@ -379,19 +384,19 @@ public class EventLoggingServiceIT {
         final Device destDevice = new Device();
         destDevice.setHostName("destHost");
 
-        final SendReceive.Source source = new SendReceive.Source();
-        source.getUserOrDevice().add(sourceUser);
-        source.getUserOrDevice().add(sourceDevice);
+        final Source source = new Source();
+        source.getEndpoints().add(sourceUser);
+        source.getEndpoints().add(sourceDevice);
 
-        final SendReceive.Destination destination = new SendReceive.Destination();
-        destination.getUserOrDevice().add(destUser);
-        destination.getUserOrDevice().add(destDevice);
+        final Destination destination = new Destination();
+        destination.getEndpoints().add(destUser);
+        destination.getEndpoints().add(destDevice);
 
-        final SendReceive sendReceive = new SendReceive();
-        sendReceive.setSource(source);
-        sendReceive.setDestination(destination);
+        final SendEventAction sendEventAction = new SendEventAction();
+        sendEventAction.setSource(source);
+        sendEventAction.setDestination(destination);
 
-        event.getEventDetail().setSend(sendReceive);
+        event.getEventDetail().setEventAction(sendEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -401,7 +406,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testImport() throws Exception {
+    void testImport() {
 
         final Event event = createBasicEvent("Import", "Import event");
 
@@ -418,11 +423,11 @@ public class EventLoggingServiceIT {
         destFile.setName("DestFile");
         dest.getObjects().add(destFile);
 
-        final Import importElm = new Import();
-        importElm.setSource(source);
-        importElm.setDestination(dest);
+        final ImportEventAction importElmAction = new ImportEventAction();
+        importElmAction.setSource(source);
+        importElmAction.setDestination(dest);
 
-        event.getEventDetail().setImport(importElm);
+        event.getEventDetail().setEventAction(importElmAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -431,7 +436,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testCreateQuery() throws Exception {
+    void testCreateQuery(){
 
         final Event event = createBasicEvent("Query", "Simple query");
 
@@ -450,10 +455,10 @@ public class EventLoggingServiceIT {
         final Query query = new Query();
         query.setRaw("my query string!");
 
-        final Search search = new Search();
-        search.setQuery(query);
+        final SearchEventAction searcheventAction = new SearchEventAction();
+        searcheventAction.setQuery(query);
 
-        event.getEventDetail().setSearch(search);
+        event.getEventDetail().setEventAction(searcheventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -462,7 +467,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    public void testCreateExportAdvancedQuery() throws Exception {
+    void testCreateExportAdvancedQuery() {
 
         final Event event = createBasicEvent("Export-Criteria", "Export-Criteria-Search");
 
@@ -471,8 +476,8 @@ public class EventLoggingServiceIT {
         term.setCondition(TermCondition.GREATER_THAN);
         term.setValue("56789");
 
-        final Query.Advanced advancedQuery = new Query.Advanced();
-        advancedQuery.getAdvancedQueryItems().add(term);
+        final AdvancedQuery advancedQuery = new AdvancedQuery();
+        advancedQuery.getQueryItems().add(term);
 
         final Query query = new Query();
         query.setAdvanced(advancedQuery);
@@ -484,14 +489,14 @@ public class EventLoggingServiceIT {
 
         source.getObjects().add(criteria);
 
-        final Export export = new Export();
-        export.setSource(source);
+        final ExportEventAction exportEventAction = new ExportEventAction();
+        exportEventAction.setSource(source);
 
         final Data data = EventLoggingUtil.createData("MyName", "MyValue");
 
-        export.getData().add(data);
+        exportEventAction.getData().add(data);
 
-        event.getEventDetail().setExport(export);
+        event.getEventDetail().setEventAction(exportEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -505,7 +510,7 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMetaWithJSON() throws Exception {
+    void testMetaWithJSON() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final Document document = new Document();
@@ -515,12 +520,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -543,7 +548,7 @@ public class EventLoggingServiceIT {
      * @throws Exception Could be thrown.
      */
     @Test
-    public void testMetaWithXML() throws Exception {
+    void testMetaWithXML() throws Exception {
         final long time = java.lang.System.currentTimeMillis();
 
         final Document document = new Document();
@@ -553,12 +558,12 @@ public class EventLoggingServiceIT {
         final Outcome outcome = new Outcome();
         outcome.setSuccess(Boolean.TRUE);
 
-        final ObjectOutcome objectOutcome = new ObjectOutcome();
-        objectOutcome.setOutcome(outcome);
-        objectOutcome.getObjects().add(document);
+        final CreateEventAction createEventAction = new CreateEventAction();
+        createEventAction.setOutcome(outcome);
+        createEventAction.getObjects().add(document);
 
         final Event event = createBasicEvent("Create", "Create object");
-        event.getEventDetail().setCreate(objectOutcome);
+        event.getEventDetail().setEventAction(createEventAction);
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 

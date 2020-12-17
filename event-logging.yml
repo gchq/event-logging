@@ -10,4 +10,4 @@ windows:
       panes:
         - 
         - 
-  - vi: vim pom.xml README.md
+  - editor: vim pom.xml README.md

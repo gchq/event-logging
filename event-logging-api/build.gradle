@@ -17,7 +17,8 @@ dependencies {
     //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
     //runtime "ch.qos.logback:logback-classic:${versions.logback}"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
     testCompile "org.assertj:assertj-core:${versions.assertj}"
 }
 
