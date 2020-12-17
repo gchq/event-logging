@@ -37,12 +37,12 @@ main() {
 
   echo "Comparing current JAXB code to release ${prevVersionTag}"
 
-  # GH_USER_AND_TOKEN decalred in .travis.yml env:/global/:secure
+  # GITHUB_TOKEN decalred in travis settings UI
   # DO NOT echo the token!
   extraCurlArgs=()
-  if [[ -n "${GH_USER_AND_TOKEN}" ]]; then 
+  if [[ -n "${GITHUB_TOKEN}" ]]; then 
     # running in travis so use authentication
-    extraCurlArgs=( -H "Authorization: token ${GH_TOKEN}" )
+    extraCurlArgs=( -H "Authorization: token ${GITHUB_TOKEN}" )
   fi
 
   apiUrl="${API_URL_BASE}/${prevVersionTag}"
