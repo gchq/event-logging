@@ -2,7 +2,6 @@
 
 set -eo pipefail
 
-#API_URL="https://api.github.com/repos/gchq/event-logging/releases/latest"
 API_URL_BASE="https://api.github.com/repos/gchq/event-logging/releases/tags"
 
 #Shell Colour constants for use in 'echo -e'
@@ -31,33 +30,34 @@ main() {
     exit 1
   fi
 
-  workingDir=${1}
-  prevVersionTag="${2}"
+  local workingDir=${1}
+  local prevVersionTag="${2}"
   echo "workingDir=${workingDir}"
 
   echo "Comparing current JAXB code to release ${prevVersionTag}"
 
   # GITHUB_TOKEN decalred in travis settings UI
   # DO NOT echo the token!
-  extraCurlArgs=()
+  local extraCurlArgs=()
   if [[ -n "${GITHUB_TOKEN}" ]]; then 
     # running in travis so use authentication
     extraCurlArgs=( -H "Authorization: token ${GITHUB_TOKEN}" )
   fi
 
-  apiUrl="${API_URL_BASE}/${prevVersionTag}"
-  prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
+  local apiUrl="${API_URL_BASE}/${prevVersionTag}"
+  local prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
 
   echo "Using API URL: ${apiUrl}"
   echo "Searching for file: ${prevVersionJar}"
 
-  jqScript=".assets[]
+  local jqScript=".assets[]
       | select( .name 
       | contains(\"${prevVersionJar}\")) 
       | .browser_download_url"
 
   #echo "Using jqScript: ${jqScript}"
 
+  local status_code
   status_code="$( \
     curl "${extraCurlArgs[@]}" -sL -o /dev/null -w "%{http_code}" "${apiUrl}" )"
 
@@ -65,40 +65,12 @@ main() {
     curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
   fi
 
-  curl -s "${extraCurlArgs[@]}" "${apiUrl}" \
-    | jq -r ".assets[]" | head -n 200
-
   # Call the github API to git the json for the latest release, 
   # then extract the sources jar binary url from it
+  local sourcesJarUrl
   sourcesJarUrl="$( \
     curl -s "${extraCurlArgs[@]}" "${apiUrl}" \
     | jq -r "${jqScript}" )"
-
-  # Call the github API to git the json for the latest release, 
-  # then extract the sources jar binary url from it
-  # GH_USER_AND_TOKEN decalred in .travis.yml env:/global/:secure
-  #sedScriptArgs=( 's/"browser_download_url":.*"\(http.*event-logging-v.*sources\.jar\)"/\1/p' )
-  #extraCurlArgs=()
-  #if [ ! "${GH_USER_AND_TOKEN}x" = "x" ]; then 
-    ## running in travis so use authentication
-    #extraCurlArgs=( --user "${GH_USER_AND_TOKEN}" )
-  #fi
-  #latestUrl=$( \
-    #curl -s "${extraCurlArgs[@]}" ${API_URL} \
-    #| sed -ne "${sedScriptArgs[@]}")
-
-  ##echo "latestUrl=${latestUrl}"
-  ##echo "PWD=${PWD}"
-
-  #if [ "${latestUrl}x" = "x" ]; then 
-    #echo
-    #echo -e "${RED}ERROR${NC} Latest sources file url could not be found" \
-      #"from ${API_URL} json content:"
-    ##dump out all the download urls
-    #curl -s ${API_URL} \
-      #| grep "\"browser_download_url\""
-    #exit 1
-  #fi
 
   pushd "${workingDir}"
 
