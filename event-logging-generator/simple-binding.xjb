@@ -129,7 +129,7 @@
 
         <!-- make any top level complex types with an Outcome complexType element implement HasOutcome to
             make it easier to get the outcome from an action -->
-        <jaxb:bindings multiple="true" node="xs:complexType[.//xs:element[@type='evt:Outcome']]">
+        <jaxb:bindings multiple="true" node="xs:complexType[.//xs:element[@type='evt:Outcome' or @type='evt:CopyMoveOutcome' or @type='evt:AuthenticateOutcome'] or .//xs:group[@ref='evt:InstallationGroup']]">
             <inheritance:implements>HasOutcome</inheritance:implements> 
         </jaxb:bindings>
 

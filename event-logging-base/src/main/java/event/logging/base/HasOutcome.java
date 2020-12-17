@@ -1,10 +1,8 @@
 package event.logging.base;
 
-import event.logging.Outcome;
+import event.logging.BaseOutcome;
 
 public interface HasOutcome {
 
-    Outcome getOutcome();
-
-    void setOutcome(final Outcome outcome);
+    BaseOutcome getOutcome();
 }
