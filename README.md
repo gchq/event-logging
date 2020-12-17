@@ -236,6 +236,20 @@ The Gradle build will download the schema from GitHub as long as the following l
 def eventLoggingSchemaVer = "v3.1.2"
 ```
 
+The class that manages the code generation is `event.logging.gen.GenClasses`.
+As well running `xjc` it copies various non-generated classes and resources into the _event-logging-api_ module which is what the published jar is ultimately build from.
+
+#### Bindings
+
+To further fine tune the code that is generated from the schema, _xjc_ uses a bindings file `simple-binding.xjb`.
+This allows us to do things like changing the name of generated classes or making classes implement a non-generated interface.
+Note the bindings file is run against a modified version of the source schema (_schema.mod.xsd_) that is produced by _GenClasses_.
+The main aim of this is to remove the suffix `ComplexType` from the complex types so that the Java classes don't have this as a suffix.
+Because the bindings file operates against the modified schema any xpaths will need to be in terms of that scheme, i.e. `@name='Foo'` rather than `@name='FooComplexType'`.
+Any changes to the schema may require changes to the bindings, e.g. the introduction of a new event action would require some additional bindings to make its class implement the `EventAction` interface.
+
+#### Generated Code Comparison
+
 Part of the build process is to compare the generated code against a previous release.
 This allows you to see how any change to the schema has impacted the java code.
 As the build is unable to determine what constitutes the previous release you need to specify it in the root build file.
