@@ -65,6 +65,9 @@ main() {
     curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
   fi
 
+  curl -s "${extraCurlArgs[@]}" "${apiUrl}" \
+    | jq -r ".assets[]" | head -n 200
+
   # Call the github API to git the json for the latest release, 
   # then extract the sources jar binary url from it
   sourcesJarUrl="$( \
