@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* Uplifted schema to v3.5.2
+
+## [v5.0-beta.1_schema-v4.0-beta.1] - 2020-12-17
+
+* Uplifted schema to v4.0-beta.1
 
 * Issue **gchq/event-logging-schema#54** : Remove `Outcome` from `Network`, add new `NetworkOutcome` class.
 
@@ -110,6 +113,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v3.5.2...HEAD
-[v5.0-beta.1_schema-v3.5.2]: https://github.com/gchq/event-logging/compare/v4.0.7_schema-v3.2.4...v3.2.4_schema-v3.2.4
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...HEAD
+[v5.0-beta.1_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...v3.2.4_schema-v3.2.4
 
