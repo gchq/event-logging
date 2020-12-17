@@ -127,6 +127,12 @@
             <inheritance:implements>PermissionEntity</inheritance:implements> 
         </jaxb:bindings>
 
+        <!-- make any top level complex types with an Outcome complexType element implement HasOutcome to
+            make it easier to get the outcome from an action -->
+        <jaxb:bindings multiple="true" node="xs:complexType[.//xs:element[@type='evt:Outcome']]">
+            <inheritance:implements>HasOutcome</inheritance:implements> 
+        </jaxb:bindings>
+
         <!-- Change prop name from userOrDevice to endpoints-->
         <jaxb:bindings node="xs:group[@name='SendReceiveGroup']/xs:sequence">
             <jaxb:bindings 
@@ -159,6 +165,8 @@
             clashes now we have all top level classes. Also make each class implement
             our EventAction marker interface, which also adds clarity but mainly means
             we can have a single eventAction property.
+
+            If you add any new schema actions then you need to add a block in here for it.
         -->
 
         <jaxb:bindings node="xs:complexType[@name='EventDetail']/xs:sequence/xs:choice">

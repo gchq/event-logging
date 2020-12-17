@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v5.0-beta.2_schema-v4.0-beta.1] - 2020-12-17
+
+* Add `HasOutcome` interface and make all complex types with an Outcome element implement it.
+
 
 ## [v5.0-beta.1_schema-v4.0-beta.1] - 2020-12-17
 
@@ -113,6 +117,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...HEAD
-[v5.0-beta.1_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...v3.2.4_schema-v3.2.4
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.2_schema-v4.0-beta.1...HEAD
+[v5.0-beta.2_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...v5.0-beta.2_schema-v4.0-beta.1
+[v5.0-beta.1_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v4.0.7_schema-v3.2.4...v5.0-beta.1_schema-v4.0-beta.1
 
