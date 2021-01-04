@@ -344,8 +344,13 @@
         </jaxb:bindings>
 
         <!-- Make all query items implement the same marker interface so we can have a List<AdvancedQueryItem> -->
-        <jaxb:bindings multiple="true" node="xs:complexType[@name='Term' or @name='And' or @name='Or' or @name='Not']">
+
+        <jaxb:bindings multiple="true" node="xs:complexType[@name='Term']">
             <inheritance:implements>AdvancedQueryItem</inheritance:implements> 
+        </jaxb:bindings>
+        <jaxb:bindings multiple="true" node="xs:complexType[@name='And' or @name='Or' or @name='Not']">
+            <!-- This extends AdvancedQueryItem -->
+            <inheritance:implements>AdvancedQueryOperator</inheritance:implements> 
         </jaxb:bindings>
 
         <jaxb:bindings 
