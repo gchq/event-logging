@@ -57,7 +57,7 @@ def eventLoggingSchemaVer = "v4.0-beta.1"
 // Set this to the last release of this repo on this branch, or earlier branches
 // It is used to diff the current jaxb code against the last release
 // *****************************************************************************
-ext.previousReleaseVersion = "v5.0-beta.3_schema-v4.0-beta.1"
+ext.previousReleaseVersion = "v5.0-beta.4_schema-v4.0-beta.1"
 // *****************************************************************************
 
 
