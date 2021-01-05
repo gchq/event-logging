@@ -20,6 +20,8 @@ import event.logging.And;
 import event.logging.AnyContent;
 import event.logging.AuthenticateAction;
 import event.logging.AuthenticateEventAction;
+import event.logging.AuthenticateOutcome;
+import event.logging.AuthenticateOutcomeReason;
 import event.logging.CreateEventAction;
 import event.logging.Criteria;
 import event.logging.Data;
@@ -43,7 +45,9 @@ import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
+import event.logging.base.LoggedResult;
 import event.logging.base.util.EventLoggingUtil;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -174,6 +178,124 @@ class FluentEventLoggingServiceIT {
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
 
+    @Test
+    void testLoggedResult_Simple() {
+
+        final String username = "jbloggs";
+        final Integer result = getEventLoggingService().loggedResult(
+                "login",
+                "User " + username + " logged in",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withName(username)
+                                .build())
+                        .withAction(AuthenticateAction.LOGON)
+                        .build(),
+                () -> {
+                    // Now do the logged work and return the result of it
+                    return 42;
+                }
+        );
+
+        Assertions.assertThat(result)
+                .isEqualTo(42);
+    }
+
+    @Test
+    void testLoggedAction_Simple() {
+
+        final String username = "jbloggs";
+        getEventLoggingService().loggedAction(
+                "login",
+                "User " + username + " logged in",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withName(username)
+                                .build())
+                        .withAction(AuthenticateAction.LOGON)
+                        .build(),
+                () -> {
+                    // Now do the logged work and return the result of it
+                    System.out.println("Doing some work");
+                }
+        );
+    }
+
+    @Test
+    void testLoggedResult_Advanced() {
+
+        final String username = "jbloggs";
+        final Integer result = getEventLoggingService().loggedResult(
+                "login",
+                "User " + username + " logged in",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withName(username)
+                                .build())
+                        .withAction(AuthenticateAction.LOGON)
+                        .build(),
+                eventAction -> {
+                    // Now do the logged work and return the result of it
+                    final int theAnswer = 42;
+                    final AuthenticateEventAction newEventAction = eventAction.newCopyBuilder()
+                            .withData(Data.builder()
+                                    .withName("extraInfo")
+                                    .withValue("a value")
+                                    .build())
+                            .build();
+                    return LoggedResult.of(42, newEventAction);
+                },
+                (eventAction, throwable) -> {
+                    final AuthenticateEventAction newEventAction = eventAction.newCopyBuilder()
+                                    .withOutcome(AuthenticateOutcome.builder()
+                                            .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
+                                            .withDescription(throwable.getMessage())
+                                            .withSuccess(false)
+                                            .build())
+                            .build();
+
+                    return newEventAction;
+                }
+        );
+
+        Assertions.assertThat(result)
+                .isEqualTo(42);
+    }
+
+    @Test
+    void testLoggedAction_Advanced() {
+
+        final String username = "jbloggs";
+        getEventLoggingService().loggedAction(
+                "login",
+                "User " + username + " logged in",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withName(username)
+                                .build())
+                        .withAction(AuthenticateAction.LOGON)
+                        .build(),
+                eventAction -> {
+                    // Now do the logged work and return the result of it
+                    final int theAnswer = 42;
+                    return eventAction.newCopyBuilder()
+                            .withData(Data.builder()
+                                    .withName("extraInfo")
+                                    .withValue("a value")
+                                    .build())
+                            .build();
+                },
+                (eventAction, throwable) ->
+                        eventAction.newCopyBuilder()
+                                .withOutcome(AuthenticateOutcome.builder()
+                                        .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
+                                        .withDescription(throwable.getMessage())
+                                        .withSuccess(false)
+                                        .build())
+                                .build()
+        );
+    }
+
     /**
      * Tests the creation of some events using paths.
      *
@@ -287,7 +409,7 @@ class FluentEventLoggingServiceIT {
 
         final Event event = createBasicEvent("LOGIN", "LOGIN");
 
-        final AuthenticateEventAction.Builder authenticateBuilder = AuthenticateEventAction.builder()
+        final AuthenticateEventAction.Builder<Void> authenticateBuilder = AuthenticateEventAction.builder()
                 .withAction(AuthenticateAction.LOGON)
                 .withUser(EventLoggingUtil.createUser("someuser"));
 
