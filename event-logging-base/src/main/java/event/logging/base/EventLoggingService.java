@@ -19,10 +19,7 @@ import event.logging.Event;
 import event.logging.EventAction;
 import event.logging.EventDetail;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * A service for creating events.
@@ -32,9 +29,12 @@ public interface EventLoggingService {
     /**
      * Creates an event that may have some common values set by default depending on the particular EventLoggingService
      * implementation being used. If this method is not implemented it will return an empty event by default.
+     *
+     * Using {@link EventLoggingService#createEvent(String, String, EventAction)} should be preferred.
      * 
      * @return An event that is ready to have additional properties set.
      */
+
     default Event createEvent() {
         return new Event();
     }
@@ -63,31 +63,19 @@ public interface EventLoggingService {
     }
 
     /**
-     * Creates an event builder instance that may have some common values set by default depending on the particular
-     * EventLoggingService implementation being used. The event builder provides a fluent API for building a complete
-     * event object in a single command. If this method is not implemented it will return a fresh builder
-     * instance with no modifications applied.
-     *
-     * @return An event builder instance that is ready to have additional properties set.
-     */
-    default Event.Builder<Void> buildEvent() {
-        return Event.builder();
-    }
-
-    /**
      * Logs an event.
      * 
      * @param event The event to log.
      */
     void log(Event event);
 
-
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, Function, BiFunction)}
+     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
      * Use this form when you do not need to modify the event based on the result of the work and the work
      * has no result.
      * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * {@link EventAction} before it is logged and the exception re-thrown.
+     * @param loggedWork A {@link Runnable} of the work to be logged. If no exception is thrown success is assumed.
      */
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
@@ -95,9 +83,10 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final Runnable loggedWork) {
 
-        final Function<T_EVENT_ACTION, LoggedResult<Void, T_EVENT_ACTION>> loggedResultFunction = event -> {
+        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
             loggedWork.run();
-            return LoggedResult.of(null, event);
+            // We don't have an outcome so assume success
+            return ComplexLoggedOutcome.of(LoggedOutcome.success(), eventAction2);
         };
 
         loggedResult(
@@ -109,20 +98,47 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, Function, BiFunction)}
-     * Use this form when the logged work has no result.
+     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
+     * Use this form when you do not need to modify the event based on the result of the work and the work
+     * has no result.
      * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * {@link EventAction} before it is logged and the exception re-thrown.
+     * @param loggedWork The work that is being logged with the outcome of the work being return as a
+     *                   {@link LoggedOutcome}.
      */
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
             final T_EVENT_ACTION eventAction,
-            final UnaryOperator<T_EVENT_ACTION> loggedWork,
-            final BiFunction<T_EVENT_ACTION, Throwable, T_EVENT_ACTION> exceptionHandler) {
+            final LoggedRunnable loggedWork) {
 
-        final Function<T_EVENT_ACTION, LoggedResult<Void, T_EVENT_ACTION>> loggedResultFunction = eventAction2 ->
-                LoggedResult.of(null, loggedWork.apply(eventAction2));
+        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
+            final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
+            return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
+        };
+
+        loggedResult(
+                eventTypeId,
+                description,
+                eventAction,
+                loggedResultFunction,
+                null);
+    }
+
+    /**
+     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
+     * Use this form when the logged work has no result.
+     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
+     * {@link EventAction} before it is logged and the exception re-thrown.
+     */
+    default <T_EVENT_ACTION extends EventAction> void loggedAction(
+            final String eventTypeId,
+            final String description,
+            final T_EVENT_ACTION eventAction,
+            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork,
+            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
+
+        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> loggedWork.run(eventAction2);
 
         loggedResult(
                 eventTypeId,
@@ -133,7 +149,7 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, Function, BiFunction)}
+     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
      * Use this form when you do not need to modify the event based on the result of the work.
      * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
      * {@link EventAction} before it is logged.
@@ -144,8 +160,34 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final Supplier<T_RESULT> loggedWork) {
 
-        final Function<T_EVENT_ACTION, LoggedResult<T_RESULT, T_EVENT_ACTION>> loggedResultFunction = event ->
-                LoggedResult.of(loggedWork.get(), event);
+        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
+            T_RESULT result = loggedWork.get();
+            // We don't have an outcome so assume success
+            return ComplexLoggedOutcome.of(LoggedOutcome.success(result), eventAction2);
+        };
+
+        return loggedResult(
+                eventTypeId,
+                description,
+                eventAction,
+                loggedResultFunction,
+                null);
+    }
+
+    /**
+     * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
+     * Use this form when you do not need to modify the event based on the result of the work.
+     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
+     * {@link EventAction} before it is logged.
+     */
+    default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
+            final String eventTypeId,
+            final String description,
+            final T_EVENT_ACTION eventAction,
+            final LoggedSupplier<T_RESULT> loggedWork) {
+
+        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 ->
+                ComplexLoggedOutcome.of(loggedWork.get(), eventAction2);
 
         return loggedResult(
                 eventTypeId,
@@ -167,10 +209,11 @@ public interface EventLoggingService {
      *                    {@link event.logging.EventDetail#setDescription(String)}
      * @param eventAction The skeleton {@link EventAction} that will be used to create the event unless
      *                    {@code loggedWork} of {@code exceptionHandler} provide an alternative.
-     * @param loggedWork A function to perform the work that is being logged and to return the {@link EventAction}
-     *                   and the result of the work. This allows a new {@link EventAction} to be returned
+     * @param loggedWork A lambda to perform the work that is being logged and to return the {@link EventAction}
+     *                   , the result of the work and the outcome. This allows a new {@link EventAction} to be returned
      *                   based on the result of the work. The skeleton {@link EventAction} is passed in
-     *                   to allow it to be copied. The result of the work must be returned within a {@link LoggedResult}
+     *                   to allow it to be copied. The result of the work must be returned within a
+     *                   {@link ComplexLoggedOutcome}
      *                   along with the desired {@link EventAction}.
      * @param exceptionHandler A function to allow you to provide a different {@link EventAction} based on
      *                         the exception. The skeleton {@link EventAction} is passed in to allow it to be
@@ -186,8 +229,8 @@ public interface EventLoggingService {
             final String eventTypeId,
             final String description,
             final T_EVENT_ACTION eventAction,
-            final Function<T_EVENT_ACTION, LoggedResult<T_RESULT, T_EVENT_ACTION>> loggedWork,
-            final BiFunction<T_EVENT_ACTION, Throwable, T_EVENT_ACTION> exceptionHandler);
+            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
+            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler);
 
     /**
      * Set to true if the event logging service should validate the output XML against the schema. This option helps

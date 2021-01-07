@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v5.0-beta.6_schema-v4.0-beta.1] - 2021-01-05
+
+* Improve loggedXXX methods in `EventLoggingService`.
+
 
 ## [v5.0-beta.5_schema-v4.0-beta.1] - 2021-01-05
 
@@ -133,7 +137,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.5_schema-v4.0-beta.1...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.6_schema-v4.0-beta.1...HEAD
+[v5.0-beta.6_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.5_schema-v4.0-beta.1...v5.0-beta.6_schema-v4.0-beta.1
 [v5.0-beta.5_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.4_schema-v4.0-beta.1...v5.0-beta.5_schema-v4.0-beta.1
 [v5.0-beta.4_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.3_schema-v4.0-beta.1...v5.0-beta.4_schema-v4.0-beta.1
 [v5.0-beta.3_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.2_schema-v4.0-beta.1...v5.0-beta.3_schema-v4.0-beta.1

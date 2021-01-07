@@ -44,8 +44,8 @@ import event.logging.SystemDetail;
 import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
+import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.EventLoggingService;
-import event.logging.base.LoggedResult;
 import event.logging.base.util.EventLoggingUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -78,7 +78,7 @@ class FluentEventLoggingServiceIT {
     void testPartiallyFluentExample() {
         final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
-        final Event event = eventLoggingService.buildEvent()
+        final Event event = Event.builder()
                 .withEventTime(EventTime.builder()
                         .withTimeCreated(new Date())
                         .build())
@@ -114,7 +114,7 @@ class FluentEventLoggingServiceIT {
     void testFullyFluentExample() {
         final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
-        final Event event = eventLoggingService.buildEvent()
+        final Event event = Event.builder()
                 .withEventTime()
                         .withTimeCreated(new Date())
                         .end()
@@ -243,19 +243,16 @@ class FluentEventLoggingServiceIT {
                                     .withValue("a value")
                                     .build())
                             .build();
-                    return LoggedResult.of(42, newEventAction);
+                    return ComplexLoggedOutcome.success(42, newEventAction);
                 },
-                (eventAction, throwable) -> {
-                    final AuthenticateEventAction newEventAction = eventAction.newCopyBuilder()
-                                    .withOutcome(AuthenticateOutcome.builder()
-                                            .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
-                                            .withDescription(throwable.getMessage())
-                                            .withSuccess(false)
-                                            .build())
-                            .build();
-
-                    return newEventAction;
-                }
+                (eventAction, throwable) ->
+                        eventAction.newCopyBuilder()
+                                .withOutcome(AuthenticateOutcome.builder()
+                                        .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
+                                        .withDescription(throwable.getMessage())
+                                        .withSuccess(false)
+                                        .build())
+                                .build()
         );
 
         Assertions.assertThat(result)
@@ -276,14 +273,17 @@ class FluentEventLoggingServiceIT {
                         .withAction(AuthenticateAction.LOGON)
                         .build(),
                 eventAction -> {
-                    // Now do the logged work and return the result of it
-                    final int theAnswer = 42;
-                    return eventAction.newCopyBuilder()
+
+                    // Now do the logged work and return the outcome
+
+                    AuthenticateEventAction newEventAction = eventAction.newCopyBuilder()
                             .withData(Data.builder()
                                     .withName("extraInfo")
                                     .withValue("a value")
                                     .build())
                             .build();
+
+                    return ComplexLoggedOutcome.success(newEventAction);
                 },
                 (eventAction, throwable) ->
                         eventAction.newCopyBuilder()

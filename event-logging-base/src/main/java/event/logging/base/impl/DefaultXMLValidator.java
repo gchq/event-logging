@@ -42,12 +42,12 @@ public final class DefaultXMLValidator implements XMLValidator {
 
     private final Schema schema;
     private final ErrorHandler validationErrorHandler;
-    private static final event.logging.base.impl.ValidationExceptionBehaviourMode DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE = event.logging.base.impl.ValidationExceptionBehaviourMode.LOG;
-    private final event.logging.base.impl.ValidationExceptionBehaviourMode validationExceptionBehaviourMode;
+    private static final ValidationExceptionBehaviourMode DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE = event.logging.base.impl.ValidationExceptionBehaviourMode.LOG;
+    private final ValidationExceptionBehaviourMode validationExceptionBehaviourMode;
 
     public DefaultXMLValidator(final String schemaLocation) {
         // use the default of logging all validation messages
-        this(schemaLocation, new event.logging.base.impl.LoggingErrorHandler(), DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
+        this(schemaLocation, new LoggingErrorHandler(), DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
 
     }
 
@@ -56,7 +56,7 @@ public final class DefaultXMLValidator implements XMLValidator {
     }
 
     public DefaultXMLValidator(final String schemaLocation, final ErrorHandler validationErrorHandler,
-                               final event.logging.base.impl.ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
+                               final ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
 
         if (validationErrorHandler == null) {
             throw new RuntimeException("Null errorHandler supplied");
@@ -82,7 +82,7 @@ public final class DefaultXMLValidator implements XMLValidator {
             }
 
             final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            final event.logging.base.impl.LoggingErrorHandler errorHandler = new LoggingErrorHandler();
+            final LoggingErrorHandler errorHandler = new LoggingErrorHandler();
             schemaFactory.setErrorHandler(errorHandler);
             schema = schemaFactory.newSchema(new StreamSource(inputStream));
             if (!errorHandler.isOk()) {

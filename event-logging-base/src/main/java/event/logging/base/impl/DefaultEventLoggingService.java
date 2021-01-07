@@ -19,8 +19,10 @@ import event.logging.BaseOutcome;
 import event.logging.Event;
 import event.logging.EventAction;
 import event.logging.HasOutcome;
+import event.logging.base.ComplexLoggedOutcome;
+import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggingService;
-import event.logging.base.LoggedResult;
+import event.logging.base.LoggedWorkExceptionHandler;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -103,8 +104,8 @@ public class DefaultEventLoggingService implements EventLoggingService {
             final String eventTypeId,
             final String description,
             final T_EVENT_ACTION eventAction,
-            final Function<T_EVENT_ACTION, LoggedResult<T_RESULT, T_EVENT_ACTION>> loggedWork,
-            final BiFunction<T_EVENT_ACTION, Throwable, T_EVENT_ACTION> exceptionHandler) {
+            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
+            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
         Objects.requireNonNull(eventAction);
         Objects.requireNonNull(loggedWork);
@@ -114,17 +115,17 @@ public class DefaultEventLoggingService implements EventLoggingService {
         try {
             // Perform the callers work, allowing them to provide a new EventAction based on the
             // result of the work e.g. if they are updating a record, they can capture the before state
-            final LoggedResult<T_RESULT, T_EVENT_ACTION> loggedResult = loggedWork.apply(eventAction);
+            final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork.get(eventAction);
 
-            final Event event = createEvent(eventTypeId, description, loggedResult.getEventAction());
+            final Event event = createEvent(eventTypeId, description, complexLoggedOutcome.getEventAction());
             log(event);
-            result = loggedResult.getResult();
+            result = complexLoggedOutcome.getResult();
         } catch (Throwable e) {
             T_EVENT_ACTION newEventAction = eventAction;
             if (exceptionHandler != null) {
                 try {
                     // Allow caller to provide a new EventAction based on the exception
-                    newEventAction = exceptionHandler.apply(eventAction, e);
+                    newEventAction = exceptionHandler.handle(eventAction, e);
                 } catch (Exception exception) {
                     LOGGER.error( "Error running exception handler. " +
                             "Swallowing exception and rethrowing original exception", e);
