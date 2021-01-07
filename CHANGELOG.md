@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [v5.0-beta.6_schema-v4.0-beta.1] - 2021-01-05
+## [v5.0-beta.6_schema-v4.0-beta.1] - 2021-01-07
 
 * Improve loggedXXX methods in `EventLoggingService`.
 
