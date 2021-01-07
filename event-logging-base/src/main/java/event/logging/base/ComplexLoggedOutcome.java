@@ -72,11 +72,11 @@ public class ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION extends EventAction> 
         return eventAction;
     }
 
-    String getOutcomeDescription() {
+    public String getOutcomeDescription() {
         return loggedOutcome.getOutcomeDescription();
     }
 
-    boolean wasSuccessful() {
+    public boolean wasSuccessful() {
         return loggedOutcome.wasSuccessful();
     }
 
