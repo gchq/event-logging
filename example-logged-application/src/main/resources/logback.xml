@@ -1,0 +1,49 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%highlight(%-5level) %d{"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",UTC} %yellow(%thread) %cyan(%-30logger{25}) %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SCHEMA" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%m;%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="event.logging.example" level="info" />
+
+    <root level="error">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+
+    <!-- Configuration for logging XML events to rolling files -->
+
+    <appender name="rolling-event-logs" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>./logs/events.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>./logs/events.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="event-logger" level="info" additivity="false">
+
+        <!-- Log to rolling files ready for sending to Stroom or some other log collection service -->
+        <appender-ref ref="rolling-event-logs" />
+
+        <!-- Also logging to console for demonstration purposes only -->
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+</configuration>

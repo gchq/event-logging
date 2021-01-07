@@ -5,11 +5,14 @@ set -e
 
 #Shell Colour constants for use in 'echo -e'
 #e.g.  echo -e "My message ${GREEN}with just this text in green${NC}"
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[1;34m'
-NC='\033[0m' # No Colour 
+# shellcheck disable=SC2034
+{
+  RED='\033[1;31m'
+  GREEN='\033[1;32m'
+  YELLOW='\033[1;33m'
+  BLUE='\033[1;34m'
+  NC='\033[0m' # No Colour 
+}
 
 #establish what version we are building
 if [ -n "$TRAVIS_TAG" ]; then
@@ -36,5 +39,13 @@ echo -e "PRODUCT_VERSION:     [${GREEN}${PRODUCT_VERSION}${NC}]"
 
 #Run the build (including running maven install task to generate poms
 ./gradlew -Pversion=$PRODUCT_VERSION clean build ${EXTRA_BUILD_ARGS}
+
+echo -e "${GREEN}Now run example application build${NC}"
+
+pushd example-logged-application >/dev/null
+
+./gradlew clean build
+
+popd >/dev/null
 
 exit 0
