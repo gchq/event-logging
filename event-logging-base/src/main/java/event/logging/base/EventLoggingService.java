@@ -70,6 +70,21 @@ public interface EventLoggingService {
     void log(Event event);
 
     /**
+     * Logs an event with the supplied typeId, description and {@link EventAction}.
+     * Makes use of {@link event.logging.EventLoggingService#createEvent(String, String, EventAction)}
+     * to provide an event with other common values set.
+     *
+     * @param typeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
+     * @param description The description of the event, see {@link EventDetail#setDescription(String)}
+     * @param eventAction The action of the logged event, see {@link EventAction}
+     */
+    default void log(final String typeId,
+                     final String description,
+                     final EventAction eventAction) {
+        log(createEvent(typeId, description, eventAction));
+    }
+
+    /**
      * See also {@link EventLoggingService#loggedResult(String, String, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
      * Use this form when you do not need to modify the event based on the result of the work and the work
      * has no result.
