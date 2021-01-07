@@ -26,9 +26,9 @@
     <!-- Configuration for logging XML events to rolling files -->
 
     <appender name="rolling-event-logs" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>./logs/events.log</file>
+        <file>../logs/events.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>./logs/events.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <fileNamePattern>../logs/events.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
 

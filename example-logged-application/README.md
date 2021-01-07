@@ -52,6 +52,7 @@ This configuration file defines a specific appender for the `event-logger` logge
 
 Typically as in this file a rolling file appender is used, with files rolling on a minute basis.
 Once a file has rolled it can be sent to stroom, stroom-proxy or some other log collection service.
+The event logs are written to files in the `logs` directory.
 
 ## Running the application
 
@@ -61,6 +62,6 @@ The following command will run it.
 ```sh
 ./gradlew --console=plain run
 ```
-
+By supplying no username when prompted, for example, you can see how failure conditions are logged differently.
 
 
