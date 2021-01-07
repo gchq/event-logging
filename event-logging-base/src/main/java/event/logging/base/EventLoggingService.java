@@ -18,6 +18,7 @@ package event.logging.base;
 import event.logging.Event;
 import event.logging.EventAction;
 import event.logging.EventDetail;
+import event.logging.Purpose;
 
 import java.util.function.Supplier;
 
@@ -42,8 +43,7 @@ public interface EventLoggingService {
     /**
      * Creates an event that may have some common values set by default depending on the particular EventLoggingService
      * implementation being used. If this method is not implemented it will return an event that contains only
-     * the supplied typeId, description and eventAction. It is expected that this method is implemented to provide
-     * an event with all common values set, e.g. system name, environment, device, etc.
+     * the supplied typeId, description and eventAction.
      *
      * @param typeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
      * @param description The description of the event, see {@link EventDetail#setDescription(String)}
@@ -53,10 +53,30 @@ public interface EventLoggingService {
     default Event createEvent(final String typeId,
                               final String description,
                               final EventAction eventAction) {
+        return createEvent(typeId, description, null, eventAction);
+    }
+
+    /**
+     * Creates an event that may have some common values set by default depending on the particular EventLoggingService
+     * implementation being used. If this method is not implemented it will return an event that contains only
+     * the supplied typeId, description, purpose and eventAction. It is expected that this method is implemented to provide
+     * an event with all common values set, e.g. system name, environment, device, etc.
+     *
+     * @param typeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
+     * @param description The description of the event, see {@link EventDetail#setDescription(String)}
+     * @param purpose The justification for the action, see {@link EventDetail#setPurpose(Purpose)}
+     * @param eventAction The action of the logged event, see {@link EventAction}
+     * @return An event that is ready to have additional properties set.
+     */
+    default Event createEvent(final String typeId,
+                              final String description,
+                              final Purpose purpose,
+                              final EventAction eventAction) {
         return Event.builder()
                 .withEventDetail(EventDetail.builder()
                         .withTypeId(typeId)
                         .withDescription(description)
+                        .withPurpose(purpose)
                         .withEventAction(eventAction)
                         .build())
                 .build();
@@ -81,7 +101,23 @@ public interface EventLoggingService {
     default void log(final String typeId,
                      final String description,
                      final EventAction eventAction) {
-        log(createEvent(typeId, description, eventAction));
+        log(createEvent(typeId, description, null, eventAction));
+    }
+
+    /**
+     * Logs an event with the supplied typeId, description and {@link EventAction}.
+     * Makes use of {@link event.logging.EventLoggingService#createEvent(String, String, EventAction)}
+     * to provide an event with other common values set.
+     *
+     * @param typeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
+     * @param description The description of the event, see {@link EventDetail#setDescription(String)}
+     * @param eventAction The action of the logged event, see {@link EventAction}
+     */
+    default void log(final String typeId,
+                     final String description,
+                     final Purpose purpose,
+                     final EventAction eventAction) {
+        log(createEvent(typeId, description, purpose, eventAction));
     }
 
     /**
