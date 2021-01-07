@@ -38,9 +38,11 @@
     </appender>
 
     <logger name="event-logger" level="info" additivity="false">
+
+        <!-- Log to rolling files ready for sending to Stroom or some other log collection service -->
         <appender-ref ref="rolling-event-logs" />
 
-        <!-- Also logging to console for demonstration purposes -->
+        <!-- Also logging to console for demonstration purposes only -->
         <appender-ref ref="STDOUT" />
     </logger>
 

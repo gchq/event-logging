@@ -3,25 +3,46 @@
  */
 package event.logging.example;
 
+import event.logging.AuthenticateAction;
+import event.logging.AuthenticateEventAction;
+import event.logging.AuthenticateLogonType;
 import event.logging.Banner;
-import event.logging.DeleteEventAction;
+import event.logging.ComplexLoggedOutcome;
 import event.logging.EventLoggingService;
+import event.logging.LoggedOutcome;
+import event.logging.MultiObject;
+import event.logging.OtherObject;
+import event.logging.Outcome;
+import event.logging.Purpose;
+import event.logging.Query;
+import event.logging.SearchEventAction;
+import event.logging.SimpleQuery;
+import event.logging.User;
 import event.logging.ViewEventAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class App {
     private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     private static final String BANNER = "" +
-            "With great power comes great responsibility.\n" +
+            "with great power comes great responsibility.\n" +
             "Do you accept this responsibility? (y/n):";
     private final EventLoggingService eventLoggingService;
+    private final UserContext userContext;
 
     private App() {
-        eventLoggingService = new CustomEventLoggingService();
+        // Set up
+        userContext = new UserContext();
+        eventLoggingService = new CustomEventLoggingService(userContext);
     }
 
     public static void main(String[] args) {
@@ -31,64 +52,180 @@ public class App {
     public void run() {
         LOGGER.info("Running example application");
 
-        showBanner();
+        loginUser();
 
-        // Currently how it works
-        try {
-            eventLoggingService.loggedAction(
-                    "DeleteFiles",
-                    "Delete some files",
-                    DeleteEventAction.builder().build(),
-                    () -> {
-                        // Do the delete and get count of files deleted
-                        int fileCount = 0 ;
+        if (showConfirmationBanner()) {
+            LOGGER.info("User accepted responsibility, happy days.");
+        } else {
+            LOGGER.info("User did not accept, what a shame. Quiting!");
+            System.exit(1);
+        }
 
-                        if (fileCount == 0) {
-                            throw new RuntimeException("No files found to delete");
-                            // This ex will cause a success:false to be logged then is re-thrown
-                        }
-                    }
-            );
-        } catch (Exception e) {
-            // probably due to no files found so ignore it
+        captureJustification();
+
+        performSearch();
+
+        // Use the log method when you want to manually deal with exceptions or the logged event outcome
+        // is always success.
+        LOGGER.info("The system is about to be shutdown for maintenance, log off now!");
+        eventLoggingService.log(
+                "LogoffNowBanner",
+                "User shown logoff now banner",
+                Purpose.builder()
+                        .withJustification("Just because!")
+                        .build(),
+                ViewEventAction.builder()
+                        .addBanner(Banner.builder()
+                                .withMessage("The system is about to be shutdown for maintenance, log off now!")
+                                .build())
+                        .build());
+
+        logoffUser();
+
+        LOGGER.info("Shutting down now!");
+        System.exit(0);
+    }
+
+    private void captureJustification() {
+        final Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the justification for all subsequent actions:");
+        final String justification = scanner.nextLine();
+        if (justification != null && !justification.isEmpty()) {
+            LOGGER.info("Setting justification to\n{}", justification);
+            userContext.setJustification(justification);
         }
     }
 
-    private void showBanner() {
-        try {
-            eventLoggingService.loggedAction(
-                    "ShowBanner",
-                    "User shown acceptable use banner",
-                    ViewEventAction.builder()
-                            .addBanner(Banner.builder()
-                                    .withMessage("With great power comes great responsibility." +
-                                            "Do you accept this responsibility?")
-                                    .build())
-                            .build(),
-                    () -> {
-                        LOGGER.info("Show banner and get confirmation");
+    private void loginUser() {
 
-                        final Scanner scanner = new Scanner(System.in);
-                        String answer;
-                        do {
-                            System.out.println(BANNER);
-                            answer = scanner.next().toLowerCase();
-                        } while (!answer.matches("[yn]"));
+        final Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your name:");
 
-                        final boolean didUserAccept = answer.equals("y");
+        final String userId = scanner.nextLine();
 
-                        if (didUserAccept) {
-                            LOGGER.info("User accepted, happy days.");
-                        } else {
-                            throw new RuntimeException("User did not accept their responsibility.");
-                        }
+        final boolean isLoggedIn = eventLoggingService.loggedResult(
+                "login",
+                "User " + userId + " logged in",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withId(userId)
+                                .build())
+                        .withAction(AuthenticateAction.LOGON)
+                        .withLogonType(AuthenticateLogonType.INTERACTIVE)
+                        .build(),
+                () -> {
+                    // Perform login
+                    if (userId == null || userId.isEmpty()) {
+                        return LoggedOutcome.failure(false, "Invalid username");
+                    } else {
+                        userContext.setUserId(userId);
+                        return LoggedOutcome.success(true);
                     }
-            );
-        } catch (Exception e) {
-            LOGGER.info("User did not accept, what a shame. Quiting!");
+                }
+        );
+
+        if (!isLoggedIn) {
+            LOGGER.error("Invalid user ID, quiting!");
             System.exit(1);
         }
     }
 
+    private void logoffUser() {
 
+        eventLoggingService.loggedAction(
+                "login",
+                "User " + userContext.getUserId() + " logged out",
+                AuthenticateEventAction.builder()
+                        .withUser(User.builder()
+                                .withId(userContext.getUserId())
+                                .build())
+                        .withAction(AuthenticateAction.LOGOFF)
+                        .build(),
+                () -> {
+                    // Perform logoff
+                    LOGGER.info("Logging off user {}", userContext.getUserId());
+                    userContext.setUserId(null);
+                }
+        );
+    }
+
+    private boolean showConfirmationBanner() {
+        return eventLoggingService.loggedResult(
+                "ShowBanner",
+                "User shown acceptable use banner",
+                ViewEventAction.builder()
+                        .addBanner(Banner.builder()
+                                .withMessage("With great power comes great responsibility." +
+                                        "Do you accept this responsibility?")
+                                .build())
+                        .build(),
+                () -> {
+                    LOGGER.info("Show banner and get confirmation");
+
+                    final Scanner scanner = new Scanner(System.in);
+                    String answer;
+                    do {
+                        System.out.println(userContext.getUserId() + ", " + BANNER);
+                        answer = scanner.next().toLowerCase();
+                    } while (!answer.matches("[yn]"));
+
+                    return answer.equals("y");
+                }
+        );
+    }
+
+    private void performSearch() {
+
+        final List<String> results = eventLoggingService.loggedResult(
+                "listMethods private",
+                "List all private method names",
+                SearchEventAction.builder()
+                        .withQuery(Query.builder()
+                                .withSimple(SimpleQuery.builder()
+                                        .withInclude("private")
+                                        .withExclude("lambda")
+                                        .build())
+                                .build())
+                        .build(),
+                eventAction -> {
+
+                    final List<String> privateMethods = Arrays.stream(this.getClass().getDeclaredMethods())
+                            .filter(method -> Modifier.isPrivate(method.getModifiers()))
+                            .map(Method::getName)
+                            .filter(name -> !name.startsWith("lambda"))
+                            .collect(Collectors.toList());
+
+
+                    // Create a new SearchEventAction that is a copy of the one we created
+                    // but with the results of the search added.
+                    final SearchEventAction newEventAction = eventAction.newCopyBuilder()
+                            .withResults(MultiObject.builder()
+                                    .addObjects(privateMethods.stream()
+                                            .map(name -> OtherObject.builder()
+                                                    .withName(name)
+                                                    .withType("Method")
+                                                    .build())
+                                            .collect(Collectors.toList()))
+                                    .build())
+                            .withTotalResults(BigInteger.valueOf(privateMethods.size()))
+                            .build();
+
+                    // Return the success outcome
+                    return ComplexLoggedOutcome.success(privateMethods, newEventAction);
+                },
+                (eventAction, throwable) -> {
+                    // Provide a modified SearchEventAction based on the exception.
+                    // If you don't provide a handler then by default the success and description
+                    // are set for you.
+                    return eventAction.newCopyBuilder()
+                            .withTotalResults(BigInteger.valueOf(0))
+                            .withOutcome(Outcome.builder()
+                                    .withSuccess(false)
+                                    .withDescription(throwable.getMessage())
+                                    .build())
+                            .build();
+                });
+
+        LOGGER.info("Search returned :\n{}", String.join("\n", results));
+    }
 }

@@ -6,6 +6,6 @@ build
 
 /logs
 
-.idea
+.idea/*
 
 out/
