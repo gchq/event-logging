@@ -18,7 +18,7 @@ package event.logging.base.impl;
 import event.logging.BaseOutcome;
 import event.logging.Event;
 import event.logging.EventAction;
-import event.logging.HasOutcome;
+import event.logging.base.HasOutcome;
 import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggingService;
@@ -118,6 +118,14 @@ public class DefaultEventLoggingService implements EventLoggingService {
             final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork.get(eventAction);
 
             final Event event = createEvent(eventTypeId, description, complexLoggedOutcome.getEventAction());
+
+            // From a logging point of view the work may be unsuccessful even if no ex is thrown
+            // so add the outcome to the event
+            if (!complexLoggedOutcome.wasSuccessful() && eventAction instanceof HasOutcome) {
+                addFailureOutcome(
+                        complexLoggedOutcome.getOutcomeDescription(),
+                        complexLoggedOutcome.getEventAction());
+            }
             log(event);
             result = complexLoggedOutcome.getResult();
         } catch (Throwable e) {
@@ -146,6 +154,14 @@ public class DefaultEventLoggingService implements EventLoggingService {
     }
 
     private void addFailureOutcome(final Throwable e, final EventAction eventAction) {
+        final String description = e.getMessage() != null
+                ? e.getMessage()
+                : e.getClass().getName();
+
+        addFailureOutcome(description, eventAction);
+    }
+
+    private void addFailureOutcome(final String description, final EventAction eventAction) {
         try {
             final HasOutcome hasOutcome = (HasOutcome) eventAction;
             BaseOutcome baseOutcome = hasOutcome.getOutcome();
@@ -160,11 +176,9 @@ public class DefaultEventLoggingService implements EventLoggingService {
                 LOGGER.error("Unable to set outcome on {}", eventAction.getClass().getName());
             } else {
                 baseOutcome.setSuccess(false);
-                baseOutcome.setDescription(e.getMessage() != null
-                        ? e.getMessage()
-                        : e.getClass().getName());
+                baseOutcome.setDescription(description);
             }
-        } catch (Exception exception) {
+        } catch (Exception e) {
             LOGGER.error("Unable to add failure outcome to {}", eventAction.getClass().getName(), e);
         }
     }
