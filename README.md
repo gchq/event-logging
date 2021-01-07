@@ -145,6 +145,8 @@ final Event event = eventLoggingService.buildEvent()
 eventLoggingService.log(event);
 ```
 
+A standalone example application can be found in `example-logged-application` that shows how you can include logging in your application, see [here](./example-logged-application/README.md) for details.
+
 _event-logging_ is used by [_Stroom_](https://github.com/gchq/stroom).
 An example of how it used can be seen here: [`StroomEventLoggingServiceImpl`](https://github.com/gchq/stroom/blob/master/stroom-event-logging/stroom-event-logging-impl/src/main/java/stroom/event/logging/impl/StroomEventLoggingServiceImpl.java)
 

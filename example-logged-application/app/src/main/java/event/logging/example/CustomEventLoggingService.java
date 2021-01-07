@@ -49,8 +49,9 @@ public class CustomEventLoggingService extends DefaultEventLoggingService {
                              final EventAction eventAction) {
 
         // The purpose/justification may be known only at the time of the event
-        // or may be held in some kind of context object for the logged in user's session.
-        final Purpose purpose2 = purpose != null
+        // or may be held in some kind of context object for the logged in user's session
+        // or a mixture.
+        final Purpose effectivePurpose = purpose != null
                 ? purpose
                 : getSessionPurpose();
 
@@ -80,7 +81,7 @@ public class CustomEventLoggingService extends DefaultEventLoggingService {
                 .withEventDetail(EventDetail.builder()
                         .withTypeId(typeId)
                         .withDescription(description)
-                        .withPurpose(purpose2)
+                        .withPurpose(effectivePurpose)
                         .withEventAction(eventAction)
                         .build())
                 .build();

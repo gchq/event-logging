@@ -45,6 +45,11 @@ application {
     mainClass = 'event.logging.example.App'
 }
 
+run{
+    // Application is interactive so attach stdin
+    standardInput = System.in
+}
+
 tasks.named('test') {
     // Use junit platform for unit tests.
     useJUnitPlatform()
