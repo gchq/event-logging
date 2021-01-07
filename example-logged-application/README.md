@@ -11,7 +11,7 @@ The Gradle build file that:
 * sets up the _stroom/event-logging_ Bintray repository
 * sets the dependency to _event-logging_
 
-### `app/src/java/event/logging/example/CustomEventLoggingService.java`
+### `src/java/event/logging/example/CustomEventLoggingService.java`
 
 You will likely want to create a class like this that provides the common values for your logged events by overriding the method:
 
@@ -32,18 +32,18 @@ You will likely want to create a class like this that provides the common values
 
 These values will be specific to your application, such as the system name or the mechanism for getting them will be specific to your application, e.g. how you get the ID of the logged in user.
 
-### `app/src/main/java/event/logging/example/UserContext.java`
+### `src/main/java/event/logging/example/UserContext.java`
 
 This is a very simplistic example of holding the user ID and justification at a kind of session scope.
 How you manage capturing the logged in user or their justification is up to you and your application framework.
 
-### `app/src/main/java/event/logging/example/App.java`
+### `src/main/java/event/logging/example/App.java`
 
 This is the simplistic example application to demonstrate some of the methods of logging events for user actions.
 It is a simple console based application that prompts for input in order to demostart some typical use cases such as logon, logoff, search etc.
 
 
-### `app/src/main/resource/logback.xml`
+### `src/main/resource/logback.xml`
 
 This is the configuratioin file for the Logback logger that implements SLF4J.
 _event-logging_ uses SLF4J by default for outputting the generated and serialised XML events.
