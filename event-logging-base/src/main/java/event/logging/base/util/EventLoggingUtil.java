@@ -15,8 +15,16 @@
  */
 package event.logging.base.util;
 
-import event.logging.*;
+import event.logging.BaseOutcome;
+import event.logging.Data;
+import event.logging.EventDetail;
+import event.logging.EventTime;
+import event.logging.Outcome;
+import event.logging.Term;
+import event.logging.TermCondition;
+import event.logging.User;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 public final class EventLoggingUtil {
@@ -62,6 +70,10 @@ public final class EventLoggingUtil {
                 .build();
     }
 
+    /**
+     * Create a new instance of {@link Outcome} with success == false using
+     * the {@link Throwable} to set the outcome description.
+     */
     public static Outcome createOutcome(final Throwable throwable) {
         final Outcome outcome;
         if (throwable != null) {
@@ -77,11 +89,50 @@ public final class EventLoggingUtil {
         return outcome;
     }
 
+    /**
+     * Create a new instance of {@link Outcome} with success == false using
+     * the {@link Throwable} to set the outcome description.
+     * @param outcomeType The sub-class of {@link BaseOutcome} required.
+     */
+    public static <T extends BaseOutcome> T createOutcome(final Class<T> outcomeType,
+                                                          final Throwable throwable) {
+        final T outcome;
+        if (throwable != null) {
+            outcome = createOutcome(
+                    outcomeType,
+                    false,
+                    throwable.getMessage() != null
+                            ? throwable.getMessage()
+                            : throwable.getClass().getName());
+        } else {
+            outcome = null;
+        }
+        return outcome;
+    }
+
     public static Outcome createOutcome(final Boolean success,
                                         final String description) {
         return Outcome.builder()
                 .withSuccess(success)
                 .withDescription(description)
                 .build();
+    }
+
+    /**
+     * Create a new instance of {@link Outcome} setting success and description
+     * @param outcomeType The sub-class of {@link BaseOutcome} required.
+     */
+    public static <T extends BaseOutcome> T createOutcome(final Class<T> outcomeType,
+                                                          final Boolean success,
+                                                          final String description) {
+        final T outcome;
+        try {
+            outcome = outcomeType.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("Error invoking noargs constructor on " + outcomeType.getName(), e);
+        }
+        outcome.setSuccess(success);
+        outcome.setDescription(description);
+        return outcome;
     }
 }
