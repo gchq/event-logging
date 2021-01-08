@@ -18,10 +18,11 @@ package event.logging.base.impl;
 import event.logging.BaseOutcome;
 import event.logging.Event;
 import event.logging.EventAction;
-import event.logging.base.HasOutcome;
+import event.logging.Purpose;
 import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggingService;
+import event.logging.base.HasOutcome;
 import event.logging.base.LoggedWorkExceptionHandler;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
@@ -103,6 +104,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
     public <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
+            final Purpose purpose,
             final T_EVENT_ACTION eventAction,
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
@@ -117,7 +119,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
             // result of the work e.g. if they are updating a record, they can capture the before state
             final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork.get(eventAction);
 
-            final Event event = createEvent(eventTypeId, description, complexLoggedOutcome.getEventAction());
+            final Event event = createEvent(eventTypeId, description, purpose, complexLoggedOutcome.getEventAction());
 
             // From a logging point of view the work may be unsuccessful even if no ex is thrown
             // so add the outcome to the event

@@ -36,6 +36,7 @@ import event.logging.ExportEventAction;
 import event.logging.ImportEventAction;
 import event.logging.MultiObject;
 import event.logging.Outcome;
+import event.logging.Purpose;
 import event.logging.Query;
 import event.logging.SearchEventAction;
 import event.logging.SendEventAction;
@@ -228,6 +229,9 @@ class FluentEventLoggingServiceIT {
         final Integer result = getEventLoggingService().loggedResult(
                 "login",
                 "User " + username + " logged in",
+                Purpose.builder()
+                        .withJustification("Approval No. 23433393")
+                        .build(),
                 AuthenticateEventAction.builder()
                         .withUser(User.builder()
                                 .withName(username)

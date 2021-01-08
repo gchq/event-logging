@@ -13,7 +13,6 @@ import event.logging.LoggedOutcome;
 import event.logging.MultiObject;
 import event.logging.OtherObject;
 import event.logging.Outcome;
-import event.logging.Purpose;
 import event.logging.Query;
 import event.logging.SearchEventAction;
 import event.logging.SimpleQuery;
@@ -71,9 +70,6 @@ public class App {
         eventLoggingService.log(
                 "LogoffNowBanner",
                 "User shown logoff now banner",
-                Purpose.builder()
-                        .withJustification("Just because!")
-                        .build(),
                 ViewEventAction.builder()
                         .addBanner(Banner.builder()
                                 .withMessage("The system is about to be shutdown for maintenance, log off now!")

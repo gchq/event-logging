@@ -14,9 +14,6 @@ dependencies {
     // The production code uses the SLF4J logging API at compile time
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
-    //runtime "net.sf.saxon:Saxon-HE:${versions.saxon}"
-    //runtime "ch.qos.logback:logback-classic:${versions.logback}"
-
     testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
     testCompile "org.assertj:assertj-core:${versions.assertj}"
