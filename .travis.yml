@@ -27,6 +27,7 @@ deploy:
     target_branch: gh-pages
     on:
       branch: master
+      tags: true
   - provider: releases
     api_key:
       # travis encrypt -r gchq/event-logging <github personal access token>

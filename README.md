@@ -7,6 +7,8 @@ _Event Logging_ can be incorporated into your Java application to provide a mean
 As this library is essentially a Java representation of the [_Event Logging XML Schema_](https://github.com/gchq/event-logging-schema) it helps to refer to the schema to better understand the Java model.
 The [schema documentation](https://gchq.github.io/event-logging-schema/) provides a lot of detail about how to model events using the schema which will be helpful when using this library.
 
+The Javadoc for the latest release of the library is available [here](https://gchq.github.io/event-logging/).
+
 This library requires Java 8 as a minimum.
 The only dependencies it brings with it are `javax.xml.bind:jaxb-api` and `org.slf4j:slf4j-api`.
 
