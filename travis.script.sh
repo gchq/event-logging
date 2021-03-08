@@ -40,6 +40,10 @@ echo -e "PRODUCT_VERSION:     [${GREEN}${PRODUCT_VERSION}${NC}]"
 #Run the build (including running maven install task to generate poms
 ./gradlew -Pversion=$PRODUCT_VERSION clean build ${EXTRA_BUILD_ARGS}
 
+# Add a .nojekyll file to stop github assuming the gh-pages content contains
+# jekyll templates.
+touch event-logging/event-logging-api/build/docs/javadoc/.nojekyll
+
 echo -e "${GREEN}Now run example application build${NC}"
 
 pushd example-logged-application >/dev/null
