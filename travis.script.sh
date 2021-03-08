@@ -42,7 +42,7 @@ echo -e "PRODUCT_VERSION:     [${GREEN}${PRODUCT_VERSION}${NC}]"
 
 # Add a .nojekyll file to stop github assuming the gh-pages content contains
 # jekyll templates.
-touch event-logging/event-logging-api/build/docs/javadoc/.nojekyll
+touch event-logging-api/build/docs/javadoc/.nojekyll
 
 echo -e "${GREEN}Now run example application build${NC}"
 
