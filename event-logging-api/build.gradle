@@ -31,6 +31,10 @@ jar {
     version versions.eventLoggingAndSchema
 }
 
+javadoc {
+    title = "event-logging-${versions.eventLogging}"
+}
+
 //The xjc generated javadoc will be failed by xdoclint so we have to
 //disable it for this module
 if (JavaVersion.current().isJava8Compatible()) {
