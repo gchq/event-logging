@@ -50,14 +50,14 @@ ext.getMajorVersion = { versionStr ->
 
 // Set this to the desired release version of the event-logging XML schema on github
 // *****************************************************************************
-def eventLoggingSchemaVer = "v4.0-beta.1"
+def eventLoggingSchemaVer = "v4.0-beta.3"
 // *****************************************************************************
 
 
 // Set this to the last release of this repo on this branch, or earlier branches
 // It is used to diff the current jaxb code against the last release
 // *****************************************************************************
-ext.previousReleaseVersion = "v5.0-beta.4_schema-v4.0-beta.1"
+ext.previousReleaseVersion = "v5.0-beta.13_schema-v4.0-beta.1"
 // *****************************************************************************
 
 
@@ -134,10 +134,6 @@ ext.versions = [
         slf4j                : '1.7.25',
         zzDUMMYzz            : 'makes sorting easier'
 ]
-
-wrapper {
-    gradleVersion = '5.5.1'
-}
 
 allprojects {
     apply plugin: 'maven'

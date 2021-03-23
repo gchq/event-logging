@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+* Uplift gradle version.
+
+* Uplift schema to `v4.0-beta.3`.
+
 
 ## [v5.0-beta.13_schema-v4.0-beta.1] - 2021-03-08
 
