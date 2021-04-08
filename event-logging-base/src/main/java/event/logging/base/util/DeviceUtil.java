@@ -93,13 +93,17 @@ public class DeviceUtil {
              * returns the IP address. We don't want the ip address so return
              * null in this case.
              */
-            if (fqdn == null || fqdn.equals(inetAddress.getHostAddress())) {
-                LOGGER.warn("Problem resolving FQDN");
+            if (fqdn == null) {
+                LOGGER.warn("FQDN is null (inetAddress=" + inetAddress.toString() + ")");
+                return null;
+            }
+            if (fqdn.equals(inetAddress.getHostAddress())) {
+                LOGGER.warn("Problem resolving FQDN (inetAddress=" + inetAddress.toString() + ")");
                 return null;
             }
             return fqdn;
         } catch (final RuntimeException e) {
-            LOGGER.warn("Problem resolving FQDN", e);
+            LOGGER.warn("Problem resolving FQDN " + e.getMessage(), e);
         }
 
         return null;

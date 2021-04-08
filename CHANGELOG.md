@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v5.0-beta.14_schema-v4.0-beta.1] - 2021-04-08
+
+* Issue **gchq/stroom#2170** : Added better logging for FQDN resolution.
+
 * Uplift gradle version.
 
 * Uplift schema to `v4.0-beta.3`.
@@ -181,8 +185,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.13_schema-v4.0-beta.1...HEAD
-[v5.0-beta.13_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.11_schema-v4.0-beta.1...v5.0-beta.13_schema-v4.0-beta.1
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.14_schema-v4.0-beta.1...HEAD
+[v5.0-beta.14_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.13_schema-v4.0-beta.1...v5.0-beta.14_schema-v4.0-beta.1
+[v5.0-beta.13_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.12_schema-v4.0-beta.1...v5.0-beta.13_schema-v4.0-beta.1
 [v5.0-beta.12_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.11_schema-v4.0-beta.1...v5.0-beta.12_schema-v4.0-beta.1
 [v5.0-beta.11_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.10_schema-v4.0-beta.1...v5.0-beta.11_schema-v4.0-beta.1
 [v5.0-beta.10_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.9_schema-v4.0-beta.1...v5.0-beta.10_schema-v4.0-beta.1
