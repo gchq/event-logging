@@ -7,11 +7,8 @@ buildscript {
         maven { url "https://dl.bintray.com/stroom/stroom" }
     }
     dependencies {
-        // A fork of https://github.com/wfhartford/gradle-dependency-analyze that works with Java 10
-        //classpath 'stroom:gradle-dependency-analyze:v2.2.2'
-        classpath 'ca.cutterslade.gradle:gradle-dependency-analyze:1.2.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        //classpath "org.javamodularity:moduleplugin:1.6.0"
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
 }
 
@@ -69,6 +66,8 @@ def projectGroup = "event-logging"
 def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
 def combinedVersion = "${projectVersion}"
+
+ext.isReleaseVersion = !projectVersion.startsWith("SNAPSHOT")
 
 if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     //Ensure the version string looks a bit like v1.2.3_schema-v4.5.6
@@ -139,6 +138,7 @@ allprojects {
     apply plugin: 'maven'
 
     group "$projectGroup"
+    archivesBaseName = "eventlogging"
     version "$projectVersion"
 }
 
