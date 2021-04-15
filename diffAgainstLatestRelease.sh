@@ -22,19 +22,20 @@ popd() {
 main() {
   #Check script arguments
   if [ "$#" -ne 2 ] || ! [ -d "$1" ]; then
-    echo "${RED}INVALID ARGS!${NC}"
-    echo "${GREEN}Usage: $0 workingDir previousVersionTag${NC}"
-    echo "${GREEN}e.g  : $0 event-logging-api/build v3.2.3_schema-v3.2.4${NC}"
+    echo -e "${RED}INVALID ARGS!${NC}"
+    echo -e "${GREEN}Usage: $0 workingDir previousVersionTag${NC}"
+    echo -e "${GREEN}e.g  : $0 event-logging-api/build v3.2.3_schema-v3.2.4${NC}"
 
-    echo "Where workingDir normally event-logging-api/build"
+    echo -e "Where workingDir normally event-logging-api/build"
     exit 1
   fi
 
   local workingDir=${1}
   local prevVersionTag="${2}"
-  echo "workingDir=${workingDir}"
+  echo -e "${BLUE}Working directory: ${YELLOW}${workingDir}${NC}"
 
-  echo "Comparing current JAXB code to release ${prevVersionTag}"
+  echo -e "${BLUE}Comparing current JAXB code to release:" \
+    "${YELLOW}${prevVersionTag}${NC}"
 
   # GITHUB_TOKEN decalred in travis settings UI
   # DO NOT echo the token!
@@ -47,8 +48,8 @@ main() {
   local apiUrl="${API_URL_BASE}/${prevVersionTag}"
   local prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
 
-  echo "Using API URL: ${apiUrl}"
-  echo "Searching for file: ${prevVersionJar}"
+  echo -e "${BLUE}Using API URL: ${YELLOW}${apiUrl}${NC}"
+  echo -e "${BLUE}Searching for file: ${YELLOW}${prevVersionJar}${NC}"
 
   local jqScript=".assets[]
       | select( .name 
@@ -95,7 +96,8 @@ main() {
   rm event-logging*.jar
   popd
 
-  echo -e "${BLUE}Comparing the source to the latested released version${NC}"
+  echo -e "${BLUE}Comparing the source to version" \
+    "${YELLOW}${prevVersionTag}${NC}"
 
   diff -r old/ new/ > source.diff || true
 
@@ -109,7 +111,7 @@ main() {
     echo
     echo -e "${BLUE}$PWD/source.diff${NC}"
 
-    echo "The nature of the changes will determine whether the next release" \
+    echo -e "The nature of the changes will determine whether the next release" \
       "is major/minor/patch or may indicate a bad change to the schema"
   else 
     echo -e "\n${GREEN}Source is identical to ${YELLOW}${sourcesJarUrl}${NC}"
