@@ -6,9 +6,12 @@ apply plugin: 'signing'
 ext.moduleName = 'event.logging.api'
 
 archivesBaseName = "event-logging"
+
 def schemaDir = project.file('schema')
-def ossrhPassword = System.getenv('OSSRH_PASSWORD')
-def ossrhUsername = System.getenv('OSSRH_USERNAME')
+//def ossrhPassword = System.getenv('OSSRH_PASSWORD')
+//def ossrhUsername = System.getenv('OSSRH_USERNAME')
+
+
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
@@ -64,15 +67,6 @@ artifacts {
     archives javadocJar
 }
 
-signing {
-    sign configurations.archives
-}
-
-// Don't sign archives for non release versions
-tasks.withType(Sign) {
-    onlyIf { isReleaseVersion }
-}
-
 def pomConfig = {
     licenses {
         license {
@@ -83,22 +77,120 @@ def pomConfig = {
     }
     scm {
         url "https://github.com/stroom/event-logging"
+        connection 'scm:git:git@github.com:gchq/event-logging.git'
+        developerConnection 'scm:git:git@github.com:gchq/event-logging.git'
     }
 }
 
-publishing.publications {
-    mavenJava(MavenPublication) {
-        artifactId "event-logging"
-        from components.java
-        artifact sourceJar
-        artifact javadocJar
-        pom.withXml {
-            def root = asNode()
-            root.appendNode('name', project.name)
-            root.children().last() + pomConfig
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            //artifactId "event-logging"
+            from components.java
+            artifact sourceJar
+            artifact javadocJar
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', project.name)
+                root.children().last() + pomConfig
+            }
         }
     }
+
+    //repositories {
+        //maven {
+            //name = "local"
+            //// change URLs to point to your repos, e.g. http://my.org/repo
+            //def releasesRepoUrl = "$buildDir/repos/releases"
+            //def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            //url = version.contains("SNAPSHOT") 
+                //? snapshotsRepoUrl 
+                //: releasesRepoUrl
+        //}
+    //}
 }
+
+//signing {
+    //sign configurations.archives
+//}
+
+//// Don't sign archives for non release versions
+//tasks.withType(Sign) {
+    //onlyIf { isReleaseVersion }
+//}
+
+def hasSigningKey = project.hasProperty("signingkeyId") || project.findProperty("signingKey")
+if(hasSigningKey) {
+    configureSigning(project)
+}
+
+void configureSigning(Project project) {
+
+    // To create the GPG key do:
+    //   gpg2 --gen-key 
+    // To list it
+    //   gpg2 --list-keys
+    // To publish the public key on a keyserver
+    //   gpg2 --keyserver hkp://keyserver.ubuntu.com --send-keys <your short key id>
+    // To get the ascii-armour private key for use in travis env vars
+    //   gpg2 --armor --export-secret-keys <your short key id>
+
+    //project.signing.gnupg.keyName = project.findProperty("signingKeyId")
+
+    project.signing {
+        println "Configuring project to sign maven artifacts"
+        required { project.gradle.taskGraph.hasTask("required") }
+        def signingKeyId = project.findProperty("signingKeyId")
+        def signingKey = project.findProperty("signingKey")
+        def signingPassword = project.findProperty("signingPassword")
+
+        //ext."signing.gnupg.keyName" = signingKeyId
+        //ext."signing.gnupg.passphrase" = signingPassword
+
+        //println "pword: [$signingPassword]"
+        //println "key: [$signingKey]"
+        //println "keyId: [$signingKeyId]"
+
+        if (signingKeyId) {
+            println "Using in memory pgp key with ID"
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        } else if (signingKey) {
+            println "Using in memory pgp key without ID"
+            useInMemoryPgpKeys(signingKey, signingPassword)
+        }
+        //useGpgCmd()
+        sign publishing.publications.mavenJava
+    }
+}
+
+// Uses sonotypeUsername and sonotypePassword
+// See https://github.com/rwinch/gradle-publish-ossrh-sample
+nexusPublishing {
+    repositories {
+        //sonatype()    //sonatypeUsername and sonatypePassword properties are used automatically
+        //sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            ////nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            ////snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            //nexusUrl.set(uri("http://localhost:8081/service/local/"))
+            //snapshotRepositoryUrl.set(uri("https://localhost:8081/content/repositories/snapshots/"))
+        //}
+
+        myNexus {
+            nexusUrl = uri("http://localhost:8081/staging")
+            snapshotRepositoryUrl = uri("https://localhost:8081/snapshots")
+            username = "admin" // defaults to project.properties["myNexusUsername"]
+            password = "admin" // defaults to project.properties["myNexusPassword"]
+        }
+    }
+    // these are not strictly required. The default timeouts are set to 1 minute. But Sonatype can be really slow.
+    // If you get the error "java.net.SocketTimeoutException: timeout", these lines will help.
+    connectTimeout = Duration.ofMinutes(3)
+    clientTimeout = Duration.ofMinutes(3)
+}
+
+// Set up a local repo for testing
+//publishing {
+//}
 
 //configuration for the bintray plugin for uploading maven artefacts to bintray
 //see https://github.com/bintray/gradle-bintray-plugin
@@ -133,53 +225,53 @@ publishing.publications {
     //}
 //}
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
+//uploadArchives {
+    //repositories {
+        //mavenDeployer {
 
-            beforeDeployment { 
-                MavenDeployment deployment -> signing.signPom(deployment) 
-            }
+            //beforeDeployment { 
+                //MavenDeployment deployment -> signing.signPom(deployment) 
+            //}
 
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
+            //repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                //authentication(userName: ossrhUsername, password: ossrhPassword)
+            //}
 
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
+            //snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+                //authentication(userName: ossrhUsername, password: ossrhPassword)
+            //}
 
-            pom.project {
-                name 'Event Logging'
-                packaging 'jar'
-                // optionally artifactId can be defined here
-                description 'API for the Event Logging XMLSchema'
-                url 'https://github.com/gchq/event-logging'
+            //pom.project {
+                //name 'Event Logging'
+                //packaging 'jar'
+                //// optionally artifactId can be defined here
+                //description 'API for the Event Logging XMLSchema'
+                //url 'https://github.com/gchq/event-logging'
 
-                scm {
-                    connection 'scm:git:git@github.com:gchq/event-logging.git'
-                    developerConnection 'scm:git:git@github.com:gchq/event-logging.git'
-                    url 'https://github.com/gchq/event-logging'
-                }
+                //scm {
+                    //connection 'scm:git:git@github.com:gchq/event-logging.git'
+                    //developerConnection 'scm:git:git@github.com:gchq/event-logging.git'
+                    //url 'https://github.com/gchq/event-logging'
+                //}
 
-                licenses {
-                    license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
+                //licenses {
+                    //license {
+                        //name 'The Apache License, Version 2.0'
+                        //url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    //}
+                //}
 
-                developers {
-                    developer {
-                        id 'at055612'
-                        name 'at055612'
-                        //email ''
-                    }
-                }
-            }
-        }
-    }
-}
+                //developers {
+                    //developer {
+                        //id 'at055612'
+                        //name 'at055612'
+                        ////email ''
+                    //}
+                //}
+            //}
+        //}
+    //}
+//}
 
 clean {
     //the contents of src is transient so clear it out

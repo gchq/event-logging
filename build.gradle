@@ -16,12 +16,17 @@ plugins {
     //plugin for downloading content from the 'net
     id "de.undercouch.download" version "3.4.3"
 
+    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
+
     //plugin for producing a tree of task dependencies, run task 'taskTree'
     //id "com.dorongold.task-tree" version "1.3"
+    id "signing"
+    id "maven-publish"
 }
 
 //must be applied to all projects including root
 apply plugin: 'ca.cutterslade.analyze'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
@@ -62,7 +67,7 @@ ext.previousReleaseVersion = "v5.0-beta.15_schema-v4.0-beta.3"
 
 def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
-def projectGroup = "event-logging"
+def projectGroup = "eventlogging"
 def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
 def combinedVersion = "${projectVersion}"
@@ -108,6 +113,12 @@ if (!eventLoggingSchemaFilePath.isEmpty()) {
     println "Setting eventLoggingSchemaFilePath to ${ext.eventLoggingSchemaFilePath}"
 }
 
+
+// maven stuff
+//group "$projectGroup"
+////archivesBaseName = "eventlogging"
+//version "$projectVersion"
+
 println "Using project version:   $projectVersion"
 println "Using schema version:    $eventLoggingSchemaVer"
 println "Using combined version:  $combinedVersion"
@@ -135,10 +146,10 @@ ext.versions = [
 ]
 
 allprojects {
-    apply plugin: 'maven'
+    //apply plugin: 'maven'
 
     group "$projectGroup"
-    archivesBaseName = "eventlogging"
+    ////archivesBaseName = "eventlogging"
     version "$projectVersion"
 }
 
