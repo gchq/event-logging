@@ -2,16 +2,16 @@ ext.moduleName = 'event.logging.base'
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile project(':event-logging-api')
+    implementation project(':event-logging-api')
 
-    compile "javax.xml.bind:jaxb-api:${versions.jaxb_api}"
+    implementation "javax.xml.bind:jaxb-api:${versions.jaxb_api}"
 
     // The production code uses the SLF4J logging API at compile time
-    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
-    testCompile "org.assertj:assertj-core:${versions.assertj}"
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
 }
 
 

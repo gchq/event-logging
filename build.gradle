@@ -7,17 +7,14 @@ buildscript {
         maven { url "https://dl.bintray.com/stroom/stroom" }
     }
     dependencies {
-        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.2.2'
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.5.2'
     }
 }
 
 plugins {
     //plugin for downloading content from the 'net
     id "de.undercouch.download" version "3.4.3"
-
     id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
-
     //plugin for producing a tree of task dependencies, run task 'taskTree'
     //id "com.dorongold.task-tree" version "1.3"
     id "signing"
@@ -148,13 +145,13 @@ ext.versions = [
 allprojects {
     //apply plugin: 'maven'
 
-    group "$projectGroup"
+    group "uk.gov.gchq.eventlogging" // no spaces as java pkg name convention
     ////archivesBaseName = "eventlogging"
     version "$projectVersion"
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
     //apply plugin: "org.javamodularity.moduleplugin"
@@ -167,23 +164,24 @@ subprojects {
         jcenter()
     }
 
-    configurations {
+    // TODO at055612 pretty sure this is not needed
+    //configurations {
 
-        all {
-            exclude group: "org.slf4j", module: "slf4j-log4j12"
-            exclude group: "log4j", module: "log4j"
+        //all {
+            //exclude group: "org.slf4j", module: "slf4j-log4j12"
+            //exclude group: "log4j", module: "log4j"
 
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                if (details.requested.name == 'log4j') {
-                    details.useTarget "org.slf4j:log4j-over-slf4j:$versions.slf4j"
-                }
-            }
-            resolutionStrategy {
-                forcedModules = [
-                ]
-            }
-        }
-    }
+            //resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                //if (details.requested.name == 'log4j') {
+                    //details.useTarget "org.slf4j:log4j-over-slf4j:$versions.slf4j"
+                //}
+            //}
+            //resolutionStrategy {
+                //forcedModules = [
+                //]
+            //}
+        //}
+    //}
 
     test {
         // Needed for junit 5
