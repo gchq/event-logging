@@ -4,8 +4,6 @@ apply plugin: 'signing'
 
 ext.moduleName = 'event.logging.api'
 
-//archivesBaseName = "event-logging"
-
 def schemaDir = project.file('schema')
 //def ossrhPassword = System.getenv('OSSRH_PASSWORD')
 //def ossrhUsername = System.getenv('OSSRH_USERNAME')
@@ -37,10 +35,10 @@ jar {
         attributes(
                 "Automatic-Module-Name": moduleName,
                 "Implementation-Title": "Event-Logging",
-                "Implementation-Version": versions.eventLoggingAndSchema,
+                "Implementation-Version": versions.eventLogging,
         )
     }
-    version versions.eventLoggingAndSchema
+    version versions.eventLogging
 }
 
 javadoc {
@@ -55,32 +53,6 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
 }
 
-// Uses sonotypeUsername and sonotypePassword
-// See https://github.com/rwinch/gradle-publish-ossrh-sample
-// Also https://github.com/kit-data-manager/nexus-publish-example
-nexusPublishing {
-    repositories {
-        sonatype()    //sonatypeUsername and sonatypePassword properties are used automatically
-        //sonatype {  //only for users registered in Sonatype after 24 Feb 2021
-            ////nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            ////snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            //nexusUrl.set(uri("http://localhost:8081/service/local/"))
-            //snapshotRepositoryUrl.set(uri("https://localhost:8081/content/repositories/snapshots/"))
-        //}
-
-        //myNexus {
-            //nexusUrl = uri("http://localhost:8081/staging")
-            //snapshotRepositoryUrl = uri("https://localhost:8081/snapshots")
-            //username = "admin" // defaults to project.properties["myNexusUsername"]
-            //password = "admin" // defaults to project.properties["myNexusPassword"]
-        //}
-    }
-    // these are not strictly required. The default timeouts are set to 1 minute. But Sonatype can be really slow.
-    // If you get the error "java.net.SocketTimeoutException: timeout", these lines will help.
-    connectTimeout = Duration.ofMinutes(3)
-    clientTimeout = Duration.ofMinutes(3)
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -90,7 +62,7 @@ publishing {
             from components.java
             pom {
                 name = "event-logging"
-                description = "An API for generating and serialising audit events conforming to https://github.com/gchq/event-logging-schema"
+                description = "An API for generating and serialising audit events conforming to the event-logging XMLSchema (https://github.com/gchq/event-logging-schema)."
                 url = 'https://github.com/gchq/event-logging'
                 licenses {
                     license {
@@ -123,12 +95,6 @@ publishing {
         }
     }
 }
-
-
-//// Don't sign archives for non release versions
-//tasks.withType(Sign) {
-    //onlyIf { isReleaseVersion }
-//}
 
 String base64DecodeProjectProperty(String propName) {
     def encodedVal = project.findProperty(propName)
@@ -196,5 +162,4 @@ task diffAgainstLatest(type: Exec) {
 }
 
 tasks.build.dependsOn diffAgainstLatest
-
 
