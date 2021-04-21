@@ -22,10 +22,13 @@ if [ -n "$TRAVIS_TAG" ]; then
 
     # GPG sign the artifacts, publish to nexus then close and release
     # the staging repo to the public nexus repo and on to central
+    # If you want to leave the published items in the staging repo
+    # for manual checking then use closeAndSonatypeStagingRepository
     EXTRA_BUILD_ARGS=(
       "signMavenJavaPublication"
       "publishToSonatype"
-      "closeAndReleaseSonatypeStagingRepository"
+      "closeAndSonatypeStagingRepository"
+      #"closeAndReleaseSonatypeStagingRepository"
     )
 else
     #No tag so use the branch name as the version, e.g. dev-SNAPSHOT
