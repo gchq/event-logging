@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+* Issue **gchq/event-logging-schema#33** : Add content to ClassificationComplexType to support richer protective marking schemes
+
 ### Changed
 
 * Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
+
+* Uplifted schema to v3.3.1
 
 
 ## [v3.2.4_schema-v3.2.4] - 2018-05-30
