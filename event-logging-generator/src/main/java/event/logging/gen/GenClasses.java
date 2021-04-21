@@ -49,7 +49,7 @@ public class GenClasses {
 
     private static final String USER_HOME = System.getProperty("user.home");
     private static final String XJC_PATH_1 = "/usr/bin/xjc";
-    private static final String XJC_PATH_2 = USER_HOME + "/.sdkman/candidates/java/current/bin/xjc";
+    private static final String XJC_PATH_2 = USER_HOME + "/.sdkman/candidates/java/8.0.282-open/bin/xjc";
     private static final List<String> XJC_PATHS = Arrays.asList(
             XJC_PATH_1,
             XJC_PATH_2
