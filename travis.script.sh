@@ -19,8 +19,8 @@ if [ -n "$TRAVIS_TAG" ]; then
     #Tagged commit so use that as our version, e.g. v1.2.3
     PRODUCT_VERSION="${TRAVIS_TAG}"
 
-    #upload the maven artefacts to bintray
-    EXTRA_BUILD_ARGS="bintrayUpload"
+    #upload the maven artefacts to sonotype
+    EXTRA_BUILD_ARGS="uploadArchives"
 else
     #No tag so use the branch name as the version, e.g. dev-SNAPSHOT
     #None tagged builds are NOT pushed to bintray
