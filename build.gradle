@@ -43,10 +43,18 @@ ext.getMajorVersion = { versionStr ->
     return majorVer
 }
 
+
 //Set this to the desired release version of the event-logging schema on github
 //*****************************************************************************
-def eventLoggingSchemaVer = "v3.4.0"
+def eventLoggingSchemaVer = "v3.4.2"
 //*****************************************************************************
+
+// Set this to the last release of this repo on this branch, or earlier branches
+// It is used to diff the current jaxb code against the last release
+// *****************************************************************************
+ext.previousReleaseVersion = "v3.2.4_schema-v3.2.4"
+// *****************************************************************************
+
 
 
 def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/
