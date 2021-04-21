@@ -15,7 +15,7 @@ env:
     #packages:
     #- oracle-java8-installer
 
-jdk: oraclejdk8
+jdk: openjdk8
 #before_install:
 #  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 #
