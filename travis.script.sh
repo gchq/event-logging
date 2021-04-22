@@ -27,7 +27,7 @@ if [ -n "$TRAVIS_TAG" ]; then
     EXTRA_BUILD_ARGS=(
       "signMavenJavaPublication"
       "publishToSonatype"
-      "closeAndSonatypeStagingRepository"
+      "closeSonatypeStagingRepository"
       #"closeAndReleaseSonatypeStagingRepository"
     )
 else
