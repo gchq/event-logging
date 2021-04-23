@@ -73,16 +73,9 @@ publishing {
                 developers {
                     developers {
                         developer {
-                            id = 'at055612'
-                            name = 'at055612'
-                        }
-                        developer {
-                            id = 'gcdev373'
-                            name = 'gcdev373'
-                        }
-                        developer {
-                            id = 'stroomdev66'
-                            name = 'stroomdev66'
+                            name = 'GCHQDevelopers'
+                            organization = 'GCQH'
+                            organizationUrl = 'https://github.com/gchq'
                         }
                     }
                 }
