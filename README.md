@@ -29,23 +29,34 @@ The aim of this API is to capture the following information about an action/even
 
 ### Gradle/Maven dependencies
 
-The Event Logging API is available as a Maven/Gradle dependency on [Bintray](https://bintray.com/stroom/event-logging/event-logging).
-You will need to add our Bintray repository to your build tool.
+The Event Logging API is available as a Maven/Gradle dependency on [Maven Central](https://mvnrepository.com/artifact/uk.gov.gchq.eventlogging/event-logging).
+
 To include it in your Gradle build add the following:
 
 ```groovy
 repositories {
-  //...
-  maven { url "https://dl.bintray.com/stroom/event-logging" }
+  mavenCentral()
 }
 
 dependencies {
-  compile 'event-logging:event-logging:v5.0-beta.9_schema-v4.0-beta.1'
+  compile 'uk.gov.gchq.eventlogging:event-logging:5.0-beta.16_schema-v4.0-beta.3'
 }
 ```
 
+To include it in your Maven build add the following:
+
+```xml
+<dependency>
+    <groupId>uk.gov.gchq.eventlogging</groupId>
+    <artifactId>event-logging</artifactId>
+    <version>5.0-beta.16_schema-v4.0-beta.3</version>
+</dependency>
+```
+
+
 > **NOTE**:  
-Version 3.x.x+ of event-logging is compatible with Java 8+  
+Version 3.x.x+ of event-logging are compatible with Java 8+  
+The Maven coordinates changed in version 5.0-beta.16_schema-v4.0-beta.3 when it was moved from Bintray to Maven Central.
 
 The second version number in the version string is the version of the _event-logging-schema_ XML Schema that the library uses.
 
