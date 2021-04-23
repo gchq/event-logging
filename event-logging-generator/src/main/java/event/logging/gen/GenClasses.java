@@ -42,6 +42,13 @@ import java.util.stream.Collectors;
  */
 public class GenClasses {
     private static final Charset UTF8 = StandardCharsets.UTF_8;
+
+    //private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
+
+    //private static final String PUBLIC_CLASS = "public class ";
+
+
+
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
     private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
