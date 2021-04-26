@@ -31,7 +31,14 @@ main() {
   fi
 
   local workingDir=${1}
+
+  # The version tag in github (with a v prefix)
   local prevVersionTag="${2}"
+
+  # Remove the v prefix to get the maven version
+  local mavenVersion=
+  # shellcheck disable=SC2001
+  mavenVersion="$(echo "${prevVersionTag}" | sed 's/^v//' )"
   echo -e "${BLUE}Working directory: ${YELLOW}${workingDir}${NC}"
 
   echo -e "${BLUE}Comparing current JAXB code to release:" \
@@ -46,7 +53,7 @@ main() {
   fi
 
   local apiUrl="${API_URL_BASE}/${prevVersionTag}"
-  local prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
+  local prevVersionJar="event-logging-${mavenVersion}-sources.jar"
 
   echo -e "${BLUE}Using API URL: ${YELLOW}${apiUrl}${NC}"
   echo -e "${BLUE}Searching for file: ${YELLOW}${prevVersionJar}${NC}"
@@ -65,6 +72,9 @@ main() {
   if [[ "${status_code}" -ne 200 ]]; then
     curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
   fi
+
+
+    curl -s "${extraCurlArgs[@]}" "${apiUrl}"
 
   # Call the github API to git the json for the latest release, 
   # then extract the sources jar binary url from it

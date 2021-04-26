@@ -6,7 +6,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-
 ## [v5.0-beta.16_schema-v4.0-beta.3] - 2021-04-23
 
 * Change maven coordinates to `uk.gov.gchq.eventlogging:event-logging` and publish on maven central instead of bintray.
@@ -130,71 +129,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Issue **6** : Fix hard coded success value in EventLoggingUtil.createOutcome().
 
-* Revert to Java 8
+* Revert to java 8
 
-
-## [v4.0.7_schema-v3.2.4] - 2018-09-07
-
-* Update to Java 10
-
-* Issue **gchq/event-logging-schema#33** : Add content to `ClassificationComplexType` to support richer protective marking schemes
-
-
-## [v4.0.5_schema-v3.2.4] - 2018-09-05
-
-* Added automatic module name for Java 9 builds.
-
-
-## [v3.2.4_schema-v3.2.4] - 2018-05-30
-
-* Fix for log receiver class name.
-
-
-## [v3.2.3_schema-v3.2.4] - 2018-05-22
-
-
-## [v3.2.1_schema-v3.2.4] - 2018-02-15
-
-### Changed
-
-* Uplifted schema to v3.2.4
-
-* Add _-client_ to the end of the `id` attribute value on the `schema` element.
-
-
-## [v3.2.0_schema-v3.2.0] - 2017-12-21
-
-### Added
-
-* Issue **gchq/event-logging-schema#23** : Add optional `Coordinates` object to the `Location` class to capture latitude/longitude
-
-### Changed
-
-* Uplifted schema to v3.2.0
-
-
-## [v3.1.2_schema-v3.1.2] - 2017-11-28
-
-### Added
-
-* Add Bintray deployment
-
-
-## [v3.1.1_schema-v3.1.2] - 2017-11-14
-
-### Added
-
-* Add sources and javadoc jars
-
-### Changed
-
-* Uplift schema to v3.1.2
-
-* Change build to Gradle
-
-
-## [v3.1.0] - 2017-04-05
-Intial open source release
 
 [Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.16_schema-v4.0-beta.3...HEAD
 [v5.0-beta.16_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.15_schema-v4.0-beta.1...v5.0-beta.16_schema-v4.0-beta.3
@@ -213,4 +149,3 @@ Intial open source release
 [v5.0-beta.3_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.2_schema-v4.0-beta.1...v5.0-beta.3_schema-v4.0-beta.1
 [v5.0-beta.2_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.1_schema-v4.0-beta.1...v5.0-beta.2_schema-v4.0-beta.1
 [v5.0-beta.1_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v4.0.7_schema-v3.2.4...v5.0-beta.1_schema-v4.0-beta.1
-
