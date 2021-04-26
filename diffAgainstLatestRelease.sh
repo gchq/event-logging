@@ -26,7 +26,7 @@ main() {
     echo -e "${GREEN}Usage: $0 workingDir previousVersionTag${NC}"
     echo -e "${GREEN}e.g  : $0 event-logging-api/build v3.2.3_schema-v3.2.4${NC}"
 
-    echo -e "Where workingDir normally is event-logging-api/build"
+    echo -e "Where workingDir is normally event-logging-api/build"
     exit 1
   fi
 
@@ -39,6 +39,7 @@ main() {
   local mavenVersion=
   # shellcheck disable=SC2001
   mavenVersion="$(echo "${prevVersionTag}" | sed 's/^v//' )"
+
   echo -e "${BLUE}Working directory: ${YELLOW}${workingDir}${NC}"
 
   echo -e "${BLUE}Comparing current JAXB code to release:" \
