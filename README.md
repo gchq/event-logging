@@ -12,7 +12,10 @@ The Javadoc for the latest release of the library is available [here](https://gc
 This library requires Java 8 as a minimum.
 The only dependencies it brings with it are `javax.xml.bind:jaxb-api` and `org.slf4j:slf4j-api`.
 
-By default the created events are serialised to XML and passed to a SLF4J logger which would typically be linked to a rolling file appender.
+By default the created events are serialised to XML and passed to an SLF4J logger which would typically be linked to a rolling file appender.
+If the events are destined for [Stroom](https://github.com/gchq/stroom) then standard practice is to serialise the events to files locally.
+Another process, e.g. a cron job, then sends the logs to their destination using curl or similar.
+[stroom-log-sender](https://hub.docker.com/r/gchq/stroom-log-sender) can also be used for sending log files to stroom.
 
 ## What to Log
 
@@ -55,10 +58,16 @@ To include it in your Maven build add the following:
 
 
 > **NOTE**:  
-Version 3.x.x+ of event-logging are compatible with Java 8+  
-The Maven coordinates changed in version 5.0-beta.16_schema-v4.0-beta.3 when it was moved from Bintray to Maven Central.
+**The Maven coordinates changed in the following major versions when event-logging was moved from Bintray to Maven Central.**  
+* **3.3.0_schema-v3.3.1**  
+* **4.0.8_schema-v3.2.4**  
+* **5.0-beta.16_schema-v4.0-beta.3**
 
 The second version number in the version string is the version of the _event-logging-schema_ XML Schema that the library uses.
+
+v5 is currently in beta but we would encourage you to use it as only v5 includes the fluent builder style API and rich javadoc.
+We do not anticpate making breaking changes unless we encounter issues with it, and aim to shortly take it out of beta.
+This version is currently in use by stroom for recording its own events.
 
 ### Example Application
 
