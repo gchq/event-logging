@@ -26,12 +26,20 @@ main() {
     echo -e "${GREEN}Usage: $0 workingDir previousVersionTag${NC}"
     echo -e "${GREEN}e.g  : $0 event-logging-api/build v3.2.3_schema-v3.2.4${NC}"
 
-    echo -e "Where workingDir normally event-logging-api/build"
+    echo -e "Where workingDir is normally event-logging-api/build"
     exit 1
   fi
 
   local workingDir=${1}
+
+  # The version tag in github (with a v prefix)
   local prevVersionTag="${2}"
+
+  # Remove the v prefix to get the maven version
+  local mavenVersion=
+  # shellcheck disable=SC2001
+  mavenVersion="$(echo "${prevVersionTag}" | sed 's/^v//' )"
+
   echo -e "${BLUE}Working directory: ${YELLOW}${workingDir}${NC}"
 
   echo -e "${BLUE}Comparing current JAXB code to release:" \
@@ -46,7 +54,7 @@ main() {
   fi
 
   local apiUrl="${API_URL_BASE}/${prevVersionTag}"
-  local prevVersionJar="event-logging-${prevVersionTag}-sources.jar"
+  local prevVersionJar="event-logging-${mavenVersion}-sources.jar"
 
   echo -e "${BLUE}Using API URL: ${YELLOW}${apiUrl}${NC}"
   echo -e "${BLUE}Searching for file: ${YELLOW}${prevVersionJar}${NC}"
