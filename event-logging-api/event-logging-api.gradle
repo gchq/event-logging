@@ -6,6 +6,10 @@ ext.moduleName = 'event.logging.api'
 
 def schemaDir = project.file('schema')
 
+// We want a jar like event-logging-5.0-beta.16_schema-v4.0-beta.3.jar,
+// not event-logging-api-5.0-beta.16_schema-v4.0-beta.3.jar
+archivesBaseName = "event-logging"
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
     implementation "javax.xml.bind:jaxb-api:${versions.jaxb_api}"

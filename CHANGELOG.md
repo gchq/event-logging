@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v3.3.1_schema-v3.3.1] - 2021-04-26
+
+* Change filename of Maven artifacts from `event-logging-api...` to `event-logging...`.
+
+
 ## [v3.3.0_schema-v3.3.1] - 2021-04-22
 
 ### Added
@@ -70,7 +75,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [v3.1.0] - 2017-04-05
 Intial open source release
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v3.3.0_schema-v3.3.1...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v3.3.1_schema-v3.3.1...HEAD
+[v3.3.1_schema-v3.3.1]: https://github.com/gchq/event-logging/compare/v3.3.0_schema-v3.3.1...v3.3.1_schema-v3.3.1
 [v3.3.0_schema-v3.3.1]: https://github.com/gchq/event-logging/compare/v3.2.4_schema-v3.2.4...v3.3.0_schema-v3.3.1
 [v3.2.4_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.3_schema-v3.2.0...v3.2.4_schema-v3.2.4
 [v3.2.3_schema-v3.2.4]: https://github.com/gchq/event-logging/compare/v3.2.1_schema-v3.2.0...v3.2.3_schema-v3.2.4
