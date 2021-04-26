@@ -3,34 +3,52 @@ import java.util.regex.Pattern
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
-        maven { url "https://dl.bintray.com/stroom/stroom" }
+        mavenCentral()
     }
     dependencies {
-        // A fork of https://github.com/wfhartford/gradle-dependency-analyze that works with Java 10
-        classpath 'stroom:gradle-dependency-analyze:v2.2.2'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.5.2'
     }
 }
 
 plugins {
     //plugin for downloading content from the 'net
     id "de.undercouch.download" version "3.4.3"
-
+    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
     //plugin for producing a tree of task dependencies, run task 'taskTree'
-    id "com.dorongold.task-tree" version "1.3"
+    id "com.dorongold.task-tree" version "1.5"
+    id "signing"
+    id "maven-publish"
 }
 
 //must be applied to all projects including root
 apply plugin: 'ca.cutterslade.analyze'
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+apply plugin: 'maven-publish'
+
+ext.isPropertySet = { propName ->
+    if (!project.hasProperty(propName)) {
+        return false
+    } else {
+        def prop = project.getProperty(propName)
+        return (prop != "unspecified" && (prop != "" || prop != null))
+    }
+}
+
+ext.ensurePropertyIsSet = { propName -> 
+    if (!isPropertySet(propName)) {
+        throw new GradleException(
+            "Expecting project property [${propName}] or env var [ORG_GRADLE_PROJECT_${propName}] to be set.")
+    }
+}
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
-ext.getPropertyOrDefault = { propName, defaultValue ->
+ext.getPropertyOrDefault = { propName, defaultValue -> 
     def val;
-    if (project.hasProperty(propName) && project.getProperty(propName) != "unspecified" && project.getProperty(propName) != "") {
+    if (isPropertySet(propName)) {
         val = project.getProperty(propName)
-        println "Using property [$propName] with value [$val]"
+        println "Getting property [$propName] with value [$val]"
     } else {
         val = defaultValue
         println "Property [$propName] has no value, using default value [$val]"
@@ -45,18 +63,45 @@ ext.getMajorVersion = { versionStr ->
     return majorVer
 }
 
-//Set this to the desired release version of the event-logging schema on github
+
+// Set this to the desired release version of the event-logging XML schema on github
 //*****************************************************************************
 def eventLoggingSchemaVer = "v3.2.4"
 //*****************************************************************************
 
+// Set this to the last release of this repo on this branch, or earlier branches
+// It is used to diff the current jaxb code against the last release so you can
+// see if/how the java model has changed following schema changes or changes
+// to the jaxb code generation.
+// *****************************************************************************
+ext.previousReleaseVersion = "v4.0.5_schema-v3.2.4"
+// *****************************************************************************
 
-def VERSION_PATTERN = /^v[0-9a-zA-Z\.-]+_schema-(v[0-9a-zA-Z\.-]+)$/
+
+
+def VERSION_PATTERN = /^(?:v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?_)?schema-(v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?)(-SNAPSHOT)?$/
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
-def projectGroup = "event-logging"
-def projectVersion = getPropertyOrDefault('version', "SNAPSHOT_schema-${eventLoggingSchemaVer}")
+def projectVersion = getPropertyOrDefault('version', "schema-${eventLoggingSchemaVer}-SNAPSHOT")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
-def combinedVersion = "${projectVersion}"
+
+ext.isReleaseBuild = !projectVersion.endsWith("SNAPSHOT")
+
+// We don't want the 'v' prefix on version numbers in maven
+ext.projectVersionForMaven = projectVersion.replaceFirst(/^v/, "")
+
+if (isReleaseBuild) {
+    println "This is a release build for maven version [${projectVersionForMaven}]"
+    // Ensure the various props are set for signing and publishing to sonatype
+
+    // The username for Sonatype OSSRH Jira account
+    ensurePropertyIsSet("sonatypeUsername")
+    // The password for Sonatype OSSRH Jira account
+    ensurePropertyIsSet("sonatypePassword")
+    // The GPG2 secret key in ascii armour format, base64 encoded
+    ensurePropertyIsSet("signingKey")
+    // The password for the GPG2 secret key
+    ensurePropertyIsSet("signingPassword")
+}
 
 if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
     //Ensure the version string looks a bit like v1.2.3_schema-v4.5.6
@@ -66,34 +111,34 @@ if (!(projectVersion =~ /^SNAPSHOT\.*/)) {
 
     //Ensure the schema part of the combined version string matches eventLoggingSchemaVer
     //This makes sure we don't tag as schema vX when the jar is built with schema vY
-    def matcher = (combinedVersion =~ VERSION_PATTERN)
+    def matcher = (projectVersion =~ VERSION_PATTERN)
     def schemaVerFromProjectVer = matcher[0][1]
     if (schemaVerFromProjectVer != eventLoggingSchemaVer) {
-        throw new GradleException("eventLoggingSchemaVer [${eventLoggingSchemaVer}] does not match schema version part [${schemaVerFromProjectVer}] of [${combinedVersion}]")
+        throw new GradleException("eventLoggingSchemaVer [${eventLoggingSchemaVer}] does not match schema version part [${schemaVerFromProjectVer}] of [${projectVersion}]")
     }
 
     //This is versioned build so ensure the version is in the CHANGELOG
     def changeLogFile = new File(CHANGE_LOG_FILENAME)
-    def pattern = Pattern.compile(combinedVersion, Pattern.LITERAL)
+    def pattern = Pattern.compile(projectVersion, Pattern.LITERAL)
 
-    if (!changeLogFile.getText("UTF-8").find(pattern)) {
-        throw new GradleException("This is a versioned build, cannot find string \"${pattern.toString()}\" in file ${CHANGE_LOG_FILENAME}, add the new version to the change log")
-    }
+    // TODO commented for testing
+    //if (!changeLogFile.getText("UTF-8").find(pattern)) {
+        //throw new GradleException("This is a versioned build, cannot find string \"${pattern.toString()}\" in file ${CHANGE_LOG_FILENAME}, add the new version to the change log")
+    //}
 }
 
-//The XML Schema to use as the basis for generating the event-logging jacb library code
+//The XML Schema to use as the basis for generating the event-logging jaxb library code
 ext.eventLoggingSchemaUrl = "http://github.com/gchq/event-logging-schema/releases/download/${eventLoggingSchemaVer}/event-logging-v${eventLoggingSchemaMajorVer}-client.xsd"
 
-println "Using project version:   $projectVersion"
-println "Using schema version:    $eventLoggingSchemaVer"
-println "Using combined version:  $combinedVersion"
-println "Using namespace version: $eventLoggingSchemaMajorVer"
-println "Using schema url:        $eventLoggingSchemaUrl"
+println "Using project version:         $projectVersion"
+println "Using project version (maven): ${projectVersionForMaven}"
+println "Using schema version:          ${eventLoggingSchemaVer}"
+println "Using namespace version:       ${eventLoggingSchemaMajorVer}"
+println "Using schema url:              ${eventLoggingSchemaUrl}"
 
 ext.versions = [
         //------event-logging--------------
-        eventLogging         : projectVersion,
-        eventLoggingAndSchema: combinedVersion,
+        eventLogging         : projectVersionForMaven,
 
         //------------3rd-party------------
         assertj              : '3.10.0',
@@ -106,48 +151,42 @@ ext.versions = [
         zzDUMMYzz            : 'makes sorting easier'
 ]
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.10'
-}
-
 allprojects {
-    apply plugin: 'maven'
-
-    group "$projectGroup"
-    version "$projectVersion"
+    group "uk.gov.gchq.eventlogging" // no spaces as java pkg name convention
+    version projectVersionForMaven
 }
 
 subprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
 
 
-    sourceCompatibility = JavaVersion.VERSION_1_10
-    targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
 
-    configurations {
+    //configurations {
 
-        all {
-            exclude group: "org.slf4j", module: "slf4j-log4j12"
-            exclude group: "log4j", module: "log4j"
+        //all {
+            //exclude group: "org.slf4j", module: "slf4j-log4j12"
+            //exclude group: "log4j", module: "log4j"
 
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                if (details.requested.name == 'log4j') {
-                    details.useTarget "org.slf4j:log4j-over-slf4j:$versions.slf4j"
-                }
-            }
-            resolutionStrategy {
-                forcedModules = [
-                ]
-            }
-        }
-    }
+            //resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                //if (details.requested.name == 'log4j') {
+                    //details.useTarget "org.slf4j:log4j-over-slf4j:$versions.slf4j"
+                //}
+            //}
+            //resolutionStrategy {
+                //forcedModules = [
+                //]
+            //}
+        //}
+    //}
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
@@ -171,43 +210,46 @@ subprojects {
             jcenter()
         }
 
-        compileJava {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                options.compilerArgs = [
-                        '--module-path', classpath.asPath,
-                ]
-                classpath = files()
-            }
-        }
-
-        compileTestJava {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                options.compilerArgs = [
-                        '--module-path', classpath.asPath,
-                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
-                ]
-                classpath = files()
-            }
-        }
-
-        test {
-            inputs.property("moduleName", moduleName)
-            doFirst {
-                jvmArgs = [
-                        '--module-path', classpath.asPath,
-                        '--add-modules', 'ALL-MODULE-PATH',
-                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
-                ]
-                classpath = files()
-            }
-        }
-
-        javadoc {
-            options.addStringOption('-module-path', classpath.asPath)
-            options.addStringOption('Xdoclint:all,-missing', '-html5')
-        }
+//        compileJava {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                options.compilerArgs = [
+//                        '--module-path', classpath.asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        compileTestJava {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                options.compilerArgs = [
+//                        '--module-path', classpath.asPath,
+////                        '--add-modules', 'junit',
+////                        '--add-reads', "$moduleName=junit",
+//                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        test {
+//            inputs.property("moduleName", moduleName)
+//            doFirst {
+//                jvmArgs = [
+//                        '--module-path', classpath.asPath,
+//                        '--add-modules', 'ALL-MODULE-PATH',
+////                        '--add-reads', "$moduleName=junit",
+//                        '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath,
+//                ]
+//                classpath = files()
+//            }
+//        }
+//
+//        javadoc {
+//            options.addStringOption('-module-path', classpath.asPath)
+//            options.addStringOption('Xdoclint:all,-missing', '-html5')
+//        }
 
         jar {
             inputs.property("moduleName", moduleName)
@@ -221,4 +263,17 @@ subprojects {
 }
 
 
+// Uses sonotypeUsername and sonotypePassword
+// This needs to be in the root project
+// See https://github.com/rwinch/gradle-publish-ossrh-sample
+// Also https://github.com/kit-data-manager/nexus-publish-example
+nexusPublishing {
+    repositories {
+        sonatype()    //sonatypeUsername and sonatypePassword properties are used automatically
+    }
+    // these are not strictly required. The default timeouts are set to 1 minute. But Sonatype can be really slow.
+    // If you get the error "java.net.SocketTimeoutException: timeout", these lines will help.
+    connectTimeout = Duration.ofMinutes(3)
+    clientTimeout = Duration.ofMinutes(3)
+}
 

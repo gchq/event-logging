@@ -1,7 +1,6 @@
 language: java
-dist: trusty
-group: edge
-jdk: openjdk10
+#dist: trusty
+#group: edge
 #sudo: false
 
 env:
@@ -11,6 +10,20 @@ env:
       #Required for curling the gh api to get the source of the latest event-logging release
     - secure: "Dj0AtkItxitrOijaZc/STz/3oUyGBNaB6k3yhgZI3Fw2MDHqqV073nr5xWPawrP2AyQmRE8zRgrvLH7ZpjBcQiJnC2qYBho8Ap5ZpwtQJ6XMpPvKhlG9mXl8CQ31n0gukxJj3jSJn/+R3MPNYPxCUcQ87wOMnveY+0bJhWpfbsJKN/2OMpIc2yie2MUcJ9OpzeSfx/LekxZsTsNai6gMwB6l4l44gB2sBRPL5I3a6UFQHNS1+Z5qrlYraS2KvL2X20nfGG2SpbVfaJneNqISjPUKIsNfR1LYre/nJDSWxCpYjZfuqt6OoH9yUg/jmmKt6Y3+mF4x8/GavOs76ImBeaqBWX/esuyAQEOCfW2pcv2r6EdpGA9BQMCOi1SoEAiJC2kND4Sy+HtEkZ0xVBrAvFT/2v1F5BPu9POzsfw55R5RbwDrBO+N4zMaPtxlo7eUEJ+vPKxOgVJrU9qEIR/GEnwv3z5FXT1YxkmksWjxuXLxZlCO0NHYfB4uwdogmhD9B8dk+ZeF1fee7U088ytsvAk89cQde0CZm9n4by98gwmcopUzyQSuYaxhQHoI9sV9hCaFNwlMXwd39vO8Zbi6Wvf2upAzkgDBwG0SWMDFXppcfT7zxcYQMlouDsFpDLXqnEYTdqEJtSgSLoMCq+LXITzc+FaKu8I127USQIcikwY="
 
+#addons:
+  #apt:
+    #packages:
+    #- oracle-java8-installer
+
+jdk: openjdk8
+#before_install:
+#  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+#
+#matrix:
+#  include:
+#      - env: JDK='OpenJDK 10'
+#        install: . ./install-jdk.sh -F 10 -L GPL
+
 install: echo "skip 'gradle assemble' step to speed up build"
 
 script: ./travis.script.sh
@@ -19,7 +32,8 @@ script: ./travis.script.sh
 deploy:
   provider: releases
   api_key:
-    secure: jR0YRPUW0TR288Vqq610yWYyxW3DkBgw9TfWYg/wn46xskMtENxP3pFIQ9AcDvmpw3O9wUHTKzn/JSvv3sEQifNiQwZAqkX+4uJ3RPM7m/4tos23J5Wm1Y7aLiJv52TJEzA4U1ZUt5NE9cs4XwrowvdhzgA5YevlY/H6IEVYmZ5xSgsE3DNrRb+i6QHnJee58/3ZfPsLzM0u4ha4JAi4CpQC6Dp9EvcpOKAZjV2W4E8OrwEcO1wO9zwGG77ieZPcTVhH08cBLTXSw2YH0BK4CaHN9z3NhuCUCdFsobVY9HZpFWP5/ZhfpNfbxkREMFyCgNeBNMXG3KFhAZbqJNJ6BpBWcLUflAwDG50xObLgh6DU0QD/ZK/4+m0Vb05bnHv8dr98QBQgU+amx1UhMaRGrmLSxJwcCFNmnn8Kl6NJWYFjfcW/vqf8nDcywXNUSImjHCXVMj+uGQNfn5YrBsMERsYrB9ytUu6tQCqS+jGkq85n/wnCMscD7xV+S1i8w/dEBpa65jxPFrGl3VF6NXfi3dtH4AbFKFsLsI07mF2E6CfsyD5JWJBH/UoUe6FW+2BA7pYFZRic9YzyZTcJs6R1ZScwuV7d3NJsVoqPhLpVQyph6ctS/4nmB4wR8ZhPD3Rh67MRi8NbZNx9KjidRp/0DCmsEjXWHYyasBgUtXZd2sU=
+      # travis encrypt -r gchq/event-logging <github personal access token>
+      secure: "52OQP+PUgNzYCFyPCS2QmjCqjYfPVU0vHl+bq+p8cemfQeiwZN4k5eXKAyIexNBT7zkpSa/oDGNVIFYDkhZr0XAWEihOXHZklSR6G0v3wdYBx745QWsUrWhl/CL7wgfqj1GfgkpOQCblLbiA/CNA9N4bu1o+fCceyys2PqQHHG3gaszl/oaHLkjZmBLiRe+WSgDZIYCFBMu9AmiLws2NI7w4ocWU/dCKDscsBlH8qouiXdFCZNHb0Jc1C1/od5Vco/oowqx/POuYnwrsIi8AQeRVi88q7eZXZDAGzR62oHgjSG5LHJtM+bgrgk+S3jrpPRd6P4FxAc2VVrNZ+t+LQtyHJQf8UB2aTuXQ12pxoeA0X91jtJAZR3Ds3j+aF+raXsNVwgOqVOPtPWgOIuqf8tQ3pF8r3elMZOb1manZFq5q6YXBpw44mhTJW9UppKj4/FFGOKO6hwRe210JxKuvgpnyTjY9V7+tg9vTh1m3pIvcXG+/9l1lPNoUKmsHywf4QRxhXBhOBJI5jqrojA+fEa50t92tV5pezRydrAzzKIujo56+QfkytssL1l9FTd4L0bTawr0W2WpcAX+TL7KmN159RPzcd+edImL3xBAKVWtItcXhaeXlfde5au6rneWbYrYjMONSCYabVq12ev8nhdOaPOWhySNX6kgcre0igxY="
   file_glob: true
   file: event-logging-api/build/libs/*.jar
   skip_cleanup: true
