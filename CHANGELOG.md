@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v5.0-beta.17_schema-v4.0-beta.3] - 2021-04-26
+
+* Change filename of Maven artifacts from `event-logging-api...` to `event-logging...`.
+
+
 ## [v5.0-beta.16_schema-v4.0-beta.3] - 2021-04-23
 
 * Change maven coordinates to `uk.gov.gchq.eventlogging:event-logging` and publish on maven central instead of bintray.
@@ -132,7 +137,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.16_schema-v4.0-beta.3...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.17_schema-v4.0-beta.3...HEAD
+[v5.0-beta.17_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.16_schema-v4.0-beta.1...v5.0-beta.17_schema-v4.0-beta.3
 [v5.0-beta.16_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.15_schema-v4.0-beta.1...v5.0-beta.16_schema-v4.0-beta.3
 [v5.0-beta.15_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.14_schema-v4.0-beta.1...v5.0-beta.15_schema-v4.0-beta.3
 [v5.0-beta.14_schema-v4.0-beta.1]: https://github.com/gchq/event-logging/compare/v5.0-beta.13_schema-v4.0-beta.1...v5.0-beta.14_schema-v4.0-beta.1

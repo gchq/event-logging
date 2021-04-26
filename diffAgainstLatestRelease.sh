@@ -73,9 +73,6 @@ main() {
     curl -sIL "${extraCurlArgs[@]}" "${apiUrl}"
   fi
 
-
-    curl -s "${extraCurlArgs[@]}" "${apiUrl}"
-
   # Call the github API to git the json for the latest release, 
   # then extract the sources jar binary url from it
   local sourcesJarUrl
