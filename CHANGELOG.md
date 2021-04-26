@@ -6,9 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-### Changed
+* Revert to java 8
 
 ## [v4.0.7_schema-v3.2.4] - 2018-09-07
 
