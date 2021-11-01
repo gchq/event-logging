@@ -38,7 +38,6 @@ main() {
   # Remove the v prefix to get the maven version
   local mavenVersion=
   # shellcheck disable=SC2001
-  mavenVersion="$(echo "${prevVersionTag}" | sed 's/^v//' )"
 
   echo -e "${BLUE}Working directory: ${YELLOW}${workingDir}${NC}"
 
@@ -54,14 +53,13 @@ main() {
   fi
 
   local apiUrl="${API_URL_BASE}/${prevVersionTag}"
-  local prevVersionJar="event-logging-${mavenVersion}-sources.jar"
 
   echo -e "${BLUE}Using API URL: ${YELLOW}${apiUrl}${NC}"
-  echo -e "${BLUE}Searching for file: ${YELLOW}${prevVersionJar}${NC}"
+  echo -e "${BLUE}Searching for Sources JAR"
 
   local jqScript=".assets[]
       | select( .name 
-      | contains(\"${prevVersionJar}\")) 
+      | endswith(\"-sources.jar\")) 
       | .browser_download_url"
 
   #echo "Using jqScript: ${jqScript}"
