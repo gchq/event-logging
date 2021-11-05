@@ -154,8 +154,7 @@ echo -e "java version:                  [${GREEN}$(java --version)${NC}]"
 #Run the build (including running maven install task to generate poms
 ./gradlew -Pversion="${PRODUCT_VERSION}" clean build "${EXTRA_BUILD_ARGS[@]}"
 
-ls -l "${libs_dir}"
-
+ls -l "${BUILD_DIR}/event-logging-api/build/libs/"
 
 # If it is a tagged build copy all the files needed for the github release
 # artefacts
