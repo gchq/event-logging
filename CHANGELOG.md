@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## [Unreleased]
+
+~~~
+DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
+~~~
+
+
+## [v5.0-beta.18_schema-v4.0-beta.3] - 2021-11-05
+
+* Fix problem of a failure Outcome not being added when an exception is thrown during `loggedWork` in `log()`.
+
 
 ## [v5.0-beta.17_schema-v4.0-beta.3] - 2021-04-26
 
@@ -137,7 +148,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.17_schema-v4.0-beta.3...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.18_schema-v4.0-beta.3...HEAD
+[v5.0-beta.18_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.17_schema-v4.0-beta.3...v5.0-beta.18_schema-v4.0-beta.3
 [v5.0-beta.17_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.16_schema-v4.0-beta.1...v5.0-beta.17_schema-v4.0-beta.3
 [v5.0-beta.16_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.15_schema-v4.0-beta.1...v5.0-beta.16_schema-v4.0-beta.3
 [v5.0-beta.15_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.14_schema-v4.0-beta.1...v5.0-beta.15_schema-v4.0-beta.3
