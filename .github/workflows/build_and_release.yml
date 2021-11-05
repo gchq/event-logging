@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '8'
+          java-version: '8.0.312+7'
 
         # Set variables in github's special env file which are then automatically 
         # read into env vars in each subsequent step
