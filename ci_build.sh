@@ -59,8 +59,6 @@ gather_release_artefacts() {
 
   local -r libs_dir="${BUILD_DIR}/event-logging-api/build/libs"
 
-  ls -l "${libs_dir}"
-
   echo "Copying release artefacts to ${RELEASE_ARTEFACTS_DIR}"
 
   # The zip dist config is inside the zip dist. We need the docker dist
@@ -155,6 +153,9 @@ echo -e "java version:                  [${GREEN}$(java --version)${NC}]"
 
 #Run the build (including running maven install task to generate poms
 ./gradlew -Pversion="${PRODUCT_VERSION}" clean build "${EXTRA_BUILD_ARGS[@]}"
+
+ls -l "${libs_dir}"
+
 
 # If it is a tagged build copy all the files needed for the github release
 # artefacts
