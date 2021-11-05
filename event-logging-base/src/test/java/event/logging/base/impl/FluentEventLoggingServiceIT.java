@@ -47,20 +47,33 @@ import event.logging.TermCondition;
 import event.logging.User;
 import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.EventLoggingService;
-import event.logging.base.util.EventLoggingUtil;
+import event.logging.util.EventLoggingUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the creation of event logging data.
+ *
+ * IMPORTANT You need to be careful about which versions of classes you use in here, i.e. event.logging
+ * or event.logging.base. When the classes in .base. are copied into event.logging they have the .base. part
+ * removed.
  */
 class FluentEventLoggingServiceIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FluentEventLoggingServiceIT.class);
 //    static {
 //        BasicConfigurator.configure();
 //    }
@@ -71,7 +84,8 @@ class FluentEventLoggingServiceIT {
     private static final int NUM_OF_RECORDS = 10;
 
     private EventLoggingService getEventLoggingService() {
-        return new DefaultEventLoggingService(new ExceptionAndLoggingErrorHandler(),
+        return new DefaultEventLoggingService(
+                new ExceptionAndLoggingErrorHandler(),
                 ValidationExceptionBehaviourMode.THROW);
     }
 
@@ -745,4 +759,143 @@ class FluentEventLoggingServiceIT {
 
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
+
+    @Test
+    void testLoggedAction_simple_success() {
+        final List<Event> events = new ArrayList<>();
+
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        AtomicBoolean isWorkDone = new AtomicBoolean(false);
+
+        eventLoggingServiceSpy.loggedAction(
+                "MyTypeId",
+                "My description",
+                SearchEventAction.builder()
+                        .withQuery(Query.builder()
+                                .withRaw("Find stuff")
+                                .build())
+                        .build(),
+                () ->
+                        isWorkDone.set(true));
+
+        assertThat(isWorkDone)
+                .isTrue();
+        assertThat(events)
+                .hasSize(1);
+        assertThat(events.get(0).getEventDetail().getEventAction())
+                .isInstanceOf(SearchEventAction.class);
+        SearchEventAction searchEventAction = (SearchEventAction) events.get(0)
+                .getEventDetail()
+                .getEventAction();
+
+        assertThat(searchEventAction.getQuery().getRaw())
+                .isEqualTo("Find stuff");
+
+        // Success is assumed with no outcome
+        assertThat(searchEventAction.getOutcome())
+                .isNull();
+    }
+
+    @Test
+    void testLoggedAction_simple_failure() {
+        final List<Event> events = new ArrayList<>();
+
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        AtomicBoolean isWorkDone = new AtomicBoolean(false);
+
+        Assertions.assertThatExceptionOfType(RuntimeException.class)
+                .describedAs("Boom")
+                .isThrownBy(() -> {
+                    eventLoggingServiceSpy.loggedAction(
+                            "MyTypeId",
+                            "My description",
+                            SearchEventAction.builder()
+                                    .withQuery(Query.builder()
+                                            .withRaw("Find stuff")
+                                            .build())
+                                    .build(),
+                            () -> {
+                                throw new RuntimeException("Boom");
+                            });
+                });
+
+        assertThat(isWorkDone)
+                .isFalse();
+        assertThat(events)
+                .hasSize(1);
+        assertThat(events.get(0).getEventDetail().getEventAction())
+                .isInstanceOf(SearchEventAction.class);
+        SearchEventAction searchEventAction = (SearchEventAction) events.get(0)
+                .getEventDetail()
+                .getEventAction();
+
+        assertThat(searchEventAction.getQuery().getRaw())
+                .isEqualTo("Find stuff");
+
+        // Check we have failure outcome
+        assertThat(searchEventAction.getOutcome())
+                .isNotNull();
+        assertThat(searchEventAction.getOutcome().isSuccess())
+                .isFalse();
+        assertThat(searchEventAction.getOutcome().getDescription())
+                .contains("Boom");
+    }
+
+    @Test
+    void testLoggedResult_advanced_success() {
+        final List<Event> events = new ArrayList<>();
+
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        final int expectedResult = 42;
+        final int result = eventLoggingServiceSpy.loggedResult(
+                "MyTypeId",
+                "My description",
+                SearchEventAction.builder()
+                        .withQuery(Query.builder()
+                                .withRaw("Find stuff")
+                                .build())
+                        .build(),
+                eventAction -> {
+                    eventAction.getQuery().setRaw("Find stuff 2");
+                    return ComplexLoggedOutcome.success(expectedResult, eventAction);
+                },
+                null);
+
+        assertThat(result)
+                .isEqualTo(expectedResult);
+        assertThat(events)
+                .hasSize(1);
+        assertThat(events.get(0).getEventDetail().getEventAction())
+                .isInstanceOf(SearchEventAction.class);
+        SearchEventAction searchEventAction = (SearchEventAction) events.get(0)
+                .getEventDetail()
+                .getEventAction();
+
+        assertThat(searchEventAction.getQuery().getRaw())
+                .isEqualTo("Find stuff 2");
+
+        // Success is assumed with no outcome
+        assertThat(searchEventAction.getOutcome())
+                .isNull();
+    }
+
+    private EventLoggingService buildEventLoggingServiceSpy(final List<Event> events) {
+        final EventLoggingService eventLoggingService = getEventLoggingService();
+        eventLoggingService.setValidate(false);
+
+        final EventLoggingService eventLoggingServiceSpy = Mockito.spy(eventLoggingService);
+
+        // Override the behaviour of the log() method so we can see what gets logged
+        Mockito.doAnswer(invocation -> {
+            final Event event = invocation.getArgument(0, Event.class);
+            events.add(event);
+            return null;
+        })
+                .when(eventLoggingServiceSpy).log(Mockito.any());
+        return eventLoggingServiceSpy;
+    }
+
 }

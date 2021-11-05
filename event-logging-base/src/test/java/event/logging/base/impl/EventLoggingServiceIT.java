@@ -46,6 +46,8 @@ import event.logging.base.Payload;
 import event.logging.util.DeviceUtil;
 import event.logging.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -63,6 +65,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Tests the creation of event logging data.
  */
 public class EventLoggingServiceIT {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventLoggingServiceIT.class);
+
 //    static {
 //        BasicConfigurator.configure();
 //    }
@@ -436,7 +441,7 @@ public class EventLoggingServiceIT {
     }
 
     @Test
-    void testCreateQuery(){
+    void testCreateQuery() {
 
         final Event event = createBasicEvent("Query", "Simple query");
 

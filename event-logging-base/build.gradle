@@ -10,8 +10,13 @@ dependencies {
     compile "org.slf4j:slf4j-api:${versions.slf4j}"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testImplementation "org.assertj:assertj-core:${versions.assertj}"
+    testImplementation "org.mockito:mockito-core:${versions.mockito}"
+//    testImplementation "org.mockito:mockito-junit-jupiter:${versions.mockito}"
+
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
-    testCompile "org.assertj:assertj-core:${versions.assertj}"
+    testRuntimeOnly "ch.qos.logback:logback-classic:${versions.logback}"
+    testRuntimeOnly "ch.qos.logback:logback-core:${versions.logback}"
 }
 
 

@@ -18,11 +18,11 @@ package event.logging.base.impl;
 import event.logging.BaseOutcome;
 import event.logging.Event;
 import event.logging.EventAction;
+import event.logging.HasOutcome;
 import event.logging.Purpose;
 import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggingService;
-import event.logging.base.HasOutcome;
 import event.logging.base.LoggedWorkExceptionHandler;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
@@ -51,7 +51,9 @@ public class DefaultEventLoggingService implements EventLoggingService {
     private final LogReceiverFactory logReceiverFactory = LogReceiverFactory.getInstance();
     private final XMLValidator xmlValidator;
 
-    private final Map<Class<? extends EventAction>, Optional<Function<EventAction, BaseOutcome>>> outcomeFactoryMap = new ConcurrentHashMap<>();
+    // For each event action hold a function to create the appropriate subclass of BaseOutcome
+    private static final Map<Class<? extends EventAction>, Optional<Function<EventAction, BaseOutcome>>>
+            OUTCOME_FACTORY_MAP = new ConcurrentHashMap<>();
 
     /**
      * Used to set validation on or off overriding the system property. This is mainly for testing purposes.
@@ -68,8 +70,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
     /**
      * @param schemaValidationErrorHandler
-     * @param validationExceptionBehaviourMode
-     *            Controls how the validator handles exceptions thrown by the schemaValidationExceptionHandler
+     * @param validationExceptionBehaviourMode Controls how the validator handles exceptions thrown by the schemaValidationExceptionHandler
      */
     public DefaultEventLoggingService(ErrorHandler schemaValidationErrorHandler,
                                       ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
@@ -81,9 +82,8 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
     /**
      * Logs an event to the log.
-     * 
-     * @param event
-     *            The event to log.
+     *
+     * @param event The event to log.
      */
     @Override
     public void log(final Event event) {
@@ -137,7 +137,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
                     // Allow caller to provide a new EventAction based on the exception
                     newEventAction = exceptionHandler.handle(eventAction, e);
                 } catch (Exception exception) {
-                    LOGGER.error( "Error running exception handler. " +
+                    LOGGER.error("Error running exception handler. " +
                             "Swallowing exception and rethrowing original exception", e);
                 }
             } else {
@@ -190,13 +190,14 @@ public class DefaultEventLoggingService implements EventLoggingService {
         // BaseOutcome it is so need to use reflection to find out.
         // Scanning the methods on each call is expensive so figure out what the ctor
         // and setOutcome methods are on first use then cache them.
-        return outcomeFactoryMap.computeIfAbsent(eventAction.getClass(), clazz -> {
+        // Manually storing the mappings would be brittle to schema changes.
+        return OUTCOME_FACTORY_MAP.computeIfAbsent(eventAction.getClass(), clazz -> {
 
             return Arrays.stream(eventAction.getClass().getMethods())
-                    .filter(method -> method.getName().equals("setOutcome"))
+                    .filter(outcomeSetter -> outcomeSetter.getName().equals("setOutcome"))
                     .findAny()
-                    .flatMap(method -> {
-                        Class<?> outcomeClass = method.getParameterTypes()[0];
+                    .flatMap(outcomeSetter -> {
+                        Class<?> outcomeClass = outcomeSetter.getParameterTypes()[0];
 
                         Constructor<?> constructor;
                         try {
@@ -206,21 +207,21 @@ public class DefaultEventLoggingService implements EventLoggingService {
                             return Optional.empty();
                         }
 
-                        final Function<EventAction, BaseOutcome> func = eventAction2 -> {
+                        final Function<EventAction, BaseOutcome> outcomeAdderFunc = anEventAction -> {
                             try {
                                 final BaseOutcome outcome = (BaseOutcome) constructor.newInstance();
-                                method.invoke(eventAction, outcomeClass.cast(outcome));
+                                outcomeSetter.invoke(anEventAction, outcomeClass.cast(outcome));
                                 return outcome;
                             } catch (Exception e) {
                                 throw new RuntimeException(e);
                             }
                         };
                         LOGGER.debug("Caching function for {}", eventAction.getClass().getName());
-                        return Optional.of(func);
+                        return Optional.of(outcomeAdderFunc);
                     });
         })
-                .flatMap(func ->
-                        Optional.of(func.apply(eventAction)));
+                .flatMap(outcomeSetter ->
+                        Optional.of(outcomeSetter.apply(eventAction)));
     }
 
     private boolean checkValidating() {
@@ -238,11 +239,10 @@ public class DefaultEventLoggingService implements EventLoggingService {
      * Set to true if the event logging service should validate the output XML against the schema. This option helps
      * identify areas of code that are producing invalid data. For performance reasons it is recommended that
      * validation is not performed in production.
-     * 
+     * <p>
      * If validate is set to null then the system property shall be used to determine if validation is performed.
-     * 
-     * @param validate
-     *            The validation flag.
+     *
+     * @param validate The validation flag.
      */
     @Override
     public void setValidate(final Boolean validate) {
@@ -251,7 +251,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
     /**
      * Use to determine if the event logging service is set to validate data against the XML schema.
-     * 
+     *
      * @return True if the validate flag is set.
      */
     @Override
