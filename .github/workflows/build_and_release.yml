@@ -95,7 +95,11 @@ jobs:
         id: run_build
         env:
           # Map the Github secrets into env vars that gradle can see
-          ORG_GRADLE_PROJECT_lowerCamelTestSecret: ${{ secrets.ORG_GRADLE_PROJECT_LOWERCAMELTESTSECRET }}
+          # GH is case insensitive, gradle is case sensitive
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.ORG_GRADLE_PROJECT_SONATYPEPASSWORD }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.ORG_GRADLE_PROJECT_SONATYPEUSERNAME }}
         run: |
           pushd "${BUILD_DIR}" > /dev/null
           echo -e "${GREEN}Running ${BLUE}ci_build.sh${NC}"

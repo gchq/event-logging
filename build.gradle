@@ -77,12 +77,6 @@ def eventLoggingSchemaVer = "v4.0-beta.3"
 ext.previousReleaseVersion = "v5.0-beta.16_schema-v4.0-beta.3"
 // *****************************************************************************
 
-def test1 = getPropertyOrDefault('lowerCamelTestSecret', "null")
-def test2 = getPropertyOrDefault('LOWERCAMELTESTSECRET', "null")
-println "test1 [${test1}]"
-println "test2 [${test2}]"
-
-
 
 def VERSION_PATTERN = /^(?:v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?_)?schema-(v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?)(-SNAPSHOT)?$/
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
