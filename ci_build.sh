@@ -59,6 +59,8 @@ gather_release_artefacts() {
 
   local -r libs_dir="${BUILD_DIR}/event-logging-api/build/libs"
 
+  ls -l "${libs_dir}"
+
   echo "Copying release artefacts to ${RELEASE_ARTEFACTS_DIR}"
 
   # The zip dist config is inside the zip dist. We need the docker dist
