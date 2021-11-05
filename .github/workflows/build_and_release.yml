@@ -93,6 +93,9 @@ jobs:
 
       - name: Run full build
         id: run_build
+        env:
+          # Map the Github secrets into env vars that gradle can see
+          ORG_GRADLE_PROJECT_lowerCamelTestSecret: ${{ secrets.ORG_GRADLE_PROJECT_LOWERCAMELTESTSECRET }}
         run: |
           pushd "${BUILD_DIR}" > /dev/null
           echo -e "${GREEN}Running ${BLUE}ci_build.sh${NC}"
