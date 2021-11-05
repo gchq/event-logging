@@ -103,10 +103,13 @@ jobs:
         id: create_release
         if: ${{ env.BUILD_IS_RELEASE == 'true' }}
         env:
-          # Github provided secret
-          # Use ssh-keygen -t rsa -b 4096 to gen a pub/pric key pair
-          # Create a repo deploy key with the public key https://github.com/<namespace>/<repo>/settings/keys/new
-          # Create a repo secret with the private key https://github.com/<namespace>/<repo>/settings/secrets/actions/new
+          # Github provided secret. To set it up do:
+          # Use this to generate the pub/priv key pair
+          #   ssh-keygen -t rsa -b 4096 -f <repo>_deploy_key
+          # Create a repo deploy key with the public key, name 'Actions Deploy Key' and with write access
+          #   https://github.com/<namespace>/<repo>/settings/keys/new
+          # Create a repo secret with the private key, name 'SSH_DEPLOY_KEY'
+          #   https://github.com/<namespace>/<repo>/settings/secrets/actions/new
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "${ACTIONS_SCRIPTS_DIR}/create_github_release.sh"
 
