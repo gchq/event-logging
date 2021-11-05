@@ -16,9 +16,9 @@ set -e
 
 #establish what version we are building
 EXTRA_BUILD_ARGS=()
-if [ -n "$TRAVIS_TAG" ]; then
+if [ -n "$BUILD_TAG" ]; then
     #Tagged commit so use that as our version, e.g. v1.2.3
-    PRODUCT_VERSION="${TRAVIS_TAG}"
+    PRODUCT_VERSION="${BUILD_TAG}"
 
     # GPG sign the artifacts, publish to nexus then close and release
     # the staging repo to the public nexus repo and on to central
@@ -38,13 +38,19 @@ else
 fi
 
 #Dump all the travis env vars to the console for debugging
-echo -e "TRAVIS_BUILD_NUMBER: [${GREEN}${TRAVIS_BUILD_NUMBER}${NC}]"
-echo -e "TRAVIS_COMMIT:       [${GREEN}${TRAVIS_COMMIT}${NC}]"
-echo -e "TRAVIS_BRANCH:       [${GREEN}${TRAVIS_BRANCH}${NC}]"
-echo -e "TRAVIS_TAG:          [${GREEN}${TRAVIS_TAG}${NC}]"
-echo -e "TRAVIS_PULL_REQUEST: [${GREEN}${TRAVIS_PULL_REQUEST}${NC}]"
-echo -e "TRAVIS_EVENT_TYPE:   [${GREEN}${TRAVIS_EVENT_TYPE}${NC}]"
-echo -e "PRODUCT_VERSION:     [${GREEN}${PRODUCT_VERSION}${NC}]"
+echo -e "PRODUCT_VERSION:               [${GREEN}${PRODUCT_VERSION}${NC}]"
+echo -e "HOME:                          [${GREEN}${HOME}${NC}]"
+echo -e "BUILD_DIR:                     [${GREEN}${BUILD_DIR}${NC}]"
+echo -e "BUILD_COMMIT:                  [${GREEN}${BUILD_COMMIT}${NC}]"
+echo -e "BUILD_BRANCH:                  [${GREEN}${BUILD_BRANCH}${NC}]"
+echo -e "BUILD_TAG:                     [${GREEN}${BUILD_TAG}${NC}]"
+echo -e "BUILD_IS_PULL_REQUEST:         [${GREEN}${BUILD_IS_PULL_REQUEST}${NC}]"
+echo -e "BUILD_VERSION:                 [${GREEN}${BUILD_VERSION}${NC}]"
+echo -e "LOCAL_BUILD:                   [${GREEN}${LOCAL_BUILD}${NC}]"
+echo -e "docker version:                [${GREEN}$(docker --version)${NC}]"
+echo -e "docker-compose version:        [${GREEN}$(docker-compose --version)${NC}]"
+echo -e "git version:                   [${GREEN}$(git --version)${NC}]"
+echo -e "java version:                  [${GREEN}$(java --version)${NC}]"
 
 #Run the build (including running maven install task to generate poms
 ./gradlew -Pversion="${PRODUCT_VERSION}" clean build "${EXTRA_BUILD_ARGS[@]}"
