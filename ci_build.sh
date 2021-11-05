@@ -71,17 +71,17 @@ gather_release_artefacts() {
     "Change log for this release"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${PRODUCT_VERSION}.jar" \
+    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Event logging library JAR"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${PRODUCT_VERSION}-sources.jar" \
+    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}-sources.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Sources JAR"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${PRODUCT_VERSION}-javadoc.jar" \
+    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}-javadoc.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Javadoc JAR"
 
@@ -109,6 +109,8 @@ EXTRA_BUILD_ARGS=()
 if [ -n "$BUILD_TAG" ]; then
   #Tagged commit so use that as our version, e.g. v1.2.3
   PRODUCT_VERSION="${BUILD_TAG}"
+  # Remove the leading 'v'
+  MAVEN_VERSION="${BUILD_TAG#v}"
 
   # GPG sign the artifacts, publish to nexus then close and release
   # the staging repo to the public nexus repo and on to central
@@ -129,6 +131,7 @@ else
   #No tag so use the branch name as the version, e.g. dev-SNAPSHOT
   #None tagged builds are NOT pushed to bintray
   PRODUCT_VERSION="SNAPSHOT"
+  MAVEN_VERSION="SNAPSHOT"
   EXTRA_BUILD_ARGS=()
 fi
 
@@ -141,6 +144,7 @@ echo -e "BUILD_BRANCH:                  [${GREEN}${BUILD_BRANCH}${NC}]"
 echo -e "BUILD_TAG:                     [${GREEN}${BUILD_TAG}${NC}]"
 echo -e "BUILD_IS_PULL_REQUEST:         [${GREEN}${BUILD_IS_PULL_REQUEST}${NC}]"
 echo -e "BUILD_VERSION:                 [${GREEN}${BUILD_VERSION}${NC}]"
+echo -e "MAVEN_VERSION:                 [${GREEN}${MAVEN_VERSION}${NC}]"
 echo -e "LOCAL_BUILD:                   [${GREEN}${LOCAL_BUILD}${NC}]"
 echo -e "docker version:                [${GREEN}$(docker --version)${NC}]"
 echo -e "docker-compose version:        [${GREEN}$(docker-compose --version)${NC}]"
