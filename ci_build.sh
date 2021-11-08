@@ -71,17 +71,17 @@ gather_release_artefacts() {
     "Change log for this release"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}.jar" \
+    "${libs_dir}/event-logging-${MAVEN_VERSION}.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Event logging library JAR"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}-sources.jar" \
+    "${libs_dir}/event-logging-${MAVEN_VERSION}-sources.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Sources JAR"
 
   copy_release_artefact \
-    "${libs_dir}/event-logging-schema-${MAVEN_VERSION}-javadoc.jar" \
+    "${libs_dir}/event-logging-${MAVEN_VERSION}-javadoc.jar" \
     "${RELEASE_ARTEFACTS_DIR}" \
     "Javadoc JAR"
 
