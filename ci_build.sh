@@ -118,10 +118,15 @@ copy_gh_pages_content() {
   # jekyll templates.
   touch "${GH_PAGES_DIR}/.nojekyll"
 
-  echo "Copying javadoc files to ${GH_PAGES_DIR}"
+  local javadoc_dir="${BUILD_DIR}/event-logging-api/build/docs/javadoc"
+
+  echo "Copying javadoc files from ${BLUE}${javadoc_dir}${NC} to" \
+    "${BLUE}${GH_PAGES_DIR}${NC}"
+
   # copy our generated javadoc to gh-pages
   cp \
-    "${BUILD_DIR}/event-logging-api/build/docs/javadoc/"* \
+    --recursive \
+    "${javadoc_dir}/"* \
     "${GH_PAGES_DIR}/"
 }
 
