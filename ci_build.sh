@@ -121,7 +121,7 @@ copy_gh_pages_content() {
   echo "Copying javadoc files to ${GH_PAGES_DIR}"
   # copy our generated javadoc to gh-pages
   cp \
-    "${BUILD_DIR}"event-logging-api/build/docs/javadoc/* \
+    "${BUILD_DIR}/event-logging-api/build/docs/javadoc/"* \
     "${GH_PAGES_DIR}/"
 }
 
