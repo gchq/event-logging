@@ -12,6 +12,11 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v5.0-beta.25_schema-v4.0-beta.3] - 2021-11-08
+
+* No changes to event-logging. Fix build process.
+
+
 ## [v5.0-beta.24_schema-v4.0-beta.3] - 2021-11-08
 
 * No changes to event-logging. Fix build process.
@@ -178,7 +183,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.24_schema-v4.0-beta.3...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.25_schema-v4.0-beta.3...HEAD
+[v5.0-beta.25_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.24_schema-v4.0-beta.3...v5.0-beta.25_schema-v4.0-beta.3
 [v5.0-beta.24_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.23_schema-v4.0-beta.3...v5.0-beta.24_schema-v4.0-beta.3
 [v5.0-beta.23_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.22_schema-v4.0-beta.3...v5.0-beta.23_schema-v4.0-beta.3
 [v5.0-beta.22_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.21_schema-v4.0-beta.3...v5.0-beta.22_schema-v4.0-beta.3
