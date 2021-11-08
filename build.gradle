@@ -90,6 +90,9 @@ ext.projectVersionForMaven = projectVersion.replaceFirst(/^v/, "")
 
 if (isReleaseBuild) {
     println "This is a release build for maven version [${projectVersionForMaven}]"
+    println "Gradle will release artefacts to sonatype."
+    println "To test a versioned build without releasing to sonatype add '-SNAPSHOT' to the end of the version property"
+
     // Ensure the various props are set for signing and publishing to sonatype
 
     // The username for Sonatype OSSRH Jira account
