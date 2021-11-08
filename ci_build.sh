@@ -51,6 +51,26 @@ copy_release_artefact() {
     >> "${RELEASE_MANIFEST}"
 }
 
+create_file_hash() {
+  local -r file="$1"
+  local -r hash_file="${file}.sha256"
+  local dir
+  dir="$(dirname "${file}")"
+  local filename
+  filename="$(basename "${file}")"
+
+  echo -e "Creating a SHA-256 hash for file ${GREEN}${filename}${NC} in ${GREEN}${dir}${NC}"
+  # Go to the dir where the file is so the hash file doesn't contain the full
+  # path
+  pushd "${dir}" > /dev/null
+  sha256sum "${filename}" > "${hash_file}"
+  popd > /dev/null
+  echo -e "Created hash file ${GREEN}${hash_file}${NC}, containing:"
+  echo -e "-------------------------------------------------------"
+  cat "${hash_file}"
+  echo -e "-------------------------------------------------------"
+}
+
 # Put all release artefacts in a dir to make it easier to upload them to
 # Github releases. Some of them are needed by the stack builds in
 # stroom-resources
