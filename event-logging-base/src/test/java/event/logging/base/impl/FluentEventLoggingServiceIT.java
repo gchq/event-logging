@@ -67,7 +67,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the creation of event logging data.
- *
+ * <p>
  * IMPORTANT You need to be careful about which versions of classes you use in here, i.e. event.logging
  * or event.logging.base. When the classes in .base. are copied into event.logging they have the .base. part
  * removed.
@@ -129,34 +129,36 @@ class FluentEventLoggingServiceIT {
     void testFullyFluentExample() {
         final EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
+        // @formatter:off
         final Event event = Event.builder()
                 .withEventTime()
-                        .withTimeCreated(new Date())
-                        .end()
+                    .withTimeCreated(new Date())
+                    .end()
                 .withEventSource()
-                        .withSystem()
-                                .withName("Test System")
-                                .withEnvironment("Test")
-                                .end()
-                        .withGenerator("JUnit")
-                        .withDevice()
-                                .withIPAddress("123.123.123.123")
-                                .end()
-                        .withUser()
-                                .withId("someuser")
-                                .end()
+                    .withSystem()
+                        .withName("Test System")
+                        .withEnvironment("Test")
                         .end()
+                    .withGenerator("JUnit")
+                    .withDevice()
+                        .withIPAddress("123.123.123.123")
+                        .end()
+                    .withUser()
+                        .withId("someuser")
+                        .end()
+                    .end()
                 .withEventDetail()
-                        .withTypeId("LOGON")
-                        .withDescription("A user logon")
-                        .withAuthenticate()
-                                .withAction(AuthenticateAction.LOGON)
-                                .withUser()
-                                        .withId("someuser")
-                                        .end()
-                                .end()
+                    .withTypeId("LOGON")
+                    .withDescription("A user logon")
+                    .withAuthenticate()
+                        .withAction(AuthenticateAction.LOGON)
+                        .withUser()
+                            .withId("someuser")
                         .end()
+                    .end()
+                .end()
                 .build();
+        // @formatter:on
 
         eventLoggingService.log(event);
     }
@@ -197,7 +199,7 @@ class FluentEventLoggingServiceIT {
     void testLoggedResult_Simple() {
 
         final String username = "jbloggs";
-        final Integer result = getEventLoggingService().loggedResult(
+        final Integer result = getEventLoggingService().loggedWorkBuilder(
                 "login",
                 "User " + username + " logged in",
                 AuthenticateEventAction.builder()
@@ -205,12 +207,12 @@ class FluentEventLoggingServiceIT {
                                 .withName(username)
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
-                        .build(),
-                () -> {
+                        .build())
+                .withSimpleLoggedResult(() -> {
                     // Now do the logged work and return the result of it
                     return 42;
-                }
-        );
+                })
+                .getResultAndLog();
 
         Assertions.assertThat(result)
                 .isEqualTo(42);
@@ -220,7 +222,7 @@ class FluentEventLoggingServiceIT {
     void testLoggedAction_Simple() {
 
         final String username = "jbloggs";
-        getEventLoggingService().loggedAction(
+        getEventLoggingService().loggedWorkBuilder(
                 "login",
                 "User " + username + " logged in",
                 AuthenticateEventAction.builder()
@@ -228,31 +230,31 @@ class FluentEventLoggingServiceIT {
                                 .withName(username)
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
-                        .build(),
-                () -> {
+                        .build())
+                .withSimpleLoggedAction(() -> {
                     // Now do the logged work and return the result of it
                     System.out.println("Doing some work");
-                }
-        );
+                })
+                .runActionAndLog();
     }
 
     @Test
     void testLoggedResult_Advanced() {
 
         final String username = "jbloggs";
-        final Integer result = getEventLoggingService().loggedResult(
+        final Integer result = getEventLoggingService().loggedWorkBuilder(
                 "login",
                 "User " + username + " logged in",
-                Purpose.builder()
-                        .withJustification("Approval No. 23433393")
-                        .build(),
                 AuthenticateEventAction.builder()
                         .withUser(User.builder()
                                 .withName(username)
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
-                        .build(),
-                eventAction -> {
+                        .build())
+                .withPurpose(Purpose.builder()
+                        .withJustification("Approval No. 23433393")
+                        .build())
+                .withComplexLoggedResult(eventAction -> {
                     // Now do the logged work and return the result of it
                     final int theAnswer = 42;
                     final AuthenticateEventAction newEventAction = eventAction.newCopyBuilder()
@@ -262,8 +264,8 @@ class FluentEventLoggingServiceIT {
                                     .build())
                             .build();
                     return ComplexLoggedOutcome.success(42, newEventAction);
-                },
-                (eventAction, throwable) ->
+                })
+                .withCustomExceptionHandler((eventAction, throwable) ->
                         eventAction.newCopyBuilder()
                                 .withOutcome(AuthenticateOutcome.builder()
                                         .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
@@ -271,7 +273,8 @@ class FluentEventLoggingServiceIT {
                                         .withSuccess(false)
                                         .build())
                                 .build()
-        );
+                )
+                .getResultAndLog();
 
         Assertions.assertThat(result)
                 .isEqualTo(42);
@@ -281,7 +284,7 @@ class FluentEventLoggingServiceIT {
     void testLoggedAction_Advanced() {
 
         final String username = "jbloggs";
-        getEventLoggingService().loggedAction(
+        getEventLoggingService().loggedWorkBuilder(
                 "login",
                 "User " + username + " logged in",
                 AuthenticateEventAction.builder()
@@ -289,8 +292,8 @@ class FluentEventLoggingServiceIT {
                                 .withName(username)
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
-                        .build(),
-                eventAction -> {
+                        .build())
+                .withComplexLoggedAction(eventAction -> {
 
                     // Now do the logged work and return the outcome
 
@@ -302,8 +305,8 @@ class FluentEventLoggingServiceIT {
                             .build();
 
                     return ComplexLoggedOutcome.success(newEventAction);
-                },
-                (eventAction, throwable) ->
+                })
+                .withCustomExceptionHandler((eventAction, throwable) ->
                         eventAction.newCopyBuilder()
                                 .withOutcome(AuthenticateOutcome.builder()
                                         .withReason(AuthenticateOutcomeReason.ACCOUNT_LOCKED)
@@ -311,7 +314,8 @@ class FluentEventLoggingServiceIT {
                                         .withSuccess(false)
                                         .build())
                                 .build()
-        );
+                )
+                .runActionAndLog();
     }
 
     /**
@@ -336,11 +340,11 @@ class FluentEventLoggingServiceIT {
                         final Event event = createBasicEvent("LOGIN", "LOGIN");
                         event.getEventDetail()
                                 .setEventAction(AuthenticateEventAction.builder()
-                                .withAction(AuthenticateAction.LOGON)
-                                .withUser(User.builder()
-                                    .withId("someuser")
-                                    .build())
-                                .build());
+                                        .withAction(AuthenticateAction.LOGON)
+                                        .withUser(User.builder()
+                                                .withId("someuser")
+                                                .build())
+                                        .build());
 
                         event.getEventTime().setTimeCreated(new Date());
                         eventLoggingService.setValidate(true);
@@ -384,8 +388,8 @@ class FluentEventLoggingServiceIT {
                         .withTypeId(typeId)
                         .withDescription(description)
                         .withEventAction(AuthenticateEventAction.builder()
-                            .withAction(AuthenticateAction.LOGON)
-                            .build())
+                                .withAction(AuthenticateAction.LOGON)
+                                .build())
                         .build())
                 .build();
     }
@@ -546,10 +550,10 @@ class FluentEventLoggingServiceIT {
                         .withTypeId("Search")
                         .withDescription("Nasty search")
                         .withEventAction(SearchEventAction.builder()
-                .withQuery(Query.builder()
-                        .withRaw(sb.toString())
-                        .build())
-                .build()).build());
+                                .withQuery(Query.builder()
+                                        .withRaw(sb.toString())
+                                        .build())
+                                .build()).build());
 
         final EventLoggingService eventLoggingService = getEventLoggingService();
 
@@ -727,8 +731,8 @@ class FluentEventLoggingServiceIT {
         final long time = java.lang.System.currentTimeMillis();
 
         final Event event = createBasicEvent(EventDetail.builder()
-                        .withTypeId("Create")
-                        .withDescription("Create object")
+                .withTypeId("Create")
+                .withDescription("Create object")
                 .withEventAction(CreateEventAction.builder()
                         .addDocument(Document.builder()
                                 .withId("TestId")
@@ -768,16 +772,17 @@ class FluentEventLoggingServiceIT {
 
         AtomicBoolean isWorkDone = new AtomicBoolean(false);
 
-        eventLoggingServiceSpy.loggedAction(
+        eventLoggingServiceSpy.loggedWorkBuilder(
                 "MyTypeId",
                 "My description",
                 SearchEventAction.builder()
                         .withQuery(Query.builder()
                                 .withRaw("Find stuff")
                                 .build())
-                        .build(),
-                () ->
-                        isWorkDone.set(true));
+                        .build())
+                .withSimpleLoggedAction(() ->
+                        isWorkDone.set(true))
+                .runActionAndLog();
 
         assertThat(isWorkDone)
                 .isTrue();
@@ -808,17 +813,18 @@ class FluentEventLoggingServiceIT {
         Assertions.assertThatExceptionOfType(RuntimeException.class)
                 .describedAs("Boom")
                 .isThrownBy(() -> {
-                    eventLoggingServiceSpy.loggedAction(
+                    eventLoggingServiceSpy.loggedWorkBuilder(
                             "MyTypeId",
                             "My description",
                             SearchEventAction.builder()
                                     .withQuery(Query.builder()
                                             .withRaw("Find stuff")
                                             .build())
-                                    .build(),
-                            () -> {
+                                    .build())
+                            .withSimpleLoggedAction(() -> {
                                 throw new RuntimeException("Boom");
-                            });
+                            })
+                            .runActionAndLog();
                 });
 
         assertThat(isWorkDone)
@@ -844,25 +850,81 @@ class FluentEventLoggingServiceIT {
     }
 
     @Test
+    void testLoggedAction_advanced_failure() {
+        final List<Event> events = new ArrayList<>();
+
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        AtomicBoolean isWorkDone = new AtomicBoolean(false);
+
+        Assertions.assertThatExceptionOfType(RuntimeException.class)
+                .describedAs("Boom")
+                .isThrownBy(() -> {
+                    eventLoggingServiceSpy.loggedWorkBuilder(
+                            "MyTypeId",
+                            "My description",
+                            SearchEventAction.builder()
+                                    .withQuery(Query.builder()
+                                            .withRaw("Find stuff")
+                                            .build())
+                                    .build())
+                            .withSimpleLoggedAction(() -> {
+                                throw new RuntimeException("Boom");
+                            })
+                            .withCustomExceptionHandler((eventAction, throwable) ->
+                                    eventAction.newCopyBuilder()
+                                            .withOutcome(Outcome.builder()
+                                                    .withSuccess(false)
+                                                    .withDescription("It went boom!!!")
+                                                    .build())
+                                            .build())
+                            .runActionAndLog();
+                });
+
+        assertThat(isWorkDone)
+                .isFalse();
+        assertThat(events)
+                .hasSize(1);
+        assertThat(events.get(0).getEventDetail().getEventAction())
+                .isInstanceOf(SearchEventAction.class);
+        SearchEventAction searchEventAction = (SearchEventAction) events.get(0)
+                .getEventDetail()
+                .getEventAction();
+
+        assertThat(searchEventAction.getQuery().getRaw())
+                .isEqualTo("Find stuff");
+
+        // Check we have failure outcome
+        assertThat(searchEventAction.getOutcome())
+                .isNotNull();
+        assertThat(searchEventAction.getOutcome().isSuccess())
+                .isFalse();
+
+        // Non standard outcome msg
+        assertThat(searchEventAction.getOutcome().getDescription())
+                .contains("It went boom!!!");
+    }
+
+    @Test
     void testLoggedResult_advanced_success() {
         final List<Event> events = new ArrayList<>();
 
         final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
 
         final int expectedResult = 42;
-        final int result = eventLoggingServiceSpy.loggedResult(
+        final int result = eventLoggingServiceSpy.loggedWorkBuilder(
                 "MyTypeId",
                 "My description",
                 SearchEventAction.builder()
                         .withQuery(Query.builder()
                                 .withRaw("Find stuff")
                                 .build())
-                        .build(),
-                eventAction -> {
+                        .build())
+                .withComplexLoggedResult(eventAction -> {
                     eventAction.getQuery().setRaw("Find stuff 2");
                     return ComplexLoggedOutcome.success(expectedResult, eventAction);
-                },
-                null);
+                })
+                .getResultAndLog();
 
         assertThat(result)
                 .isEqualTo(expectedResult);
@@ -880,6 +942,91 @@ class FluentEventLoggingServiceIT {
         // Success is assumed with no outcome
         assertThat(searchEventAction.getOutcome())
                 .isNull();
+    }
+
+    @Test
+    void testBuildLogger_simpleResult() {
+        final List<Event> events = new ArrayList<>();
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        final long result = eventLoggingServiceSpy.loggedWorkBuilder(
+                "MyTypeId",
+                "My description",
+                SearchEventAction.builder()
+                        .build())
+                .withPurpose(Purpose.builder()
+                        .withJustification("Just because")
+                        .build())
+                .withSimpleLoggedResult(() -> {
+                    // Do logged work
+                    return 42L;
+                })
+                .withLoggingRequired(true)
+                .getResultAndLog();
+
+        Assertions.assertThat(result)
+                .isEqualTo(42L);
+    }
+
+    @Test
+    void testBuildLogger_complexResult() {
+        final List<Event> events = new ArrayList<>();
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        final long result = eventLoggingServiceSpy.loggedWorkBuilder(
+                "MyTypeId",
+                "My description",
+                SearchEventAction.builder()
+                        .build())
+                .withPurpose(Purpose.builder()
+                        .withJustification("Just because")
+                        .build())
+                .withComplexLoggedResult(eventAction -> {
+                    // Do logged work
+
+                    return ComplexLoggedOutcome.success(42L, eventAction);
+                })
+                .withLoggingRequired(true)
+                .getResultAndLog();
+
+        Assertions.assertThat(result)
+                .isEqualTo(42L);
+        final Event event = events.get(0);
+        Assertions.assertThat(event)
+                .isNotNull();
+        Assertions.assertThat(event.getEventDetail().getPurpose().getJustification())
+                .isEqualTo("Just because");
+        Assertions.assertThat(event.getEventDetail().getTypeId())
+                .isEqualTo("MyTypeId");
+        Assertions.assertThat(event.getEventDetail().getDescription())
+                .isEqualTo("My description");
+    }
+
+    @Test
+    void testBuildLogger_notLogged() {
+        final List<Event> events = new ArrayList<>();
+        final EventLoggingService eventLoggingServiceSpy = buildEventLoggingServiceSpy(events);
+
+        final long result = eventLoggingServiceSpy.loggedWorkBuilder(
+                "MyTypeId",
+                "My description",
+                SearchEventAction.builder()
+                        .build())
+                .withPurpose(Purpose.builder()
+                        .withJustification("Just because")
+                        .build())
+                .withSimpleLoggedResult(() -> {
+                    // Do logged work
+                    return 42L;
+                })
+                .withLoggingRequired(false)
+                .getResultAndLog();
+
+        Assertions.assertThat(result)
+                .isEqualTo(42L);
+
+        Assertions.assertThat(events)
+                .isEmpty();
     }
 
     private EventLoggingService buildEventLoggingServiceSpy(final List<Event> events) {

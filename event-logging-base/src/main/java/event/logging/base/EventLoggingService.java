@@ -127,13 +127,36 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work and the work
-     * has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
-     * @param loggedWork A {@link Runnable} of the work to be logged. If no exception is thrown success is assumed.
+     * Creates a builder to assist with logging an event for a {@link Runnable} or {@link Supplier}.
+     * This method allows for a piece of work to be run and logged in one go with any expceptions behing logged
+     * appropriately.
+     * @param eventTypeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
+     * @param description The description of the event, see {@link EventDetail#setDescription(String)}
+     * @param eventAction The action of the logged event, see {@link EventAction}. This event action will be
+     *                    used on the event unless one of the following methods is used which can override it:
+     *                    {@link EventLoggerBasicBuilder#withComplexLoggedAction(ComplexLoggedRunnable)}
+     *                    {@link EventLoggerBasicBuilder#withComplexLoggedResult(ComplexLoggedSupplier)}
+     *                    {@link EventLoggerBasicBuilder#withCustomExceptionHandler(LoggedWorkExceptionHandler)}
+     * @param <T_EVENT_ACTION> The type of event action that will be logged, e.g.
+     * {@link event.logging.SearchEventAction}, {@link event.logging.ViewEventAction}, etc.
+     * @return A builder instance.
      */
+    default <T_EVENT_ACTION extends EventAction> EventLoggerBasicBuilder<T_EVENT_ACTION> loggedWorkBuilder(
+            final String eventTypeId,
+            final String description,
+            final T_EVENT_ACTION eventAction) {
+
+        return new EventLoggerBasicBuilder<>(
+                this,
+                eventTypeId,
+                description,
+                eventAction);
+    }
+
+    /**
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -156,13 +179,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work and the work
-     * has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
-     * @param loggedWork A {@link Runnable} of the work to be logged. If no exception is thrown success is assumed.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -186,14 +205,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work and the work
-     * has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
-     * @param loggedWork The work that is being logged with the outcome of the work being return as a
-     *                   {@link LoggedOutcome}.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -215,14 +229,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work and the work
-     * has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
-     * @param loggedWork The work that is being logged with the outcome of the work being return as a
-     *                   {@link LoggedOutcome}.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -245,11 +254,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when the logged work has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -267,11 +274,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when the logged work has no result.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged and the exception re-thrown.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
             final String eventTypeId,
             final String description,
@@ -290,11 +295,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
@@ -317,11 +320,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
@@ -345,11 +346,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
@@ -369,11 +368,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
-     * Use this form when you do not need to modify the event based on the result of the work.
-     * If an exception occurs in {@code loggedWork} then an unsuccessful outcome will be added to the
-     * {@link EventAction} before it is logged.
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
@@ -394,8 +391,9 @@ public interface EventLoggingService {
     }
 
     /**
-     * See also {@link EventLoggingService#loggedResult(String, String, Purpose, EventAction, ComplexLoggedSupplier, LoggedWorkExceptionHandler)}
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      */
+    @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
@@ -413,6 +411,7 @@ public interface EventLoggingService {
     }
 
     /**
+     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
      * Performs {@code loggedWork} and logs an event using the supplied {@link EventAction}.
      * An event is logged if the work is successful or if an exception occurs.
      * Use this form when you want to modify the event based on the result of the work, e.g. recording the
@@ -429,8 +428,7 @@ public interface EventLoggingService {
      *                   , the result of the work and the outcome. This allows a new {@link EventAction} to be returned
      *                   based on the result of the work. The skeleton {@link EventAction} is passed in
      *                   to allow it to be copied. The result of the work must be returned within a
-     *                   {@link ComplexLoggedOutcome}
-     *                   along with the desired {@link EventAction}.
+     *                   {@link ComplexLoggedOutcome} along with the desired {@link EventAction}.
      * @param exceptionHandler A function to allow you to provide a different {@link EventAction} based on
      *                         the exception. The skeleton {@link EventAction} is passed in to allow it to be
      *                         copied.<br/>
@@ -441,13 +439,21 @@ public interface EventLoggingService {
      *                         the caller to handle. Any exceptions in the handler will be ignored and the original
      *                         exception rethrown.
      */
-    <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
+    @Deprecated
+    default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
             final String eventTypeId,
             final String description,
             final Purpose purpose,
             final T_EVENT_ACTION eventAction,
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
-            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler);
+            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
+
+        return loggedWorkBuilder(eventTypeId, description, eventAction)
+                .withPurpose(purpose)
+                .withComplexLoggedResult(loggedWork)
+                .withCustomExceptionHandler(exceptionHandler)
+                .getResultAndLog();
+    }
 
     /**
      * Set to true if the event logging service should validate the output XML against the schema. This option helps

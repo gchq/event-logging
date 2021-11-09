@@ -15,27 +15,12 @@
  */
 package event.logging.base.impl;
 
-import event.logging.BaseOutcome;
 import event.logging.Event;
-import event.logging.EventAction;
-import event.logging.HasOutcome;
-import event.logging.Purpose;
-import event.logging.base.ComplexLoggedOutcome;
-import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggingService;
-import event.logging.base.LoggedWorkExceptionHandler;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
-
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 /**
  * This is the default implementation for creating an event that writes to Log4J when logged.
@@ -50,10 +35,6 @@ public class DefaultEventLoggingService implements EventLoggingService {
     private final EventSerializer eventSerializer = new DefaultEventSerializer();
     private final LogReceiverFactory logReceiverFactory = LogReceiverFactory.getInstance();
     private final XMLValidator xmlValidator;
-
-    // For each event action hold a function to create the appropriate subclass of BaseOutcome
-    private static final Map<Class<? extends EventAction>, Optional<Function<EventAction, BaseOutcome>>>
-            OUTCOME_FACTORY_MAP = new ConcurrentHashMap<>();
 
     /**
      * Used to set validation on or off overriding the system property. This is mainly for testing purposes.
@@ -100,130 +81,6 @@ public class DefaultEventLoggingService implements EventLoggingService {
         }
     }
 
-    @Override
-    public <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
-            final String eventTypeId,
-            final String description,
-            final Purpose purpose,
-            final T_EVENT_ACTION eventAction,
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
-            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
-
-        Objects.requireNonNull(eventAction);
-        Objects.requireNonNull(loggedWork);
-
-        final T_RESULT result;
-
-        try {
-            // Perform the callers work, allowing them to provide a new EventAction based on the
-            // result of the work e.g. if they are updating a record, they can capture the before state
-            final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork.get(eventAction);
-
-            final Event event = createEvent(eventTypeId, description, purpose, complexLoggedOutcome.getEventAction());
-
-            // From a logging point of view the work may be unsuccessful even if no ex is thrown
-            // so add the outcome to the event
-            if (!complexLoggedOutcome.wasSuccessful() && eventAction instanceof HasOutcome) {
-                addFailureOutcome(
-                        complexLoggedOutcome.getOutcomeDescription(),
-                        complexLoggedOutcome.getEventAction());
-            }
-            log(event);
-            result = complexLoggedOutcome.getResult();
-        } catch (Throwable e) {
-            T_EVENT_ACTION newEventAction = eventAction;
-            if (exceptionHandler != null) {
-                try {
-                    // Allow caller to provide a new EventAction based on the exception
-                    newEventAction = exceptionHandler.handle(eventAction, e);
-                } catch (Exception exception) {
-                    LOGGER.error("Error running exception handler. " +
-                            "Swallowing exception and rethrowing original exception", e);
-                }
-            } else {
-                // No handler so see if we can add an outcome
-                if (eventAction instanceof HasOutcome) {
-                    addFailureOutcome(e, newEventAction);
-                }
-            }
-            final Event event = createEvent(eventTypeId, description, newEventAction);
-            log(event);
-            // Rethrow the exception from the callers work
-            throw e;
-        }
-
-        return result;
-    }
-
-    private void addFailureOutcome(final Throwable e, final EventAction eventAction) {
-        final String description = e.getMessage() != null
-                ? e.getMessage()
-                : e.getClass().getName();
-
-        addFailureOutcome(description, eventAction);
-    }
-
-    private void addFailureOutcome(final String description, final EventAction eventAction) {
-        try {
-            final HasOutcome hasOutcome = (HasOutcome) eventAction;
-            BaseOutcome baseOutcome = hasOutcome.getOutcome();
-
-            if (baseOutcome == null) {
-                // eventAction has no outcome so we need to create one on it
-                baseOutcome = createBaseOutcome(eventAction)
-                        .orElse(null);
-            }
-
-            if (baseOutcome == null) {
-                LOGGER.error("Unable to set outcome on {}", eventAction.getClass().getName());
-            } else {
-                baseOutcome.setSuccess(false);
-                baseOutcome.setDescription(description);
-            }
-        } catch (Exception e) {
-            LOGGER.error("Unable to add failure outcome to {}", eventAction.getClass().getName(), e);
-        }
-    }
-
-    private Optional<BaseOutcome> createBaseOutcome(final EventAction eventAction) {
-        // We need to call setOutcome on eventAction but we don't know what sub class of
-        // BaseOutcome it is so need to use reflection to find out.
-        // Scanning the methods on each call is expensive so figure out what the ctor
-        // and setOutcome methods are on first use then cache them.
-        // Manually storing the mappings would be brittle to schema changes.
-        return OUTCOME_FACTORY_MAP.computeIfAbsent(eventAction.getClass(), clazz -> {
-
-            return Arrays.stream(eventAction.getClass().getMethods())
-                    .filter(outcomeSetter -> outcomeSetter.getName().equals("setOutcome"))
-                    .findAny()
-                    .flatMap(outcomeSetter -> {
-                        Class<?> outcomeClass = outcomeSetter.getParameterTypes()[0];
-
-                        Constructor<?> constructor;
-                        try {
-                            constructor = outcomeClass.getDeclaredConstructor();
-                        } catch (NoSuchMethodException e) {
-                            LOGGER.warn("No noargs constructor found for " + outcomeClass.getName(), e);
-                            return Optional.empty();
-                        }
-
-                        final Function<EventAction, BaseOutcome> outcomeAdderFunc = anEventAction -> {
-                            try {
-                                final BaseOutcome outcome = (BaseOutcome) constructor.newInstance();
-                                outcomeSetter.invoke(anEventAction, outcomeClass.cast(outcome));
-                                return outcome;
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        };
-                        LOGGER.debug("Caching function for {}", eventAction.getClass().getName());
-                        return Optional.of(outcomeAdderFunc);
-                    });
-        })
-                .flatMap(outcomeSetter ->
-                        Optional.of(outcomeSetter.apply(eventAction)));
-    }
-
     private boolean checkValidating() {
         // Check the programmatic flag first.
         if (validate != null) {
@@ -258,5 +115,4 @@ public class DefaultEventLoggingService implements EventLoggingService {
     public boolean isValidate() {
         return validate != null && validate;
     }
-
 }
