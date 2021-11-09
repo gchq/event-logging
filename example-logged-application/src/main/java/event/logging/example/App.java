@@ -9,7 +9,6 @@ import event.logging.AuthenticateLogonType;
 import event.logging.Banner;
 import event.logging.ComplexLoggedOutcome;
 import event.logging.EventLoggingService;
-import event.logging.LoggedOutcome;
 import event.logging.MultiObject;
 import event.logging.OtherObject;
 import event.logging.Outcome;
@@ -99,7 +98,7 @@ public class App {
 
         final String userId = scanner.nextLine();
 
-        final boolean isLoggedIn = eventLoggingService.loggedResult(
+        final boolean isLoggedIn = eventLoggingService.loggedWorkBuilder(
                 "login",
                 "User " + userId + " logged in",
                 AuthenticateEventAction.builder()
@@ -108,17 +107,22 @@ public class App {
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
                         .withLogonType(AuthenticateLogonType.INTERACTIVE)
-                        .build(),
-                () -> {
+                        .build())
+                .withComplexLoggedResult(eventAction -> {
                     // Perform login
                     if (userId == null || userId.isEmpty()) {
-                        return LoggedOutcome.failure(false, "Invalid username");
+                        return ComplexLoggedOutcome.failure(
+                                false,
+                                eventAction,
+                                "Invalid username");
                     } else {
                         userContext.setUserId(userId);
-                        return LoggedOutcome.success(true);
+                        return ComplexLoggedOutcome.success(
+                                true,
+                                eventAction);
                     }
-                }
-        );
+                })
+                .getResultAndLog();
 
         if (!isLoggedIn) {
             LOGGER.error("Invalid user ID, quiting!");
@@ -128,7 +132,7 @@ public class App {
 
     private void logoffUser() {
 
-        eventLoggingService.loggedAction(
+        eventLoggingService.loggedWorkBuilder(
                 "login",
                 "User " + userContext.getUserId() + " logged out",
                 AuthenticateEventAction.builder()
@@ -136,17 +140,17 @@ public class App {
                                 .withId(userContext.getUserId())
                                 .build())
                         .withAction(AuthenticateAction.LOGOFF)
-                        .build(),
-                () -> {
+                        .build())
+                .withSimpleLoggedAction(() -> {
                     // Perform logoff
                     LOGGER.info("Logging off user {}", userContext.getUserId());
                     userContext.setUserId(null);
-                }
-        );
+                })
+                .runActionAndLog();
     }
 
     private boolean showConfirmationBanner() {
-        return eventLoggingService.loggedResult(
+        return eventLoggingService.loggedWorkBuilder(
                 "ShowBanner",
                 "User shown acceptable use banner",
                 ViewEventAction.builder()
@@ -154,8 +158,8 @@ public class App {
                                 .withMessage("With great power comes great responsibility." +
                                         "Do you accept this responsibility?")
                                 .build())
-                        .build(),
-                () -> {
+                        .build())
+                .withSimpleLoggedResult(() -> {
                     LOGGER.info("Show banner and get confirmation");
 
                     final Scanner scanner = new Scanner(System.in);
@@ -166,13 +170,13 @@ public class App {
                     } while (!answer.matches("[yn]"));
 
                     return answer.equals("y");
-                }
-        );
+                })
+                .getResultAndLog();
     }
 
     private void performSearch() {
 
-        final List<String> results = eventLoggingService.loggedResult(
+        final List<String> results = eventLoggingService.loggedWorkBuilder(
                 "listMethods private",
                 "List all private method names",
                 SearchEventAction.builder()
@@ -182,8 +186,8 @@ public class App {
                                         .withExclude("lambda")
                                         .build())
                                 .build())
-                        .build(),
-                eventAction -> {
+                        .build())
+                .withComplexLoggedResult(eventAction -> {
 
                     final List<String> privateMethods = Arrays.stream(this.getClass().getDeclaredMethods())
                             .filter(method -> Modifier.isPrivate(method.getModifiers()))
@@ -208,8 +212,8 @@ public class App {
 
                     // Return the success outcome
                     return ComplexLoggedOutcome.success(privateMethods, newEventAction);
-                },
-                (eventAction, throwable) -> {
+                })
+                .withCustomExceptionHandler((eventAction, throwable) -> {
                     // Provide a modified SearchEventAction based on the exception.
                     // If you don't provide a handler then by default the success and description
                     // are set for you.
@@ -220,7 +224,8 @@ public class App {
                                     .withDescription(throwable.getMessage())
                                     .build())
                             .build();
-                });
+                })
+                .getResultAndLog();
 
         LOGGER.info("Search returned :\n{}", String.join("\n", results));
     }

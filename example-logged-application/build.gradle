@@ -29,7 +29,7 @@ java {
 dependencies {
     implementation "ch.qos.logback:logback-classic:$versions.logback"
     implementation "ch.qos.logback:logback-core:$versions.logback"
-    implementation 'uk.gov.gchq.eventlogging:event-logging:5.0-beta.16_schema-v4.0-beta.3'
+    implementation 'uk.gov.gchq.eventlogging:event-logging:5.0-beta.27_schema-v4.0-beta.3'
     implementation 'org.slf4j:slf4j-api:1.7.30'
 
     // Use JUnit Jupiter API for testing.
