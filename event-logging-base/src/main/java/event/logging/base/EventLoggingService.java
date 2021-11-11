@@ -130,31 +130,12 @@ public interface EventLoggingService {
      * Creates a builder to assist with logging an event for a {@link Runnable} or {@link Supplier}.
      * This method allows for a piece of work to be run and logged in one go with any expceptions behing logged
      * appropriately.
-     * @param eventTypeId The typeId of the event, see {@link EventDetail#setTypeId(String)}
-     * @param description The description of the event, see {@link EventDetail#setDescription(String)}
-     * @param eventAction The action of the logged event, see {@link EventAction}. This event action will be
-     *                    used on the event unless one of the following methods is used which can override it:
-     *                    {@link EventLoggerBasicBuilder#withComplexLoggedAction(ComplexLoggedRunnable)}
-     *                    {@link EventLoggerBasicBuilder#withComplexLoggedResult(ComplexLoggedSupplier)}
-     *                    {@link EventLoggerBasicBuilder#withCustomExceptionHandler(LoggedWorkExceptionHandler)}
-     * @param <T_EVENT_ACTION> The type of event action that will be logged, e.g.
-     * {@link event.logging.SearchEventAction}, {@link event.logging.ViewEventAction}, etc.
      * @return A builder instance.
      */
-    default <T_EVENT_ACTION extends EventAction> EventLoggerBasicBuilder<T_EVENT_ACTION> loggedWorkBuilder(
-            final String eventTypeId,
-            final String description,
-            final T_EVENT_ACTION eventAction) {
-
-        return new EventLoggerBasicBuilder<>(
-                this,
-                eventTypeId,
-                description,
-                eventAction);
-    }
+    EventLoggerBasicBuilder.TypeIdBuildStep loggedWorkBuilder();
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -179,7 +160,7 @@ public interface EventLoggingService {
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -205,7 +186,7 @@ public interface EventLoggingService {
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -229,7 +210,7 @@ public interface EventLoggingService {
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -239,22 +220,22 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final LoggedRunnable loggedWork) {
 
-        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
+        final ComplexLoggedRunnable<T_EVENT_ACTION> loggedRunnable = eventAction2 -> {
             final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
             return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
         };
 
-        loggedResult(
-                eventTypeId,
-                description,
-                purpose,
-                eventAction,
-                loggedResultFunction,
-                null);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedAction(loggedRunnable)
+                .withPurpose(purpose)
+                .runActionAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -264,17 +245,17 @@ public interface EventLoggingService {
             final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
-        loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedWork::run,
-                exceptionHandler);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedAction(loggedWork)
+                .withCustomExceptionHandler(exceptionHandler)
+                .runActionAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_EVENT_ACTION extends EventAction> void loggedAction(
@@ -285,17 +266,18 @@ public interface EventLoggingService {
             final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
-        loggedResult(
-                eventTypeId,
-                description,
-                purpose,
-                eventAction,
-                loggedWork::run,
-                exceptionHandler);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedAction(loggedWork)
+                .withPurpose(purpose)
+                .withCustomExceptionHandler(exceptionHandler)
+                .runActionAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
@@ -310,17 +292,16 @@ public interface EventLoggingService {
             return ComplexLoggedOutcome.of(LoggedOutcome.success(result), eventAction2);
         };
 
-        return loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedResultFunction,
-                null);
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withSimpleLoggedResult(loggedWork)
+                .getResultAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
@@ -330,23 +311,17 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final Supplier<T_RESULT> loggedWork) {
 
-        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
-            T_RESULT result = loggedWork.get();
-            // We don't have an outcome so assume success
-            return ComplexLoggedOutcome.of(LoggedOutcome.success(result), eventAction2);
-        };
-
-        return loggedResult(
-                eventTypeId,
-                description,
-                purpose,
-                eventAction,
-                loggedResultFunction,
-                null);
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withSimpleLoggedResult(loggedWork)
+                .withPurpose(purpose)
+                .getResultAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
@@ -358,17 +333,16 @@ public interface EventLoggingService {
         final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 ->
                 ComplexLoggedOutcome.of(loggedWork.get(), eventAction2);
 
-        return loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedResultFunction,
-                null);
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedResult(loggedResultFunction)
+                .getResultAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
@@ -381,17 +355,17 @@ public interface EventLoggingService {
         final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 ->
                 ComplexLoggedOutcome.of(loggedWork.get(), eventAction2);
 
-        return loggedResult(
-                eventTypeId,
-                description,
-                purpose,
-                eventAction,
-                loggedResultFunction,
-                null);
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedResult(loggedResultFunction)
+                .withPurpose(purpose)
+                .getResultAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      */
     @Deprecated
     default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
@@ -401,17 +375,17 @@ public interface EventLoggingService {
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
-        return loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedWork,
-                exceptionHandler);
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedResult(loggedWork)
+                .withCustomExceptionHandler(exceptionHandler)
+                .getResultAndLog();
     }
 
     /**
-     * @deprecated Use {@link #loggedWorkBuilder(String, String, EventAction)}
+     * @deprecated Use {@link #loggedWorkBuilder()}
      * Performs {@code loggedWork} and logs an event using the supplied {@link EventAction}.
      * An event is logged if the work is successful or if an exception occurs.
      * Use this form when you want to modify the event based on the result of the work, e.g. recording the
@@ -448,9 +422,12 @@ public interface EventLoggingService {
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
-        return loggedWorkBuilder(eventTypeId, description, eventAction)
-                .withPurpose(purpose)
+        return loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
                 .withComplexLoggedResult(loggedWork)
+                .withPurpose(purpose)
                 .withCustomExceptionHandler(exceptionHandler)
                 .getResultAndLog();
     }
