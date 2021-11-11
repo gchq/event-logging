@@ -8,7 +8,7 @@ import event.logging.Purpose;
 import event.logging.base.ComplexLoggedOutcome;
 import event.logging.base.ComplexLoggedRunnable;
 import event.logging.base.ComplexLoggedSupplier;
-import event.logging.base.EventLoggerBasicBuilder;
+import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 import event.logging.base.LoggedWorkExceptionHandler;
 import org.slf4j.Logger;
@@ -24,10 +24,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> implements
-        EventLoggerBasicBuilder.TypeIdBuildStep,
-        EventLoggerBasicBuilder.DescriptionBuildStep,
-        EventLoggerBasicBuilder.EventActionBuildStep,
-        EventLoggerBasicBuilder.WorkBuildStep<T_EVENT_ACTION> {
+        EventLoggerBuilder.TypeIdStep,
+        EventLoggerBuilder.DescriptionStep,
+        EventLoggerBuilder.EventActionStep,
+        EventLoggerBuilder.WorkStep<T_EVENT_ACTION> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventLoggerBasicBuilderImpl.class);
 
@@ -48,163 +48,49 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
         this.eventLoggingService = eventLoggingService;
     }
 
-//    EventLoggerBasicBuilderImpl(final EventLoggingService eventLoggingService,
-//                                final String eventTypeId,
-//                                final String description,
-//                                final T_EVENT_ACTION eventAction) {
-//        this.eventLoggingService = eventLoggingService;
-//        this.eventTypeId = Objects.requireNonNull(eventTypeId, "Type ID required for all events.");
-//        this.description = Objects.requireNonNull(description, "Description required for all events.");
-//        this.eventAction = Objects.requireNonNull(
-//                eventAction, "Initial event action required for all events.");
-//    }
-
-    private EventLoggerBasicBuilderImpl(final EventLoggingService eventLoggingService,
-                                        final String eventTypeId,
-                                        final String description,
-                                        final T_EVENT_ACTION eventAction,
-                                        final boolean isLogEventRequired,
-                                        final Purpose purpose,
-                                        final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
-        this.eventLoggingService = eventLoggingService;
-        this.eventTypeId = eventTypeId;
-        this.description = description;
-        this.eventAction = eventAction;
-        this.isLogEventRequired = isLogEventRequired;
-        this.purpose = purpose;
-        this.exceptionHandler = exceptionHandler;
-    }
-
     @Override
-    public EventLoggerBasicBuilder.DescriptionBuildStep withTypeId(final String typeId) {
+    public EventLoggerBuilder.DescriptionStep withTypeId(final String typeId) {
         this.eventTypeId = typeId;
         return this;
     }
 
     @Override
-    public EventLoggerBasicBuilder.EventActionBuildStep withDescription(final String description) {
+    public EventLoggerBuilder.EventActionStep withDescription(final String description) {
         this.description = description;
         return this;
     }
 
     @Override
-    public <T extends EventAction> EventLoggerBasicBuilder.WorkBuildStep<T> withDefaultEventAction(
+    public <T extends EventAction> EventLoggerBuilder.WorkStep<T> withDefaultEventAction(
             final T defaultEventAction) {
-        // At this point we are moving from the builder having unknown type to it having a known EventAction type
-        // casts are unavoidable
+
+        // At this point we are moving from the builder having unknown type to it having a known
+        // EventAction so type casts are unavoidable.
 
         //noinspection unchecked
         this.eventAction = (T_EVENT_ACTION) defaultEventAction;
         //noinspection unchecked
-        return (EventLoggerBasicBuilder.WorkBuildStep<T>) this;
+        return (EventLoggerBuilder.WorkStep<T>) this;
     }
-
-//    @Override
-//    public EventLoggerBasicBuilder.WorkBuildStep<T_EVENT_ACTION> withDefaultEventAction(
-//            final T_EVENT_ACTION defaultEventAction) {
-//
-//        return this;
-//    }
 
     T_EVENT_ACTION getEventAction() {
         return eventAction;
     }
 
-    //    @Override
-//    public <T extends EventAction> EventLoggerBasicBuilder.OptionalsBuildStep<T> withDefaultEventAction(
-//            final T defaultEventAction) {
-//
-//        // This is the first step where we know the type of the event action so the unchecked casts
-//        // are unavoidable
-//
-////        @SuppressWarnings("unchecked")
-//        this.eventAction = (T_EVENT_ACTION) defaultEventAction;
-//
-//        final EventLoggerBasicBuilder.OptionalsBuildStep<T> buildStep = this;
-//        return (EventLoggerBasicBuilder.OptionalsBuildStep<T>) buildStep;
-//    }
-
-    /**
-     * Proved a custom exception handler that will intercept the exception and can then
-     * @param exceptionHandler A function to allow you to provide a different {@link EventAction} based on
-     *                         the exception. The skeleton {@link EventAction} is passed in to allow it to be
-     *                         copied.<br/>
-     *                         If null or this method is not called then an outcome will be set on the skeleton
-     *                         event action and the exception message will be added to the outcome
-     *                         description. The outcome success will be set to false.<br/>
-     *                         In either case, an event will be logged and the original exception re-thrown for
-     *                         the caller to handle. Any exceptions in the handler will be ignored and the original
-     *                         exception rethrown.
-     * @return The builder instance.
-     */
-//    @Override
-//    public EventLoggerBasicBuilder.OptionalsBuildStep<T_EVENT_ACTION> withCustomExceptionHandler(
-//            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
-//        this.exceptionHandler = exceptionHandler;
-//        return this;
-//    }
-
-
-//    @Override
-//    public EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withCustomExceptionHandler(
-//            final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
-//        return null;
-//    }
-//
-//    /**
-//     * Specify the purpose for the action being logged.
-//     * @param purpose The purpose/justification for the action being logged.
-//     * @return The builder instance.
-//     */
-//    @Override
-//    public EventLoggerBasicBuilder.OptionalsBuildStep<T_EVENT_ACTION, T_RESULT> withPurpose(final Purpose purpose) {
-//        this.purpose = purpose;
-//        return this;
-//    }
-//
-//    /**
-//     * Allows for selective logging of events.
-//     * @param isLoggingRequired False if the work should be performed without logging an event.
-//     * @return The builder instance.
-//     */
-//    @Override
-//    public EventLoggerBasicBuilder.OptionalsBuildStep<T_EVENT_ACTION, T_RESULT> withLoggingRequiredWhen(
-//            final boolean isLoggingRequired) {
-//
-//        this.isLogEventRequired = isLoggingRequired;
-//        return this;
-//    }
-
-    /**
-     * @param loggedWork A lambda to perform the work that is being logged and to return the {@link EventAction}
-     *                   , the result of the work and the outcome. This allows a new {@link EventAction} to be returned
-     *                   based on the result of the work. The skeleton {@link EventAction} is passed in
-     *                   to allow it to be copied. The result of the work must be returned within a
-     *                   {@link ComplexLoggedOutcome} along with the desired {@link EventAction}.
-     * @param <T_RESULT> The type of the result of the work.
-     * @return The builder instance.
-     */
     @Override
-    public <T_RESULT> EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withComplexLoggedResult(
+    public <T_RESULT> EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withComplexLoggedResult(
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
 
-        return new EventLoggerLoggedResultBuilderImpl<>(
+        return new ResultSubBuilderImpl<>(
                 this,
                 Objects.requireNonNull(loggedWork, "loggedWork must be provided"));
     }
 
-    /**
-     * @param loggedWork A simple {@link Supplier} to perform the work that is being logged and to return
-     *                   the result of the work. The outcome will be assumed to be a success unless an
-     *                   exception is thrown.
-     * @param <T_RESULT> The type of the result of the work.
-     * @return The builder instance.
-     */
     @Override
-    public <T_RESULT> EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withSimpleLoggedResult(
+    public <T_RESULT> EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withSimpleLoggedResult(
             final Supplier<T_RESULT> loggedWork) {
 
-        return new EventLoggerLoggedResultBuilderImpl<>(
+        return new ResultSubBuilderImpl<>(
                 this,
                 (eventAction ->
                         ComplexLoggedOutcome.success(
@@ -212,33 +98,20 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
                                 eventAction)));
     }
 
-    /**
-     * @param loggedAction A lambda to perform the work that is being logged and to return the outcome.
-     *                   This allows a new {@link EventAction} to be returned
-     *                   based on the result of the work. The skeleton {@link EventAction} is passed in
-     *                   to allow it to be copied. The result of the work must be returned within a
-     *                   {@link ComplexLoggedOutcome} along with the desired {@link EventAction}.
-     * @return The builder instance.
-     */
     @Override
-    public <T_RESULT> EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> withComplexLoggedAction(
+    public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withComplexLoggedAction(
             final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction) {
 
-        return new EventLoggerLoggedActionBuilderImpl<>(
+        return new ActionSubBuilderImpl<>(
                 this,
                 Objects.requireNonNull(loggedAction, "loggedAction must be provided"));
     }
 
-    /**
-     * @param loggedAction A simple {@link Runnable} to perform the work that is being logged.
-     *                   The outcome will be assumed to be a success unless an exception is thrown.
-     * @return The builder instance.
-     */
     @Override
-    public <T_RESULT> EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> withSimpleLoggedAction(
+    public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withSimpleLoggedAction(
             final Runnable loggedAction) {
 
-        return new EventLoggerLoggedActionBuilderImpl<>(
+        return new ActionSubBuilderImpl<>(
                 this,
                 eventAction -> {
                     loggedAction.run();
@@ -378,13 +251,13 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    public static class EventLoggerLoggedResultBuilderImpl<T_EVENT_ACTION extends EventAction, T_RESULT>
-            implements EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> {
+    public static class ResultSubBuilderImpl<T_EVENT_ACTION extends EventAction, T_RESULT>
+            implements EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> {
 
         private final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder;
         private final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork;
 
-        EventLoggerLoggedResultBuilderImpl(
+        ResultSubBuilderImpl(
                 final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder,
                 final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
 
@@ -397,21 +270,21 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
         }
 
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withCustomExceptionHandler(
+        public EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withCustomExceptionHandler(
                 final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
             basicBuilder.exceptionHandler = exceptionHandler;
             return this;
         }
 
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withPurpose(
+        public EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withPurpose(
                 final Purpose purpose) {
             basicBuilder.purpose = purpose;
             return this;
         }
 
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedResultBuilder<T_EVENT_ACTION, T_RESULT> withLoggingRequiredWhen(
+        public EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withLoggingRequiredWhen(
                 final boolean isLoggingRequired) {
             basicBuilder.isLogEventRequired = isLoggingRequired;
             return this;
@@ -435,13 +308,13 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-    public static class EventLoggerLoggedActionBuilderImpl<T_EVENT_ACTION extends EventAction>
-            implements EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> {
+    public static class ActionSubBuilderImpl<T_EVENT_ACTION extends EventAction>
+            implements EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> {
 
         private final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder;
         private final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction;
 
-        EventLoggerLoggedActionBuilderImpl(
+        ActionSubBuilderImpl(
                 final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder,
                 final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork) {
 
@@ -454,26 +327,26 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
         }
 
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> withCustomExceptionHandler(
+        public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withCustomExceptionHandler(
                 final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
             basicBuilder.exceptionHandler = exceptionHandler;
             return this;
         }
 
         /**
-         * {@link event.logging.base.EventLoggerBasicBuilder.OptionalBuildMethods#withPurpose(Purpose)}
+         * {@link EventLoggerBuilder.OptionalMethods#withPurpose(Purpose)}
          */
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> withPurpose(final Purpose purpose) {
+        public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withPurpose(final Purpose purpose) {
             basicBuilder.purpose = purpose;
             return this;
         }
 
         /**
-         * {@link event.logging.base.EventLoggerBasicBuilder.OptionalBuildMethods#withLoggingRequiredWhen(boolean)}
+         * {@link EventLoggerBuilder.OptionalMethods#withLoggingRequiredWhen(boolean)}
          */
         @Override
-        public EventLoggerBasicBuilder.EventLoggerLoggedActionBuilder<T_EVENT_ACTION> withLoggingRequiredWhen(
+        public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withLoggingRequiredWhen(
                 final boolean isLoggingRequired) {
             basicBuilder.isLogEventRequired = isLoggingRequired;
             return this;

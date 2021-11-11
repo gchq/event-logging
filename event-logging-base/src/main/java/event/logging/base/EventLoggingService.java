@@ -132,7 +132,7 @@ public interface EventLoggingService {
      * appropriately.
      * @return A builder instance.
      */
-    EventLoggerBasicBuilder.TypeIdBuildStep loggedWorkBuilder();
+    EventLoggerBuilder.TypeIdStep loggedWorkBuilder();
 
     /**
      * @deprecated Use {@link #loggedWorkBuilder()}

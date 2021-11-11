@@ -83,7 +83,7 @@ public class App {
 
     private void captureJustification() {
         final Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the justification for all subsequent actions:");
+        System.out.println("\nEnter the justification for all subsequent actions:");
         final String justification = scanner.nextLine();
         if (justification != null && !justification.isEmpty()) {
             LOGGER.info("Setting justification to\n{}", justification);
@@ -94,34 +94,22 @@ public class App {
     private void loginUser() {
 
         final Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your name:");
+        System.out.println("\nEnter your name:");
 
         final String userId = scanner.nextLine();
 
-        final boolean isLoggedIn = eventLoggingService.loggedWorkBuilder(
-                "login",
-                "User " + userId + " logged in",
-                AuthenticateEventAction.builder()
+        final boolean isLoggedIn = eventLoggingService.loggedWorkBuilder()
+                .withTypeId("login")
+                .withDescription("User " + userId + " logged in")
+                .withDefaultEventAction(AuthenticateEventAction.builder()
                         .withUser(User.builder()
                                 .withId(userId)
                                 .build())
                         .withAction(AuthenticateAction.LOGON)
                         .withLogonType(AuthenticateLogonType.INTERACTIVE)
                         .build())
-                .withComplexLoggedResult(eventAction -> {
-                    // Perform login
-                    if (userId == null || userId.isEmpty()) {
-                        return ComplexLoggedOutcome.failure(
-                                false,
-                                eventAction,
-                                "Invalid username");
-                    } else {
-                        userContext.setUserId(userId);
-                        return ComplexLoggedOutcome.success(
-                                true,
-                                eventAction);
-                    }
-                })
+                .withComplexLoggedResult(eventAction ->
+                        performLogin(userId, eventAction))
                 .getResultAndLog();
 
         if (!isLoggedIn) {
@@ -130,12 +118,30 @@ public class App {
         }
     }
 
+    private ComplexLoggedOutcome<Boolean, AuthenticateEventAction> performLogin(
+            final String userId,
+            final AuthenticateEventAction eventAction) {
+
+        // Perform login
+        if (userId == null || userId.isEmpty()) {
+            return ComplexLoggedOutcome.failure(
+                    false,
+                    eventAction,
+                    "Invalid username");
+        } else {
+            userContext.setUserId(userId);
+            return ComplexLoggedOutcome.success(
+                    true,
+                    eventAction);
+        }
+    }
+
     private void logoffUser() {
 
-        eventLoggingService.loggedWorkBuilder(
-                "login",
-                "User " + userContext.getUserId() + " logged out",
-                AuthenticateEventAction.builder()
+        eventLoggingService.loggedWorkBuilder()
+                .withTypeId("login")
+                .withDescription("User " + userContext.getUserId() + " logged out")
+                .withDefaultEventAction(AuthenticateEventAction.builder()
                         .withUser(User.builder()
                                 .withId(userContext.getUserId())
                                 .build())
@@ -150,10 +156,10 @@ public class App {
     }
 
     private boolean showConfirmationBanner() {
-        return eventLoggingService.loggedWorkBuilder(
-                "ShowBanner",
-                "User shown acceptable use banner",
-                ViewEventAction.builder()
+        return eventLoggingService.loggedWorkBuilder()
+                .withTypeId("ShowBanner")
+                .withDescription("User shown acceptable use banner")
+                .withDefaultEventAction(ViewEventAction.builder()
                         .addBanner(Banner.builder()
                                 .withMessage("With great power comes great responsibility." +
                                         "Do you accept this responsibility?")
@@ -165,7 +171,7 @@ public class App {
                     final Scanner scanner = new Scanner(System.in);
                     String answer;
                     do {
-                        System.out.println(userContext.getUserId() + ", " + BANNER);
+                        System.out.println("\n" + userContext.getUserId() + ", " + BANNER);
                         answer = scanner.next().toLowerCase();
                     } while (!answer.matches("[yn]"));
 
@@ -176,10 +182,10 @@ public class App {
 
     private void performSearch() {
 
-        final List<String> results = eventLoggingService.loggedWorkBuilder(
-                "listMethods private",
-                "List all private method names",
-                SearchEventAction.builder()
+        final List<String> results = eventLoggingService.loggedWorkBuilder()
+                .withTypeId("listMethods private")
+                .withDescription("List all private method names")
+                .withDefaultEventAction(SearchEventAction.builder()
                         .withQuery(Query.builder()
                                 .withSimple(SimpleQuery.builder()
                                         .withInclude("private")
@@ -189,12 +195,12 @@ public class App {
                         .build())
                 .withComplexLoggedResult(eventAction -> {
 
+                    // Do the work
                     final List<String> privateMethods = Arrays.stream(this.getClass().getDeclaredMethods())
                             .filter(method -> Modifier.isPrivate(method.getModifiers()))
                             .map(Method::getName)
                             .filter(name -> !name.startsWith("lambda"))
                             .collect(Collectors.toList());
-
 
                     // Create a new SearchEventAction that is a copy of the one we created
                     // but with the results of the search added.

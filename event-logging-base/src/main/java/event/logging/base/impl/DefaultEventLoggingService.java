@@ -16,7 +16,7 @@
 package event.logging.base.impl;
 
 import event.logging.Event;
-import event.logging.base.EventLoggerBasicBuilder;
+import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
     }
 
     @Override
-    public EventLoggerBasicBuilder.TypeIdBuildStep loggedWorkBuilder() {
+    public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
 
         // noinspection rawtypes - don't know the type yet
         return new EventLoggerBasicBuilderImpl(this);

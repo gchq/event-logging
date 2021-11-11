@@ -2,7 +2,7 @@ package event.logging.base.impl;
 
 import event.logging.Event;
 import event.logging.EventDetail;
-import event.logging.base.EventLoggerBasicBuilder;
+import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class MockEventLoggingService implements EventLoggingService {
     }
 
     @Override
-    public EventLoggerBasicBuilder.TypeIdBuildStep loggedWorkBuilder() {
+    public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
 
         //noinspection rawtypes - Can't know the type at this point, will later
         return new MockEventLoggerBasicBuilder(this);

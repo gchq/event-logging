@@ -17,7 +17,10 @@ repositories {
 }
 
 ext.versions = [
-    logback : '1.2.3'
+    //eventLogging: '5.0-beta.27_schema-v4.0-beta.3',
+    eventLogging: 'schema-v4.0-beta.3-SNAPSHOT',
+    logback : '1.2.3',
+    //jaxbRuntime: '2.3.2',
 ]
 
 java {
@@ -27,15 +30,24 @@ java {
 }
 
 dependencies {
-    implementation "ch.qos.logback:logback-classic:$versions.logback"
-    implementation "ch.qos.logback:logback-core:$versions.logback"
-    implementation 'uk.gov.gchq.eventlogging:event-logging:5.0-beta.27_schema-v4.0-beta.3'
+    // The event logging library
+    implementation "uk.gov.gchq.eventlogging:event-logging:$versions.eventLogging"
+
+    // event-logging uses the SLF4J logging API
     implementation 'org.slf4j:slf4j-api:1.7.30'
 
-    // Use JUnit Jupiter API for testing.
+    // The JAXB implementation required for event serialisation to XML
+    //runtime "org.glassfish.jaxb:jaxb-runtime:${versions.jaxb_impl}"
+
+    // Used by this example application at run time to log output to the console
+    // Other SLF4J implementations can be used
+    runtimeOnly "ch.qos.logback:logback-classic:$versions.logback"
+    runtimeOnly "ch.qos.logback:logback-core:$versions.logback"
+
+    // Use JUnit Jupiter API for testing this example application.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
 
-    // Use JUnit Jupiter Engine for testing.
+    // Use JUnit Jupiter Engine for testing this example application.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

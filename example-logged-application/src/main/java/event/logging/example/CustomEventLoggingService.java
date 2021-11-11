@@ -27,8 +27,9 @@ public class CustomEventLoggingService extends DefaultEventLoggingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomEventLoggingService.class);
 
     private static final String SYSTEM = "Example Application";
-    private static final String ENVIRONMENT = "DEV";
     private static final String GENERATOR = "CustomEventLoggingService";
+    // These are only hard coded for this example application
+    private static final String ENVIRONMENT = "DEV";
     private static final String VERSION = "1.2.3";
 
     private final UserContext userContext;
