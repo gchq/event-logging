@@ -9,10 +9,10 @@ import event.logging.base.EventLoggingService;
 
 import java.util.function.Supplier;
 
-public class MockEventLoggerBasicBuilder<T_EVENT_ACTION extends EventAction>
-        extends EventLoggerBasicBuilderImpl<T_EVENT_ACTION> {
+public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
+        extends EventLoggerBuilderImpl<T_EVENT_ACTION> {
 
-    MockEventLoggerBasicBuilder(final EventLoggingService eventLoggingService) {
+    MockEventLoggerBuilder(final EventLoggingService eventLoggingService) {
         super(eventLoggingService);
     }
 
@@ -22,7 +22,10 @@ public class MockEventLoggerBasicBuilder<T_EVENT_ACTION extends EventAction>
 
         return new MockActionSubBuilder<>(
                 this,
-                ComplexLoggedOutcome::success);
+                eventAction -> {
+                    loggedAction.run();
+                    return ComplexLoggedOutcome.success(eventAction);
+                });
     }
 
     @Override
@@ -55,10 +58,10 @@ public class MockEventLoggerBasicBuilder<T_EVENT_ACTION extends EventAction>
 public static class MockActionSubBuilder<T_EVENT_ACTION extends EventAction>
         extends ActionSubBuilderImpl<T_EVENT_ACTION> {
 
-    private final MockEventLoggerBasicBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder;
+    private final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder;
 
     public MockActionSubBuilder(
-            final MockEventLoggerBasicBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
+            final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
             final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction) {
         super(mockEventLoggerBasicBuilder, loggedAction);
 
@@ -76,10 +79,10 @@ public static class MockActionSubBuilder<T_EVENT_ACTION extends EventAction>
 public static class MockResultSubBuilder<T_EVENT_ACTION extends EventAction, T_RESULT>
         extends ResultSubBuilderImpl<T_EVENT_ACTION, T_RESULT> {
 
-    private final MockEventLoggerBasicBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder;
+    private final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder;
 
     public MockResultSubBuilder(
-            final MockEventLoggerBasicBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
+            final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
             final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
         super(mockEventLoggerBasicBuilder, loggedWork);
 

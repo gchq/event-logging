@@ -27,7 +27,7 @@ public class MockEventLoggingService implements EventLoggingService {
     public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
 
         //noinspection rawtypes - Can't know the type at this point, will later
-        return new MockEventLoggerBasicBuilder(this);
+        return new MockEventLoggerBuilder(this);
     }
 
     @Override

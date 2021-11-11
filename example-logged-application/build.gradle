@@ -46,6 +46,7 @@ dependencies {
 
     // Use JUnit Jupiter API for testing this example application.
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.assertj:assertj-core:3.20.2'
 
     // Use JUnit Jupiter Engine for testing this example application.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

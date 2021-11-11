@@ -86,7 +86,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
     public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
 
         // noinspection rawtypes - don't know the type yet
-        return new EventLoggerBasicBuilderImpl(this);
+        return new EventLoggerBuilderImpl(this);
     }
 
     private boolean checkValidating() {

@@ -23,13 +23,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> implements
+public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implements
         EventLoggerBuilder.TypeIdStep,
         EventLoggerBuilder.DescriptionStep,
         EventLoggerBuilder.EventActionStep,
         EventLoggerBuilder.WorkStep<T_EVENT_ACTION> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventLoggerBasicBuilderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventLoggerBuilderImpl.class);
 
     // For each event action hold a function to create the appropriate subclass of BaseOutcome
     private static final Map<Class<? extends EventAction>, Optional<Function<EventAction, BaseOutcome>>>
@@ -44,7 +44,7 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
     private boolean isLogEventRequired = true;
     private LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler;
 
-    EventLoggerBasicBuilderImpl(final EventLoggingService eventLoggingService) {
+    EventLoggerBuilderImpl(final EventLoggingService eventLoggingService) {
         this.eventLoggingService = eventLoggingService;
     }
 
@@ -254,11 +254,11 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
     public static class ResultSubBuilderImpl<T_EVENT_ACTION extends EventAction, T_RESULT>
             implements EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> {
 
-        private final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder;
+        private final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder;
         private final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork;
 
         ResultSubBuilderImpl(
-                final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder,
+                final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder,
                 final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
 
             this.loggedWork = loggedWork;
@@ -311,11 +311,11 @@ public class EventLoggerBasicBuilderImpl<T_EVENT_ACTION extends EventAction> imp
     public static class ActionSubBuilderImpl<T_EVENT_ACTION extends EventAction>
             implements EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> {
 
-        private final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder;
+        private final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder;
         private final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction;
 
         ActionSubBuilderImpl(
-                final EventLoggerBasicBuilderImpl<T_EVENT_ACTION> basicBuilder,
+                final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder,
                 final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork) {
 
             this.basicBuilder = basicBuilder;
