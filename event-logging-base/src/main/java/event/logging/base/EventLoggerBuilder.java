@@ -4,6 +4,7 @@ import event.logging.EventAction;
 import event.logging.EventDetail;
 import event.logging.Purpose;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -43,8 +44,8 @@ public interface EventLoggerBuilder {
         /**
          * @param defaultEventAction The action of the logged event, see {@link EventAction}. This event action will be
          *                           used on the event unless one of the following methods is used which can override it:
-         *                           {@link WorkStep#withComplexLoggedAction(ComplexLoggedRunnable)}
-         *                           {@link WorkStep#withComplexLoggedResult(ComplexLoggedSupplier)}
+         *                           {@link WorkStep#withComplexLoggedAction(Function)}
+         *                           {@link WorkStep#withComplexLoggedResult(Function)}
          *                           {@link OptionalMethods#withCustomExceptionHandler(LoggedWorkExceptionHandler)}
          * @param <T>                The type of event action that will be logged, e.g.
          *                           {@link event.logging.SearchEventAction}, {@link event.logging.ViewEventAction}, etc.
@@ -68,7 +69,7 @@ public interface EventLoggerBuilder {
          * @return The builder instance.
          */
         <T_RESULT> ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withComplexLoggedResult(
-                ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork);
+                Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork);
 
         /**
          * @param loggedWork A simple {@link Supplier} to perform the work that is being logged and to return
@@ -89,7 +90,7 @@ public interface EventLoggerBuilder {
          * @return The builder instance.
          */
         ActionSubBuilder<T_EVENT_ACTION> withComplexLoggedAction(
-                ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction);
+                Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction);
 
         /**
          * @param loggedAction A simple {@link Runnable} to perform the work that is being logged.

@@ -2,11 +2,10 @@ package event.logging.base.impl;
 
 import event.logging.EventAction;
 import event.logging.base.ComplexLoggedOutcome;
-import event.logging.base.ComplexLoggedRunnable;
-import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
@@ -30,7 +29,7 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
 
     @Override
     public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withComplexLoggedAction(
-            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction) {
 
         return new MockActionSubBuilder<>(this, loggedAction);
     }
@@ -47,7 +46,7 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
 
     @Override
     public <T_RESULT> EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withComplexLoggedResult(
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork) {
 
         return new MockResultSubBuilder<>(this, loggedWork);
     }
@@ -62,7 +61,7 @@ public static class MockActionSubBuilder<T_EVENT_ACTION extends EventAction>
 
     public MockActionSubBuilder(
             final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
-            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction) {
         super(mockEventLoggerBasicBuilder, loggedAction);
 
         this.mockEventLoggerBasicBuilder = mockEventLoggerBasicBuilder;
@@ -70,7 +69,7 @@ public static class MockActionSubBuilder<T_EVENT_ACTION extends EventAction>
 
     @Override
     public void runActionAndLog() {
-        getLoggedAction().run(mockEventLoggerBasicBuilder.getEventAction());
+        getLoggedAction().apply(mockEventLoggerBasicBuilder.getEventAction());
     }
 }
 
@@ -83,7 +82,7 @@ public static class MockResultSubBuilder<T_EVENT_ACTION extends EventAction, T_R
 
     public MockResultSubBuilder(
             final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBasicBuilder,
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork) {
         super(mockEventLoggerBasicBuilder, loggedWork);
 
         this.mockEventLoggerBasicBuilder = mockEventLoggerBasicBuilder;
@@ -92,7 +91,7 @@ public static class MockResultSubBuilder<T_EVENT_ACTION extends EventAction, T_R
     @Override
     public T_RESULT getResultAndLog() {
         return getLoggedWork()
-                .get(mockEventLoggerBasicBuilder.getEventAction())
+                .apply(mockEventLoggerBasicBuilder.getEventAction())
                 .getResult();
     }
 }

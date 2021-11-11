@@ -22,6 +22,7 @@ import event.logging.EventTime;
 import event.logging.Purpose;
 
 import java.util.Date;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -144,19 +145,12 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final Runnable loggedWork) {
 
-        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
-            loggedWork.run();
-            // We don't have an outcome so assume success
-            return ComplexLoggedOutcome.of(LoggedOutcome.success(), eventAction2);
-        };
-
-        loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedResultFunction,
-                null);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withSimpleLoggedAction(loggedWork)
+                .runActionAndLog();
     }
 
     /**
@@ -170,19 +164,13 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final Runnable loggedWork) {
 
-        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
-            loggedWork.run();
-            // We don't have an outcome so assume success
-            return ComplexLoggedOutcome.of(LoggedOutcome.success(), eventAction2);
-        };
-
-        loggedResult(
-                eventTypeId,
-                description,
-                purpose,
-                eventAction,
-                loggedResultFunction,
-                null);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withSimpleLoggedAction(loggedWork)
+                .withPurpose(purpose)
+                .runActionAndLog();
     }
 
     /**
@@ -195,18 +183,15 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final LoggedRunnable loggedWork) {
 
-        final ComplexLoggedSupplier<Void, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
-            final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
-            return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
-        };
-
-        loggedResult(
-                eventTypeId,
-                description,
-                null,
-                eventAction,
-                loggedResultFunction,
-                null);
+        loggedWorkBuilder()
+                .withTypeId(eventTypeId)
+                .withDescription(description)
+                .withDefaultEventAction(eventAction)
+                .withComplexLoggedAction(eventAction2 -> {
+                    final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
+                    return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
+                })
+                .runActionAndLog();
     }
 
     /**
@@ -220,16 +205,14 @@ public interface EventLoggingService {
             final T_EVENT_ACTION eventAction,
             final LoggedRunnable loggedWork) {
 
-        final ComplexLoggedRunnable<T_EVENT_ACTION> loggedRunnable = eventAction2 -> {
-            final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
-            return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
-        };
-
         loggedWorkBuilder()
                 .withTypeId(eventTypeId)
                 .withDescription(description)
                 .withDefaultEventAction(eventAction)
-                .withComplexLoggedAction(loggedRunnable)
+                .withComplexLoggedAction(eventAction2 -> {
+                    final LoggedOutcome<Void> loggedOutcome = loggedWork.run();
+                    return ComplexLoggedOutcome.of(loggedOutcome, eventAction2);
+                })
                 .withPurpose(purpose)
                 .runActionAndLog();
     }
@@ -242,7 +225,7 @@ public interface EventLoggingService {
             final String eventTypeId,
             final String description,
             final T_EVENT_ACTION eventAction,
-            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork,
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
         loggedWorkBuilder()
@@ -263,7 +246,7 @@ public interface EventLoggingService {
             final String description,
             final Purpose purpose,
             final T_EVENT_ACTION eventAction,
-            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork,
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
         loggedWorkBuilder()
@@ -285,12 +268,6 @@ public interface EventLoggingService {
             final String description,
             final T_EVENT_ACTION eventAction,
             final Supplier<T_RESULT> loggedWork) {
-
-        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 -> {
-            T_RESULT result = loggedWork.get();
-            // We don't have an outcome so assume success
-            return ComplexLoggedOutcome.of(LoggedOutcome.success(result), eventAction2);
-        };
 
         return loggedWorkBuilder()
                 .withTypeId(eventTypeId)
@@ -328,51 +305,7 @@ public interface EventLoggingService {
             final String eventTypeId,
             final String description,
             final T_EVENT_ACTION eventAction,
-            final LoggedSupplier<T_RESULT> loggedWork) {
-
-        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 ->
-                ComplexLoggedOutcome.of(loggedWork.get(), eventAction2);
-
-        return loggedWorkBuilder()
-                .withTypeId(eventTypeId)
-                .withDescription(description)
-                .withDefaultEventAction(eventAction)
-                .withComplexLoggedResult(loggedResultFunction)
-                .getResultAndLog();
-    }
-
-    /**
-     * @deprecated Use {@link #loggedWorkBuilder()}
-     */
-    @Deprecated
-    default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
-            final String eventTypeId,
-            final String description,
-            final Purpose purpose,
-            final T_EVENT_ACTION eventAction,
-            final LoggedSupplier<T_RESULT> loggedWork) {
-
-        final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedResultFunction = eventAction2 ->
-                ComplexLoggedOutcome.of(loggedWork.get(), eventAction2);
-
-        return loggedWorkBuilder()
-                .withTypeId(eventTypeId)
-                .withDescription(description)
-                .withDefaultEventAction(eventAction)
-                .withComplexLoggedResult(loggedResultFunction)
-                .withPurpose(purpose)
-                .getResultAndLog();
-    }
-
-    /**
-     * @deprecated Use {@link #loggedWorkBuilder()}
-     */
-    @Deprecated
-    default <T_RESULT, T_EVENT_ACTION extends EventAction> T_RESULT loggedResult(
-            final String eventTypeId,
-            final String description,
-            final T_EVENT_ACTION eventAction,
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
         return loggedWorkBuilder()
@@ -419,7 +352,7 @@ public interface EventLoggingService {
             final String description,
             final Purpose purpose,
             final T_EVENT_ACTION eventAction,
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler) {
 
         return loggedWorkBuilder()

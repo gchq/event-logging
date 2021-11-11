@@ -6,8 +6,6 @@ import event.logging.EventAction;
 import event.logging.HasOutcome;
 import event.logging.Purpose;
 import event.logging.base.ComplexLoggedOutcome;
-import event.logging.base.ComplexLoggedRunnable;
-import event.logging.base.ComplexLoggedSupplier;
 import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 import event.logging.base.LoggedWorkExceptionHandler;
@@ -79,7 +77,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
 
     @Override
     public <T_RESULT> EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> withComplexLoggedResult(
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork) {
 
         return new ResultSubBuilderImpl<>(
                 this,
@@ -100,7 +98,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
 
     @Override
     public EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> withComplexLoggedAction(
-            final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction) {
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction) {
 
         return new ActionSubBuilderImpl<>(
                 this,
@@ -124,7 +122,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
             final String description,
             final Purpose purpose,
             final T_EVENT_ACTION eventAction,
-            final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork,
+            final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork,
             final LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler,
             final boolean isLoggingRequired) {
 
@@ -136,9 +134,14 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
             try {
                 // Perform the callers work, allowing them to provide a new EventAction based on the
                 // result of the work e.g. if they are updating a record, they can capture the before state
-                final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork.get(eventAction);
+                final ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION> complexLoggedOutcome = loggedWork
+                        .apply(eventAction);
 
-                final Event event = eventLoggingService.createEvent(eventTypeId, description, purpose, complexLoggedOutcome.getEventAction());
+                final Event event = eventLoggingService.createEvent(
+                        eventTypeId,
+                        description,
+                        purpose,
+                        complexLoggedOutcome.getEventAction());
 
                 // From a logging point of view the work may be unsuccessful even if no ex is thrown
                 // so add the outcome to the event
@@ -172,7 +175,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
                 throw e;
             }
         } else {
-            result = loggedWork.get(eventAction).getResult();
+            result = loggedWork.apply(eventAction).getResult();
         }
 
         return result;
@@ -255,17 +258,17 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
             implements EventLoggerBuilder.ResultSubBuilder<T_EVENT_ACTION, T_RESULT> {
 
         private final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder;
-        private final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork;
+        private final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork;
 
         ResultSubBuilderImpl(
                 final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder,
-                final ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> loggedWork) {
+                final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork) {
 
             this.loggedWork = loggedWork;
             this.basicBuilder = basicBuilder;
         }
 
-        ComplexLoggedSupplier<T_RESULT, T_EVENT_ACTION> getLoggedWork() {
+        Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> getLoggedWork() {
             return loggedWork;
         }
 
@@ -312,17 +315,17 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
             implements EventLoggerBuilder.ActionSubBuilder<T_EVENT_ACTION> {
 
         private final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder;
-        private final ComplexLoggedRunnable<T_EVENT_ACTION> loggedAction;
+        private final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction;
 
         ActionSubBuilderImpl(
                 final EventLoggerBuilderImpl<T_EVENT_ACTION> basicBuilder,
-                final ComplexLoggedRunnable<T_EVENT_ACTION> loggedWork) {
+                final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction) {
 
             this.basicBuilder = basicBuilder;
-            this.loggedAction = loggedWork;
+            this.loggedAction = loggedAction;
         }
 
-        ComplexLoggedRunnable<T_EVENT_ACTION> getLoggedAction() {
+        Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> getLoggedAction() {
             return loggedAction;
         }
 
@@ -363,7 +366,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
                     basicBuilder.description,
                     basicBuilder.purpose,
                     basicBuilder.eventAction,
-                    loggedAction::run,
+                    loggedAction::apply,
                     basicBuilder.exceptionHandler,
                     basicBuilder.isLogEventRequired);
         }
