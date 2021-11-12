@@ -15,7 +15,7 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockEventLoggerBuilder.class);
 
-    MockEventLoggerBuilder(final EventLoggingService eventLoggingService) {
+    public MockEventLoggerBuilder(final EventLoggingService eventLoggingService) {
         super(eventLoggingService);
     }
 
@@ -56,9 +56,9 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
     }
 
     private void debugEvent(final String methodName) {
-        String typeId = getTypeId();
-        String description = getDescription();
-        String eventActionName = getEventAction().getClass().getSimpleName();
+        final String typeId = getTypeId();
+        final String description = getDescription();
+        final String eventActionName = getEventAction().getClass().getSimpleName();
 
         final String info = String.join("typeId: '", typeId,
                 "' description: '", description,
@@ -77,7 +77,7 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
 
         private final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBuilder;
 
-        public MockActionSubBuilder(
+        private MockActionSubBuilder(
                 final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBuilder,
                 final Function<T_EVENT_ACTION, ComplexLoggedOutcome<Void, T_EVENT_ACTION>> loggedAction) {
             super(mockEventLoggerBuilder, loggedAction);
@@ -103,7 +103,7 @@ public class MockEventLoggerBuilder<T_EVENT_ACTION extends EventAction>
 
         private final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBuilder;
 
-        public MockResultSubBuilder(
+        private MockResultSubBuilder(
                 final MockEventLoggerBuilder<T_EVENT_ACTION> mockEventLoggerBuilder,
                 final Function<T_EVENT_ACTION, ComplexLoggedOutcome<T_RESULT, T_EVENT_ACTION>> loggedWork) {
             super(mockEventLoggerBuilder, loggedWork);
