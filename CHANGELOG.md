@@ -12,6 +12,11 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v5.0-beta.28_schema-v4.0-beta.3] - 2021-11-12
+
+* Remove `loggedResult()` and `loggedAction()` methods from EventLoggingService. Instead use `loggedWorkBuilder()`.
+
+
 ## [v5.0-beta.27_schema-v4.0-beta.3] - 2021-11-09
 
 * Add loggedWorkBuilder() to EventLoggingService.
@@ -195,7 +200,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.27_schema-v4.0-beta.3...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.28_schema-v4.0-beta.3...HEAD
+[v5.0-beta.28_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.27_schema-v4.0-beta.3...v5.0-beta.28_schema-v4.0-beta.3
 [v5.0-beta.27_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.26_schema-v4.0-beta.3...v5.0-beta.27_schema-v4.0-beta.3
 [v5.0-beta.26_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.25_schema-v4.0-beta.3...v5.0-beta.26_schema-v4.0-beta.3
 [v5.0-beta.25_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.24_schema-v4.0-beta.3...v5.0-beta.25_schema-v4.0-beta.3
