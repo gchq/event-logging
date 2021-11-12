@@ -32,8 +32,8 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
     return val;
 }
 
-//def DEFAULT_EVENT_LOGGING_VERSION = '5.0-beta.27_schema-v4.0-beta.3'
-def DEFAULT_EVENT_LOGGING_VERSION = 'schema-v4.0-beta.3-SNAPSHOT'
+def DEFAULT_EVENT_LOGGING_VERSION = '5.0-beta.27_schema-v4.0-beta.3'
+//def DEFAULT_EVENT_LOGGING_VERSION = 'schema-v4.0-beta.3-SNAPSHOT'
 
 ext.versions = [
     eventLogging: getPropertyOrDefault('mavenVersion', DEFAULT_EVENT_LOGGING_VERSION),
