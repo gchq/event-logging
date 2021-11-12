@@ -18,8 +18,7 @@ public class AppMain {
     private AppMain() {
         // This would normally be done with dependency injection
         final UserContext userContext = new UserContext();
-        final EventLoggingService eventLoggingService = new CustomEventLoggingService(
-                userContext);
+        final EventLoggingService eventLoggingService = new CustomEventLoggingService(userContext);
         this.userContext = userContext;
         this.appService = new AppService(eventLoggingService, userContext);
 
