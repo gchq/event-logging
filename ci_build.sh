@@ -152,12 +152,11 @@ if [ -n "$BUILD_TAG" ]; then
     "publishToSonatype"
     #"closeSonatypeStagingRepository"
     "closeAndReleaseSonatypeStagingRepository"
+    "-Pversion=\"${PRODUCT_VERSION}\""
   )
 else
-  #No tag so use the branch name as the version, e.g. dev-SNAPSHOT
-  #None tagged builds are NOT pushed to bintray
-  PRODUCT_VERSION="SNAPSHOT"
-  MAVEN_VERSION="SNAPSHOT"
+  PRODUCT_VERSION=
+  MAVEN_VERSION=
   EXTRA_BUILD_ARGS=()
 fi
 
