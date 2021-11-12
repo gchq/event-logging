@@ -152,7 +152,7 @@ if [ -n "$BUILD_TAG" ]; then
     "publishToSonatype"
     #"closeSonatypeStagingRepository"
     "closeAndReleaseSonatypeStagingRepository"
-    "-Pversion=\"${PRODUCT_VERSION}\""
+    "-Pversion=${PRODUCT_VERSION}"
   )
 else
   PRODUCT_VERSION=
