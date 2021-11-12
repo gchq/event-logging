@@ -52,10 +52,18 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
         return this;
     }
 
+    String getTypeId() {
+        return eventTypeId;
+    }
+
     @Override
     public EventLoggerBuilder.EventActionStep withDescription(final String description) {
         this.description = description;
         return this;
+    }
+
+    String getDescription() {
+        return description;
     }
 
     @Override

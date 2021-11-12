@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * code that uses {@link EventLoggingService} and needs a simple implementation that does not
  * log.
  */
+@SuppressWarnings("unused")
 public class MockEventLoggingService implements EventLoggingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MockEventLoggingService.class);
