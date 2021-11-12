@@ -4,19 +4,27 @@ ext.moduleName = 'event.logging.base'
 dependencies {
     compile project(':event-logging-api')
 
-    compile "javax.xml.bind:jaxb-api:${versions.jaxb_api}"
+    //compile "javax.xml.bind:jaxb-api:${versions.jaxb_api}"
+    compile libs.jaxb_api
 
     // The production code uses the SLF4J logging API at compile time
-    compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    //compile "org.slf4j:slf4j-api:${versions.slf4j}"
+    compile libs.slf4j_api
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
-    testImplementation "org.assertj:assertj-core:${versions.assertj}"
-    testImplementation "org.mockito:mockito-core:${versions.mockito}"
+    //testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testImplementation libs.junit_jupiter_api
+    //testImplementation "org.assertj:assertj-core:${versions.assertj}"
+    testImplementation libs.assertj_core
+    //testImplementation "org.mockito:mockito-core:${versions.mockito}"
+    testImplementation libs.mockito_core
 //    testImplementation "org.mockito:mockito-junit-jupiter:${versions.mockito}"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
-    testRuntimeOnly "ch.qos.logback:logback-classic:${versions.logback}"
-    testRuntimeOnly "ch.qos.logback:logback-core:${versions.logback}"
+    //testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
+    testRuntimeOnly libs.junit_jupiter_engine
+    //testRuntimeOnly "ch.qos.logback:logback-classic:${versions.logback}"
+    testRuntimeOnly libs.logback_classic
+    //testRuntimeOnly "ch.qos.logback:logback-core:${versions.logback}"
+    testRuntimeOnly libs.logback_core
 }
 
 

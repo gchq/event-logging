@@ -120,3 +120,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: "${ACTIONS_SCRIPTS_DIR}/create_github_release.sh"
 
+      - name: Cleanup Gradle Cache
+        # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.
+        # Restoring these files from a GitHub Actions cache might cause problems for future builds.
+        # See https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties

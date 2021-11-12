@@ -16,6 +16,7 @@
 package event.logging.base.impl;
 
 import event.logging.Event;
+import event.logging.base.EventLoggerBuilder;
 import event.logging.base.EventLoggingService;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
@@ -79,6 +80,13 @@ public class DefaultEventLoggingService implements EventLoggingService {
             final LogReceiver logReceiver = logReceiverFactory.getLogReceiver();
             logReceiver.log(trimmed);
         }
+    }
+
+    @Override
+    public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
+
+        // noinspection rawtypes - don't know the type yet
+        return new EventLoggerBuilderImpl(this);
     }
 
     private boolean checkValidating() {

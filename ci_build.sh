@@ -152,12 +152,11 @@ if [ -n "$BUILD_TAG" ]; then
     "publishToSonatype"
     #"closeSonatypeStagingRepository"
     "closeAndReleaseSonatypeStagingRepository"
+    "-Pversion=\"${PRODUCT_VERSION}\""
   )
 else
-  #No tag so use the branch name as the version, e.g. dev-SNAPSHOT
-  #None tagged builds are NOT pushed to bintray
-  PRODUCT_VERSION="SNAPSHOT"
-  MAVEN_VERSION="SNAPSHOT"
+  PRODUCT_VERSION=
+  MAVEN_VERSION=
   EXTRA_BUILD_ARGS=()
 fi
 
@@ -175,10 +174,10 @@ echo -e "LOCAL_BUILD:                   [${GREEN}${LOCAL_BUILD}${NC}]"
 echo -e "docker version:                [${GREEN}$(docker --version)${NC}]"
 echo -e "docker-compose version:        [${GREEN}$(docker-compose --version)${NC}]"
 echo -e "git version:                   [${GREEN}$(git --version)${NC}]"
-echo -e "java version:                  [${GREEN}$(java --version)${NC}]"
+echo -e "java version:                  [${GREEN}$(java -version)${NC}]"
 
 #Run the build (including running maven install task to generate poms
-./gradlew -Pversion="${PRODUCT_VERSION}" clean build "${EXTRA_BUILD_ARGS[@]}"
+./gradlew clean build "${EXTRA_BUILD_ARGS[@]}"
 
 ls -l "${BUILD_DIR}/event-logging-api/build/libs/"
 
