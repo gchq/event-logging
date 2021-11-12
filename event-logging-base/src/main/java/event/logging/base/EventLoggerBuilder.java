@@ -143,6 +143,11 @@ public interface EventLoggerBuilder {
     interface ResultSubBuilder<T_EVENT_ACTION extends EventAction, T_RESULT>
             extends OptionalMethods<T_EVENT_ACTION, ResultSubBuilder<T_EVENT_ACTION, T_RESULT>> {
 
+        /**
+         * Run loggedWork, log the event for it and return the result of the work. If logged work
+         * throws an exception it will be rethrown.
+         * @return The result of loggedWork
+         */
         T_RESULT getResultAndLog();
     }
 
@@ -151,6 +156,10 @@ public interface EventLoggerBuilder {
     interface ActionSubBuilder<T_EVENT_ACTION extends EventAction>
             extends OptionalMethods<T_EVENT_ACTION, ActionSubBuilder<T_EVENT_ACTION>> {
 
+        /**
+         * Run loggedWork and log the event for it. If logged work throws an exception it will
+         * be rethrown.
+         */
         void runActionAndLog();
     }
 }

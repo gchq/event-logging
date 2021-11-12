@@ -168,3 +168,19 @@ task diffAgainstLatest(type: Exec) {
 
 tasks.build.dependsOn diffAgainstLatest
 
+// The example app is a standalone build with its own root gradle file so run it
+// once we have the api jar in the local maven repo. Pass in the maven version
+// so it knows which event logging version to depend on.
+task runExampleAppBuild(type: GradleBuild) {
+    dependsOn publishToMavenLocal
+
+    buildFile = '../example-logged-application/build.gradle'
+    tasks = ['clean', 'build']
+    startParameter.projectProperties = [mavenVersion: projectVersionForMaven]
+
+    doFirst {
+        println "Running separate example application build [$buildFile]"
+    }
+}
+
+tasks.build.dependsOn runExampleAppBuild
