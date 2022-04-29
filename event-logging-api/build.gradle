@@ -20,6 +20,7 @@ dependencies {
     runtimeOnly libs.jaxb_runtime
 
     testImplementation libs.junit_jupiter_api
+    testImplementation libs.junit_jupiter_params
     testImplementation libs.assertj_core
     testImplementation libs.mockito_core
 

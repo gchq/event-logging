@@ -13,6 +13,7 @@ dependencies {
 
     //testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
     testImplementation libs.junit_jupiter_api
+    testImplementation libs.junit_jupiter_params
     //testImplementation "org.assertj:assertj-core:${versions.assertj}"
     testImplementation libs.assertj_core
     //testImplementation "org.mockito:mockito-core:${versions.mockito}"
