@@ -107,7 +107,7 @@ class TestDeviceUtil {
     }
 
     private void logDeviceAddressDetails(final Device device) {
-        LOGGER.debug("Device: (ip: [{}], host: [{}], mac: [{}]",
+        LOGGER.debug("Device: (ip: [{}], host: [{}], mac: [{}])",
                 device.getIPAddress(),
                 device.getHostName(),
                 device.getMACAddress());
