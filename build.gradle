@@ -6,7 +6,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.5.2'
     }
 }
