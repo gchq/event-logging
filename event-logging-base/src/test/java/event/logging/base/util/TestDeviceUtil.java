@@ -61,7 +61,8 @@ class TestDeviceUtil {
         final Device device = DeviceUtil.createDeviceFromInetAddress(inetAddress);
         logDeviceAddressDetails(device);
         Assertions.assertThat(device.getIPAddress())
-                .isIn("127.0.0.1", "127.0.1.1", "0:0:0:0:0:0:0:1");
+                .matches("^(10\\.|127\\.|0{1,3}:).*");
+
         Assertions.assertThat(device.getHostName())
                 .isNotNull();
     }
