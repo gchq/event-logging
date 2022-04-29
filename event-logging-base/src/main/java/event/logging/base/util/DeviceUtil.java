@@ -32,7 +32,7 @@ public class DeviceUtil {
                                       final String ipAddress) {
         final Device device = new Device();
         device.setHostName(hostName);
-        device.setIPAddress(ipAddress);
+        device.setIPAddress(getValidIP(ipAddress));
         return device;
     }
 
@@ -71,12 +71,33 @@ public class DeviceUtil {
             return null;
         }
 
-        final String tmp = ip.trim().toUpperCase(Locale.ENGLISH);
+        String tmp = ip.trim().toUpperCase(Locale.ENGLISH);
         if (tmp.length() == 0 || tmp.contains(UNKNOWN_IP)) {
             return null;
         }
+        tmp = stripIpv6Brackets(tmp);
 
         return tmp;
+    }
+
+    /**
+     * IPv6 standard allows an IPv6 address to be surrounded by square brackets when
+     * used in URI/URLs. This method removes those brackets to ensure IP addresses are stored
+     * in the event in a consistent form.
+     */
+    public static String stripIpv6Brackets(final String ip) {
+        if (ip == null || ip.isEmpty()) {
+            return ip;
+        } else {
+            String cleanedIp = ip;
+            if (cleanedIp.startsWith("[")) {
+                cleanedIp = cleanedIp.substring(1);
+            }
+            if (cleanedIp.endsWith("]")) {
+                cleanedIp = cleanedIp.substring(0, cleanedIp.length() - 1);
+            }
+            return cleanedIp;
+        }
     }
 
     /**

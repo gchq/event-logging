@@ -6,7 +6,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath group: 'ca.cutterslade.gradle', name: 'gradle-dependency-analyze', version: '1.5.2'
     }
 }
@@ -75,7 +74,7 @@ def eventLoggingSchemaVer = "v4.0-beta.3"
 // see if/how the java model has changed following schema changes or changes
 // to the jaxb code generation.
 // *****************************************************************************
-ext.previousReleaseVersion = "v5.0-beta.29_schema-v4.0-beta.3"
+ext.previousReleaseVersion = "v5.0-beta.30_schema-v4.0-beta.3"
 // *****************************************************************************
 
 
@@ -158,7 +157,7 @@ ext.versions = [
     eventLogging         : projectVersionForMaven,
 
     //------------3rd-party------------
-    junit_jupiter        : '5.7.2',
+    junit_jupiter        : '5.8.2',
     logback              : '1.2.3',
     mockito              : '3.12.4',
 ]
@@ -179,6 +178,7 @@ ext.libs = [
     jaxb_bom                       : "org.glassfish.jaxb:jaxb-bom:2.4.0-b180830.0438",
     junit_jupiter_api              : "org.junit.jupiter:junit-jupiter-api:$versions.junit_jupiter",
     junit_jupiter_engine           : "org.junit.jupiter:junit-jupiter-engine:$versions.junit_jupiter",
+    junit_jupiter_params           : "org.junit.jupiter:junit-jupiter-params:$versions.junit_jupiter",
     logback_classic                : "ch.qos.logback:logback-classic:${versions.logback}",
     logback_core                   : "ch.qos.logback:logback-core:${versions.logback}",
     mockito_core                   : "org.mockito:mockito-core:$versions.mockito",
