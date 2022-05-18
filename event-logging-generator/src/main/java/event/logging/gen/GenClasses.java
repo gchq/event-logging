@@ -21,11 +21,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +42,6 @@ public class GenClasses {
     //private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
 
     //private static final String PUBLIC_CLASS = "public class ";
-
 
 
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
@@ -168,6 +163,11 @@ public class GenClasses {
             });
         }
 
+        // Add Jackson annotations
+        System.out.println("Adding Jackson Annotations");
+        new JacksonAnnotationDecorator(true, false)
+                .addAnnotations(apiProjectDir.resolve("src/main/java/event/logging"));
+
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
         copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"),
@@ -184,7 +184,7 @@ public class GenClasses {
 
         // The jaxb2-rich-contract-plugin creates some classes in com.kscs.util.jaxb so move them into
         // event.logging.fluent
-        relocatePackage( apiProjectDir, "com.kscs.util.jaxb", "event.logging.jaxb.fluent");
+        relocatePackage(apiProjectDir, "com.kscs.util.jaxb", "event.logging.jaxb.fluent");
 
         // Copy the schema for validation purposes.
         Path schemaPath = mainResourcesDir.resolve("event/logging/impl");

@@ -170,6 +170,7 @@ ext.versions = [
 
 ext.libs = [
     assertj_core                   : "org.assertj:assertj-core:3.20.2",
+    jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.2",
     jaxb_api                       : "javax.xml.bind:jaxb-api", // Version set by jaxb_bom
     jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
     jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:2.1.0",
@@ -197,7 +198,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java-library'
-    apply plugin: 'ca.cutterslade.analyze'
+//    apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
 
     sourceCompatibility = JavaVersion.VERSION_1_8

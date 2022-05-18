@@ -11,6 +11,7 @@ def schemaDir = project.file('schema')
 archivesBaseName = "event-logging"
 
 dependencies {
+    implementation libs.jackson_annotations
     implementation libs.jaxb_api
 
     // The production code uses the SLF4J logging API at compile time
