@@ -170,7 +170,9 @@ ext.versions = [
 
 ext.libs = [
     assertj_core                   : "org.assertj:assertj-core:3.20.2",
-    jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.2",
+    classgraph                     : "io.github.classgraph:classgraph:4.8.146",
+    jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.3",
+    jackson_databind               : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
     jaxb_api                       : "javax.xml.bind:jaxb-api", // Version set by jaxb_bom
     jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
     jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:2.1.0",

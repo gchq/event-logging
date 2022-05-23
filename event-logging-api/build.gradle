@@ -12,6 +12,7 @@ archivesBaseName = "event-logging"
 
 dependencies {
     implementation libs.jackson_annotations
+    implementation libs.jackson_databind
     implementation libs.jaxb_api
 
     // The production code uses the SLF4J logging API at compile time
@@ -20,6 +21,7 @@ dependencies {
     // The JAXB implementation required for event serialisation to XML
     runtimeOnly libs.jaxb_runtime
 
+    testImplementation libs.classgraph
     testImplementation libs.junit_jupiter_api
     testImplementation libs.junit_jupiter_params
     testImplementation libs.assertj_core

@@ -163,11 +163,6 @@ public class GenClasses {
             });
         }
 
-        // Add Jackson annotations
-        System.out.println("Adding Jackson Annotations");
-        new JacksonAnnotationDecorator(true, false)
-                .addAnnotations(apiProjectDir.resolve("src/main/java/event/logging"));
-
         // Copy other classes that make up the API.
         final Path baseProjectDir = rootDir.resolve(BASE_PROJECT_NAME);
         copyAll(baseProjectDir.resolve("src/main/java/event/logging/base"),
@@ -181,6 +176,11 @@ public class GenClasses {
 
         copyAll(baseProjectDir.resolve("src/test/resources"),
                 apiProjectDir.resolve("src/test/resources"));
+
+        // Add Jackson annotations
+        System.out.println("Adding Jackson Annotations");
+        new JacksonAnnotationDecorator(true, false)
+                .addAnnotations(apiProjectDir.resolve("src/main/java/event/logging"));
 
         // The jaxb2-rich-contract-plugin creates some classes in com.kscs.util.jaxb so move them into
         // event.logging.fluent

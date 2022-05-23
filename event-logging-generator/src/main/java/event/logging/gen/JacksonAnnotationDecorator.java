@@ -19,11 +19,18 @@ public class JacksonAnnotationDecorator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JacksonAnnotationDecorator.class);
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile("package .*;\n\n");
-    private static final Pattern IMPORT_PATTERN = Pattern.compile("\nimport [A-Za-z0-9.]+;\n");
-    private static final Pattern CLASS_PATTERN = Pattern.compile("public (abstract )?class ([a-zA-z0-9]+)[\n <][^{]*\\{\n?");
-    private static final Pattern INTERFACE_PATTERN = Pattern.compile("public interface ([a-zA-z0-9]+)[\n <][^{]*\\{\n?");
-    private static final Pattern FIELD_PATTERN = Pattern.compile("(public|protected|private) ([A-Za-z0-9<>]+) ([A-Za-z0-9]+);\n?");
+    private static final Pattern PACKAGE_PATTERN =
+            Pattern.compile("package .*;\n\n");
+    private static final Pattern IMPORT_PATTERN =
+            Pattern.compile("\nimport [A-Za-z0-9.]+;\n");
+    private static final Pattern CLASS_PATTERN =
+            Pattern.compile("public (abstract )?(class|interface|enum|record) ([a-zA-z0-9]+)[\n <][^{]*\\{\n?");
+    //    private static final Pattern INTERFACE_PATTERN =
+//            Pattern.compile("public interface ([a-zA-z0-9]+)[\n <][^{]*\\{\n?");
+    private static final Pattern FIELD_PATTERN =
+            Pattern.compile("(public|protected|private) ([A-Za-z0-9<>]+) ([A-Za-z0-9]+);\n?");
+    private static final Pattern EXTENDS_PATTERN =
+            Pattern.compile("(class|interface|enum|record)\\s+([A-Za-z0-9.]+)\\s+(extends|implements)\\s+([^{]+)");
     private static final String CLASS = " class ";
 
     private final boolean overwrite;
@@ -47,111 +54,155 @@ public class JacksonAnnotationDecorator {
             Files.createDirectories(outputDir);
         }
 
-        addPropertyAnnotations(inputDir, outputDir);
-        addTypeAnnotations(outputDir, outputDir);
+        // Inspect implementations and superclasses.
+        final Classes classes = getClasses(inputDir);
+        addPropertyAnnotations(classes, inputDir, outputDir);
+        addTypeAnnotations(classes, outputDir, outputDir);
     }
 
-    private void addPropertyAnnotations(final Path inputDir, final Path outputDir) throws IOException {
-        System.out.println("Adding Jackson Annotations to all files in: " + inputDir);
-        if (Files.isDirectory(inputDir)) {
-            // Modify Java files.
-            try (final Stream<Path> stream = Files.list(inputDir)) {
-                stream.forEach(path -> {
-                    if (path.toFile().getName().endsWith(".java")) {
-                        System.out.println("Adding Jackson Annotations to: " + path);
-                        addJacksonAnnotations(path, outputDir.resolve(path.getFileName().toString()));
-                    }
-                });
+    private void addPropertyAnnotations(final Classes classes,
+                                        final Path inputDir,
+                                        final Path outputDir) {
+        LOGGER.info("Adding Jackson Annotations to all files in: " + inputDir);
+        // Modify Java files.
+        classes.allClasses.forEach((className, classInfo) -> {
+            final Path path = inputDir.resolve(className + ".java");
+            LOGGER.info("Adding Jackson Annotations to: " + path);
+            addJacksonAnnotations(classes, classInfo, path, outputDir.resolve(path.getFileName().toString()));
+        });
+    }
+
+    private void addTypeAnnotations(final Classes classes,
+                                    final Path inputDir,
+                                    final Path outputDir) {
+        // Calculate implementations.
+        final Map<String, Set<String>> implementations = new HashMap<>();
+        classes.allClasses.values().forEach(classInfo -> {
+            for (final String superClass : classInfo.superClassSet) {
+                implementations.computeIfAbsent(superClass, k -> new HashSet<>()).add(classInfo.name);
+            }
+        });
+
+        implementations.keySet().forEach(superClass -> {
+            final Path inputFile = inputDir.resolve(superClass + ".java");
+            if (!Files.isRegularFile(inputFile)) {
+                LOGGER.error("File not found: " + inputFile);
+
+            } else {
+                final Path outputFile = outputDir.resolve(inputFile.getFileName().toString());
+                addTypeAnnotations(
+                        implementations,
+                        superClass,
+                        inputFile,
+                        outputFile);
+            }
+        });
+    }
+
+    private void addTypeAnnotations(final Map<String, Set<String>> implementations,
+                                    final String superClass,
+                                    final Path inputFile,
+                                    final Path outputFile) {
+        final Set<String> subTypes = getDescendantImplementations(superClass, implementations);
+
+        final List<String> sorted = subTypes.stream().sorted().collect(Collectors.toList());
+        final Map<String, String> typeNames = new HashMap<>();
+
+        // TODO : Mine the implementations so we end up with only final descendants.
+
+        // See if we can do all first names.
+        final Set<String> uniqueNames = new HashSet<>();
+        for (final String subType : sorted) {
+            String typeName = subType;
+            if (typeName.endsWith("EventAction")) {
+                typeName = getFirstName(typeName);
+            }
+            typeName = createTypeName(typeName);
+            typeNames.put(subType, typeName);
+            if (!uniqueNames.add(typeName)) {
+                throw new RuntimeException("Type name not unique");
             }
         }
+
+        // Add type into to superclass.
+        final StringBuilder sb = new StringBuilder();
+        sb.append("@JsonTypeInfo(\n");
+        sb.append("        use = JsonTypeInfo.Id.NAME,\n");
+        sb.append("        property = \"type\"\n");
+        sb.append(")\n");
+        sb.append("@JsonSubTypes({\n");
+
+        for (int i = 0; i < sorted.size(); i++) {
+            final String subType = sorted.get(i);
+            sb.append("        @JsonSubTypes.Type(value = ");
+            sb.append(subType);
+            sb.append(".class, name = \"");
+            sb.append(typeNames.get(subType));
+            sb.append("\")");
+            if (i < sorted.size() - 1) {
+                sb.append(",");
+            }
+            sb.append("\n");
+        }
+        sb.append("})\n");
+
+        String java = read(inputFile);
+        java = addImport(java, "com.fasterxml.jackson.annotation.JsonTypeInfo");
+        java = addImport(java, "com.fasterxml.jackson.annotation.JsonSubTypes");
+
+        final int start = start(java, CLASS_PATTERN);
+        if (start == -1) {
+            LOGGER.error("Unable to find start of class or interface");
+        } else {
+            java = insert(java, sb.toString(), start);
+        }
+
+        write(outputFile, java);
     }
 
-    private void addTypeAnnotations(final Path inputDir, final Path outputDir) throws IOException {
-        if (Files.isDirectory(inputDir)) {
-            // Determine implementation and extensions.
-            Map<String, Set<String>> implementations = new HashMap<>();
-            try (final Stream<Path> stream = Files.list(outputDir)) {
-                stream.forEach(path -> {
-                    if (path.toFile().getName().endsWith(".java")) {
-                        final String java = read(path);
-                        final Pattern pattern = Pattern.compile("(class|interface)\\s+([A-Za-z0-9.]+)\\s+(extends|implements)\\s+([^{]+)");
-                        final Matcher matcher = pattern.matcher(java);
-                        while (matcher.find()) {
-                            final String extensionClass = matcher.group(2);
-
-                            String superClasses = matcher.group(4);
-                            superClasses = superClasses.replaceAll("<[^>]*>", ""); // Remove generics
-                            superClasses = superClasses.replaceAll("extends\\s+", ",");
-                            superClasses = superClasses.replaceAll("implements\\s+", ",");
-                            superClasses = superClasses.replaceAll(",", " ");
-                            superClasses = superClasses.replaceAll("\\s+", " ");
-
-                            Arrays.stream(superClasses.split(" ")).forEach(superClass -> {
-                                if (!superClass.contains(".Selector")) {
-                                    implementations.computeIfAbsent(superClass, k -> new HashSet<>()).add(extensionClass);
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-
-            implementations.forEach((superClass, subTypes) -> {
-                final Path file = inputDir.resolve(superClass + ".java");
-                if (!Files.isRegularFile(file)) {
-                    LOGGER.error("File not found: " + file);
-
+    private Set<String> getDescendantImplementations(final String superClass, final Map<String, Set<String>> implementations) {
+        final Set<String> result = new HashSet<>();
+        final Set<String> subClasses = implementations.get(superClass);
+        if (subClasses != null) {
+            for (final String subclass : subClasses) {
+                final Set<String> descendants = getDescendantImplementations(subclass, implementations);
+                if (descendants.size() > 0) {
+                    result.addAll(descendants);
                 } else {
-                    // Add type into to superclass.
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append("@JsonTypeInfo(\n");
-                    sb.append("        use = JsonTypeInfo.Id.NAME,\n");
-                    sb.append("        property = \"type\"\n");
-                    sb.append(")\n");
-                    sb.append("@JsonSubTypes({\n");
-
-                    final List<String> sorted = subTypes.stream().sorted().collect(Collectors.toList());
-                    for (int i = 0; i < sorted.size(); i++) {
-                        final String subType = sorted.get(i);
-                        sb.append("        @JsonSubTypes.Type(value = ");
-                        sb.append(subType);
-                        sb.append(".class, name = \"");
-
-                        // See if all caps
-                        if (subType.toUpperCase(Locale.ROOT).equals(subType)) {
-                            // Lowercase
-                            sb.append(subType.toLowerCase(Locale.ROOT));
-                        } else {
-                            // Lowercase first letter
-                            sb.append(subType.substring(0, 1).toLowerCase(Locale.ROOT) + subType.substring(1));
-                        }
-
-                        sb.append("\")");
-                        if (i < sorted.size() - 1) {
-                            sb.append(",");
-                        }
-                        sb.append("\n");
-                    }
-                    sb.append("})\n");
-
-                    String java = read(file);
-                    java = addImport(java, "com.fasterxml.jackson.annotation.JsonTypeInfo");
-                    java = addImport(java, "com.fasterxml.jackson.annotation.JsonSubTypes");
-
-                    int start = start(java, CLASS_PATTERN);
-                    if (start == -1) {
-                        start = start(java, INTERFACE_PATTERN);
-                    }
-                    if (start == -1) {
-                        LOGGER.error("Unable to find start of class or interface");
-                    } else {
-                        java = insert(java, sb.toString(), start);
-                    }
-
-                    write(outputDir.resolve(file.getFileName().toString()), java);
+                    result.add(subclass);
                 }
-            });
+            }
         }
+        return result;
+    }
+
+    private String getFirstName(final String string) {
+        if (string.toUpperCase(Locale.ROOT).equals(string)) {
+            return string;
+        }
+
+        int pos = -1;
+        for (int i = 1; i < string.length() && pos == -1; i++) {
+            if (Character.isUpperCase(string.charAt(i))) {
+                pos = i;
+            }
+        }
+        if (pos != -1) {
+            return string.substring(0, pos);
+        }
+        return string;
+    }
+
+    private String createTypeName(final String string) {
+        if (string.length() == 0) {
+            return string;
+        }
+
+        if (string.toUpperCase(Locale.ROOT).equals(string)) {
+            return string.toLowerCase(Locale.ROOT);
+        }
+
+        return string.substring(0, 1).toLowerCase(Locale.ROOT) + string.substring(1);
     }
 
     private String read(final Path path) {
@@ -170,9 +221,12 @@ public class JacksonAnnotationDecorator {
         }
     }
 
-    private void addJacksonAnnotations(final Path inputFile, final Path outputFile) {
+    private void addJacksonAnnotations(final Classes classes,
+                                       final ClassInfo classInfo,
+                                       final Path inputFile,
+                                       final Path outputFile) {
         String java = read(inputFile);
-        java = addJacksonAnnotations(java);
+        java = addJacksonAnnotations(classes, classInfo, java);
 
         if (relocate) {
             java = java.replaceAll("package event.logging", "package event.logging.temp");
@@ -181,102 +235,104 @@ public class JacksonAnnotationDecorator {
         write(outputFile, java);
     }
 
-    public String addJacksonAnnotations(String java) {
-        final int firstClassPos = end(java, CLASS_PATTERN);
+    private List<FieldInfo> getSuperFields(final Classes classes,
+                                           final ClassInfo classInfo) {
+        final List<FieldInfo> fields = new ArrayList<>();
+        for (final String superClass : classInfo.superClassSet) {
+            final ClassInfo superClassInfo = classes.allClasses.get(superClass);
+            if (superClassInfo != null) {
+                fields.addAll(getSuperFields(classes, superClassInfo));
+                fields.addAll(superClassInfo.fields);
+            } else {
+                LOGGER.info("Unknown super class: " + superClass);
+            }
+        }
+        return fields;
+    }
+
+    public String addJacksonAnnotations(final Classes classes,
+                                        final ClassInfo classInfo,
+                                        String java) {
+        final int firstClassPos = classInfo.firstClassPos;
         if (firstClassPos == -1) {
             return java;
         }
 
-        final List<String> members = new ArrayList<>();
-        final Map<String, String> typeMap = new HashMap<>();
-        int afterMembers = -1;
-        int nextClassPos = java.indexOf(CLASS, firstClassPos);
-        if (nextClassPos == -1) {
-            nextClassPos = Integer.MAX_VALUE;
-        }
+        final List<FieldInfo> superFields = getSuperFields(classes, classInfo);
+        final List<FieldInfo> combinedFields = new ArrayList<>();
+        combinedFields.addAll(superFields);
+        combinedFields.addAll(classInfo.fields);
 
-        final Matcher fieldMatcher = FIELD_PATTERN.matcher(java);
-        while (fieldMatcher.find()) {
-            final int start = fieldMatcher.start();
-            final int end = fieldMatcher.end();
-            if (start > nextClassPos) {
-                break;
-            }
-
-            final String typeName = fieldMatcher.group(2);
-            final String memberName = fieldMatcher.group(3);
-            typeMap.put(memberName, typeName);
-            if (members.contains(memberName)) {
-                throw new RuntimeException("Duplicate field: " + memberName);
-            }
-            members.add(memberName);
-            afterMembers = end;
-        }
-
-        if (members.size() > 0) {
+        if (combinedFields.size() > 0) {
             // Add creator
-            if (afterMembers != -1) {
-                String className = null;
-                final Matcher classNameMatcher = CLASS_PATTERN.matcher(java);
-                if (classNameMatcher.find()) {
-                    className = classNameMatcher.group(2);
+            if (classInfo.afterMembers != -1) {
+                String className = classInfo.name;
+                final StringBuilder sb = new StringBuilder();
+                sb.append(java, 0, classInfo.afterMembers);
+                sb.append("\n    @JsonCreator\n");
+                sb.append("    public ");
+                sb.append(className);
+                sb.append("(\n");
+
+                // Add params
+                for (int i = 0; i < combinedFields.size(); i++) {
+                    final FieldInfo fieldInfo = combinedFields.get(i);
+                    sb.append("        @JsonProperty(");
+                    sb.append("\"");
+                    sb.append(fieldInfo.name);
+                    sb.append("\"");
+                    sb.append(") final ");
+                    sb.append(fieldInfo.type);
+                    sb.append(" ");
+                    sb.append(fieldInfo.name);
+
+                    if (i < combinedFields.size() - 1) {
+                        sb.append(",\n");
+                    }
                 }
+                sb.append(") {\n");
 
-                if (className != null) {
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append(java.substring(0, afterMembers));
-                    sb.append("\n    @JsonCreator\n");
-                    sb.append("    public ");
-                    sb.append(className);
-                    sb.append("(\n");
-
-                    // Add params
-                    for (int i = 0; i < members.size(); i++) {
-                        final String member = members.get(i);
-                        sb.append("        @JsonProperty(");
-                        sb.append("\"");
-                        sb.append(member);
-                        sb.append("\"");
-                        sb.append(") final ");
-                        sb.append(typeMap.get(member));
-                        sb.append(" ");
-                        sb.append(member);
-
-                        if (i < members.size() - 1) {
-                            sb.append(",\n");
+                // Add super call.
+                if (superFields.size() > 0) {
+                    sb.append("        super(");
+                    for (int i = 0; i < superFields.size(); i++) {
+                        final FieldInfo fieldInfo = superFields.get(i);
+                        sb.append(fieldInfo.name);
+                        if (i < superFields.size() - 1) {
+                            sb.append(",\n              ");
                         }
                     }
-                    sb.append(") {\n");
-
-                    // Add assignments
-                    for (final String member : members) {
-                        sb.append("        this.");
-                        sb.append(member);
-                        sb.append(" = ");
-                        sb.append(member);
-                        sb.append(";\n");
-                    }
-
-                    sb.append("    }\n");
-
-                    // Ensure there is a no-args constructor.
-                    if (!java.contains("public " + className + "()")) {
-                        sb.append("\n    public ");
-                        sb.append(className);
-                        sb.append("() {\n");
-                        sb.append("    }\n");
-                    }
-
-                    sb.append(java.substring(afterMembers));
-                    java = sb.toString();
-
-
+                    sb.append(");\n");
                 }
+
+                // Add assignments
+                for (final FieldInfo fieldInfo : classInfo.fields) {
+                    sb.append("        this.");
+                    sb.append(fieldInfo.name);
+                    sb.append(" = ");
+                    sb.append(fieldInfo.name);
+                    sb.append(";\n");
+                }
+
+                sb.append("    }\n");
+
+                // Ensure there is a no-args constructor.
+                if (!java.contains("public " + className + "()")) {
+                    sb.append("\n    public ");
+                    sb.append(className);
+                    sb.append("() {\n");
+                    sb.append("    }\n");
+                }
+
+                sb.append(java.substring(classInfo.afterMembers));
+                java = sb.toString();
             }
 
             // Add member annotations.
-            for (final String member : members) {
-                final String accessor = member.substring(0, 1).toUpperCase(Locale.ROOT) + member.substring(1);
+            for (final FieldInfo fieldInfo : classInfo.fields) {
+                final String accessor =
+                        fieldInfo.name.substring(0, 1).toUpperCase(Locale.ROOT) +
+                                fieldInfo.name.substring(1);
                 final String getter = "get" + accessor + "(";
                 int index = java.indexOf(getter);
                 if (index == -1) {
@@ -317,14 +373,13 @@ public class JacksonAnnotationDecorator {
                     }
                 }
 
-                final String type = typeMap.get(member);
-                int start = findMemberPos(java, type, member);
+                int start = findMemberPos(java, fieldInfo);
                 if (start != -1) {
                     if (comment != null) {
                         java = insert(java, "@JsonPropertyDescription(" + comment + "\n    )\n    ", start);
                     }
 
-                    start = findMemberPos(java, type, member);
+                    start = findMemberPos(java, fieldInfo);
                     if (start != -1) {
                         java = insert(java, "@JsonProperty\n    ", start);
                     }
@@ -338,15 +393,16 @@ public class JacksonAnnotationDecorator {
             java = addImport(java, "com.fasterxml.jackson.annotation.JsonProperty");
             java = addImport(java, "com.fasterxml.jackson.annotation.JsonPropertyDescription");
             java = addImport(java, "com.fasterxml.jackson.annotation.JsonPropertyOrder");
+            java = addImport(java, "java.util.List");
 
             final StringBuilder classAnnotations = new StringBuilder();
             classAnnotations.append("@JsonPropertyOrder({\n");
-            for (int i = 0; i < members.size(); i++) {
-                final String memberName = members.get(i);
+            for (int i = 0; i < combinedFields.size(); i++) {
+                final FieldInfo fieldInfo = combinedFields.get(i);
                 classAnnotations.append("    \"");
-                classAnnotations.append(memberName);
+                classAnnotations.append(fieldInfo.name);
                 classAnnotations.append("\"");
-                if (i != members.size() - 1) {
+                if (i != combinedFields.size() - 1) {
                     classAnnotations.append(",");
                 }
                 classAnnotations.append("\n");
@@ -364,8 +420,13 @@ public class JacksonAnnotationDecorator {
         return java;
     }
 
-    private int findMemberPos(final String java, final String type, final String member) {
-        return start(java, Pattern.compile("(public|protected|private)? " + type + " " + member + ";"));
+    private int findMemberPos(final String java, final FieldInfo fieldInfo) {
+        return start(java, Pattern.compile(
+                "(public|protected|private)? " +
+                        fieldInfo.type +
+                        " " +
+                        fieldInfo.name +
+                        ";"));
     }
 
     private String insertBefore(final String java, final String insert, final Pattern pattern) {
@@ -422,6 +483,149 @@ public class JacksonAnnotationDecorator {
         } else {
             // Insert after the package declaration.
             return insertAfter(java, string, PACKAGE_PATTERN);
+        }
+    }
+
+    private Classes getClasses(final Path dir) {
+//        final Map<String, Set<String>> implementations = new HashMap<>();
+        final Map<String, ClassInfo> classes = new HashMap<>();
+
+        try {
+            if (Files.isDirectory(dir)) {
+                // Determine implementation and extensions.
+                try (final Stream<Path> stream = Files.list(dir)) {
+                    stream.forEach(path -> {
+                        final String fileName = path.getFileName().toString();
+                        if (fileName.endsWith(".java") && !fileName.contains("package-info")) {
+                            final String java = read(path);
+                            final ClassInfo classInfo = getClassInfo(java);
+                            classes.put(classInfo.name, classInfo);
+                        }
+                    });
+                }
+            }
+        } catch (final IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return new Classes(classes);
+    }
+
+    private ClassInfo getClassInfo(final String java) {
+        final int firstClassPos = end(java, CLASS_PATTERN);
+        int afterMembers = firstClassPos;
+        final List<FieldInfo> fields = new ArrayList<>();
+//        final Map<String, String> typeMap = new HashMap<>();
+        if (firstClassPos != -1) {
+            int nextClassPos = java.indexOf(CLASS, firstClassPos);
+            if (nextClassPos == -1) {
+                nextClassPos = Integer.MAX_VALUE;
+            }
+
+            final Matcher fieldMatcher = FIELD_PATTERN.matcher(java);
+            while (fieldMatcher.find()) {
+                final int start = fieldMatcher.start();
+                final int end = fieldMatcher.end();
+                if (start > nextClassPos) {
+                    break;
+                }
+
+                final String fieldType = fieldMatcher.group(2);
+                final String fieldName = fieldMatcher.group(3);
+                final FieldInfo fieldInfo = new FieldInfo(fieldName, fieldType);
+                if (fields.contains(fieldInfo)) {
+                    throw new RuntimeException("Duplicate field: " + fieldName);
+                }
+                fields.add(fieldInfo);
+                afterMembers = end;
+            }
+        }
+
+        final Matcher classNameMatcher = CLASS_PATTERN.matcher(java);
+        String name = null;
+        if (classNameMatcher.find()) {
+            name = classNameMatcher.group(3);
+        }
+
+        if (name == null || name.trim().length() == 0) {
+            throw new RuntimeException("Unable to find class name");
+        }
+
+        // Get superclasses.
+        final Set<String> superClassSet = new HashSet<>();
+        final Matcher matcher = EXTENDS_PATTERN.matcher(java);
+        while (matcher.find()) {
+            final String extensionClass = matcher.group(2);
+
+            String superClasses = matcher.group(4);
+            superClasses = superClasses.replaceAll("<[^>]*>", ""); // Remove generics
+            superClasses = superClasses.replaceAll("extends\\s+", ",");
+            superClasses = superClasses.replaceAll("implements\\s+", ",");
+            superClasses = superClasses.replaceAll(",", " ");
+            superClasses = superClasses.replaceAll("\\s+", " ");
+
+            Arrays.stream(superClasses.split(" ")).forEach(superClass -> {
+                if (!superClass.contains(".Selector")) {
+                    superClassSet.add(superClass);
+                }
+            });
+
+//            if (matcher.find()) {
+//                throw new RuntimeException("Unexpected repeat");
+//            }
+        }
+
+        return new ClassInfo(name, firstClassPos, afterMembers, fields, superClassSet);
+    }
+
+    private static class Classes {
+        private final Map<String, ClassInfo> allClasses;
+
+        public Classes(final Map<String, ClassInfo> allClasses) {
+            this.allClasses = allClasses;
+        }
+    }
+
+    private static class ClassInfo {
+        private final String name;
+        private final int firstClassPos;
+        private final int afterMembers;
+        private final List<FieldInfo> fields;
+        private final Set<String> superClassSet;
+
+        public ClassInfo(final String name,
+                         final int firstClassPos,
+                         final int afterMembers,
+                         final List<FieldInfo> fields,
+                         final Set<String> superClassSet) {
+            this.name = name;
+            this.firstClassPos = firstClassPos;
+            this.afterMembers = afterMembers;
+            this.fields = fields;
+            this.superClassSet = superClassSet;
+        }
+    }
+
+    private static class FieldInfo {
+        private final String name;
+        private final String type;
+
+        public FieldInfo(String name, String type) {
+            this.name = name;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FieldInfo fieldInfo = (FieldInfo) o;
+            return Objects.equals(name, fieldInfo.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
         }
     }
 }
