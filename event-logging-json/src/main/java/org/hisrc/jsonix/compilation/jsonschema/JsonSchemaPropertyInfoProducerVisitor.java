@@ -8,7 +8,9 @@ package org.hisrc.jsonix.compilation.jsonschema;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Multiplicity;
 import com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo;
+import com.sun.xml.xsom.XSAnnotation;
 import com.sun.xml.xsom.XSComponent;
+import com.sun.xml.xsom.impl.ParticleImpl;
 import org.apache.commons.lang3.Validate;
 import org.hisrc.jsonix.JsonixConstants;
 import org.hisrc.jsonix.jsonschema.JsonSchemaBuilder;
@@ -187,22 +189,35 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
     }
 
     private String getDescription(final MPropertyInfo<T, C> info) {
+        String description = null;
+
         if (info.getOrigin() instanceof XJCCMPropertyInfoOrigin) {
             final XJCCMPropertyInfoOrigin xjccmPropertyInfoOrigin = (XJCCMPropertyInfoOrigin) info.getOrigin();
             final CPropertyInfo cElementPropertyInfo = xjccmPropertyInfoOrigin.getSource();
             final XSComponent xsComponent = cElementPropertyInfo.getSchemaComponent();
             if (xsComponent != null) {
-                if (xsComponent.getAnnotation() != null &&
-                        xsComponent.getAnnotation().getAnnotation() != null) {
-                    if (xsComponent.getAnnotation().getAnnotation() instanceof BindInfo) {
-                        return ((BindInfo) xsComponent.getAnnotation().getAnnotation()).getDocumentation();
-                    } else {
-                        System.out.println("ink");
-                    }
+                if (xsComponent instanceof ParticleImpl) {
+                    final ParticleImpl particle = (ParticleImpl) xsComponent;
+                    description = getAnnotation(particle.getTerm().getAnnotation());
+                }
+
+                if (description == null) {
+                    description = getAnnotation(xsComponent.getAnnotation());
                 }
             }
         } else {
             System.out.println("ink");
+        }
+        return description;
+    }
+
+    private String getAnnotation(final XSAnnotation xsAnnotation) {
+        if (xsAnnotation != null) {
+            if (xsAnnotation.getAnnotation() instanceof BindInfo) {
+                return ((BindInfo) xsAnnotation.getAnnotation()).getDocumentation();
+            } else {
+                System.out.println("ink");
+            }
         }
         return null;
     }
