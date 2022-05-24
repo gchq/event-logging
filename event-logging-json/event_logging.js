@@ -3,20 +3,39 @@ var event_logging_Module_Factory = function () {
     name: 'event_logging',
     defaultElementNamespaceURI: 'event-logging:3',
     typeInfos: [{
-        localName: 'ImportEventAction',
-        typeName: 'Import',
+        localName: 'Email',
+        baseTypeInfo: '.BaseObject',
         propertyInfos: [{
-            name: 'source',
-            elementName: 'Source',
-            typeInfo: '.MultiObject'
+            name: 'from',
+            elementName: 'From',
+            typeInfo: '.User'
           }, {
-            name: 'destination',
-            elementName: 'Destination',
-            typeInfo: '.MultiObject'
+            name: 'to',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'To',
+            typeInfo: '.User'
           }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
+            name: 'cc',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Cc',
+            typeInfo: '.User'
+          }, {
+            name: 'bcc',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Bcc',
+            typeInfo: '.User'
+          }, {
+            name: 'subject',
+            elementName: 'Subject'
+          }, {
+            name: 'content',
+            elementName: 'Content'
+          }, {
+            name: 'mimeType',
+            elementName: 'MimeType'
           }, {
             name: 'data',
             minOccurs: 0,
@@ -25,18 +44,96 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'User',
+        localName: 'BaseObject',
+        propertyInfos: [{
+            name: 'meta',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Meta',
+            typeInfo: '.AnyContent'
+          }, {
+            name: 'type',
+            elementName: 'Type'
+          }, {
+            name: 'id',
+            elementName: 'Id'
+          }, {
+            name: 'name',
+            elementName: 'Name'
+          }, {
+            name: 'description',
+            elementName: 'Description'
+          }, {
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
+          }, {
+            name: 'state',
+            elementName: 'State'
+          }, {
+            name: 'groups',
+            elementName: 'Groups',
+            typeInfo: '.Groups'
+          }, {
+            name: 'permissions',
+            elementName: 'Permissions',
+            typeInfo: '.Permissions'
+          }, {
+            name: 'tags',
+            elementName: 'Tags',
+            typeInfo: '.MetaDataTags'
+          }]
+      }, {
+        localName: 'AddGroups',
+        typeName: null,
+        propertyInfos: [{
+            name: 'groups',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Group',
+            typeInfo: '.Group'
+          }]
+      }, {
+        localName: 'Approvers',
+        typeName: null,
+        propertyInfos: [{
+            name: 'approvers',
+            required: true,
+            collection: true,
+            elementName: 'Approver',
+            typeInfo: '.User'
+          }]
+      }, {
+        localName: 'Configuration',
         baseTypeInfo: '.BaseObject',
         propertyInfos: [{
-            name: 'domain',
-            elementName: 'Domain'
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ReceiveEventAction',
+        typeName: 'Receive',
+        propertyInfos: [{
+            name: 'source',
+            required: true,
+            elementName: 'Source',
+            typeInfo: '.Source'
           }, {
-            name: 'emailAddress',
-            elementName: 'EmailAddress'
+            name: 'destination',
+            required: true,
+            elementName: 'Destination',
+            typeInfo: '.Destination'
           }, {
-            name: 'userDetails',
-            elementName: 'UserDetails',
-            typeInfo: '.UserDetails'
+            name: 'payload',
+            elementName: 'Payload',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
           }, {
             name: 'data',
             minOccurs: 0,
@@ -87,64 +184,6 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'AdvancedQuery',
-        typeName: null,
-        propertyInfos: [{
-            name: 'queryItems',
-            minOccurs: 0,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'Term',
-                typeInfo: '.Term'
-              }, {
-                elementName: 'And',
-                typeInfo: '.And'
-              }, {
-                elementName: 'Or',
-                typeInfo: '.Or'
-              }, {
-                elementName: 'Not',
-                typeInfo: '.Not'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'BaseNetwork',
-        propertyInfos: [{
-            name: 'source',
-            required: true,
-            elementName: 'Source',
-            typeInfo: '.NetworkLocation'
-          }, {
-            name: 'destination',
-            elementName: 'Destination',
-            typeInfo: '.NetworkLocation'
-          }, {
-            name: 'processName',
-            elementName: 'ProcessName'
-          }, {
-            name: 'payload',
-            elementName: 'Payload',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'rule',
-            elementName: 'Rule'
-          }]
-      }, {
-        localName: 'VirtualSession',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'sessionState',
-            elementName: 'SessionState',
-            typeInfo: '.VirtualSessionSessionState'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
         localName: 'PrintSettings',
         typeName: null,
         propertyInfos: [{
@@ -170,625 +209,18 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'ViewEventAction',
-        typeName: 'View',
-        baseTypeInfo: '.BaseObjectOutcome'
-      }, {
-        localName: 'OtherObject',
-        typeName: 'Object',
+        localName: 'VirtualSession',
         baseTypeInfo: '.BaseObject',
         propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'UpdateEventAction',
-        typeName: 'Update',
-        propertyInfos: [{
-            name: 'before',
-            elementName: 'Before',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'after',
-            required: true,
-            elementName: 'After',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
+            name: 'sessionState',
+            elementName: 'SessionState',
+            typeInfo: '.VirtualSessionSessionState'
           }, {
             name: 'data',
             minOccurs: 0,
             collection: true,
             elementName: 'Data',
             typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'EventDetail',
-        propertyInfos: [{
-            name: 'typeId',
-            required: true,
-            elementName: 'TypeId'
-          }, {
-            name: 'description',
-            elementName: 'Description'
-          }, {
-            name: 'purpose',
-            elementName: 'Purpose',
-            typeInfo: '.Purpose'
-          }, {
-            name: 'eventAction',
-            required: true,
-            elementTypeInfos: [{
-                elementName: 'Authenticate',
-                typeInfo: '.AuthenticateEventAction'
-              }, {
-                elementName: 'Authorise',
-                typeInfo: '.AuthoriseEventAction'
-              }, {
-                elementName: 'Search',
-                typeInfo: '.SearchEventAction'
-              }, {
-                elementName: 'Copy',
-                typeInfo: '.CopyEventAction'
-              }, {
-                elementName: 'Move',
-                typeInfo: '.MoveEventAction'
-              }, {
-                elementName: 'Create',
-                typeInfo: '.CreateEventAction'
-              }, {
-                elementName: 'View',
-                typeInfo: '.ViewEventAction'
-              }, {
-                elementName: 'Import',
-                typeInfo: '.ImportEventAction'
-              }, {
-                elementName: 'Export',
-                typeInfo: '.ExportEventAction'
-              }, {
-                elementName: 'Update',
-                typeInfo: '.UpdateEventAction'
-              }, {
-                elementName: 'Delete',
-                typeInfo: '.DeleteEventAction'
-              }, {
-                elementName: 'Process',
-                typeInfo: '.ProcessEventAction'
-              }, {
-                elementName: 'Print',
-                typeInfo: '.PrintEventAction'
-              }, {
-                elementName: 'Install',
-                typeInfo: '.InstallEventAction'
-              }, {
-                elementName: 'Uninstall',
-                typeInfo: '.UninstallEventAction'
-              }, {
-                elementName: 'Network',
-                typeInfo: '.NetworkEventAction'
-              }, {
-                elementName: 'Alert',
-                typeInfo: '.AlertEventAction'
-              }, {
-                elementName: 'Send',
-                typeInfo: '.SendEventAction'
-              }, {
-                elementName: 'Receive',
-                typeInfo: '.ReceiveEventAction'
-              }, {
-                elementName: 'Approval',
-                typeInfo: '.ApprovalEventAction'
-              }, {
-                elementName: 'Unknown',
-                typeInfo: '.UnknownEventAction'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'Software',
-        propertyInfos: [{
-            name: 'id',
-            elementName: 'Id'
-          }, {
-            name: 'name',
-            required: true,
-            elementName: 'Name'
-          }, {
-            name: 'version',
-            elementName: 'Version'
-          }, {
-            name: 'manufacturer',
-            elementName: 'Manufacturer'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Email',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'from',
-            elementName: 'From',
-            typeInfo: '.User'
-          }, {
-            name: 'to',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'To',
-            typeInfo: '.User'
-          }, {
-            name: 'cc',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Cc',
-            typeInfo: '.User'
-          }, {
-            name: 'bcc',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Bcc',
-            typeInfo: '.User'
-          }, {
-            name: 'subject',
-            elementName: 'Subject'
-          }, {
-            name: 'content',
-            elementName: 'Content'
-          }, {
-            name: 'mimeType',
-            elementName: 'MimeType'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'IDS',
-        typeName: null,
-        propertyInfos: [{
-            name: 'rule',
-            elementName: 'Rule'
-          }, {
-            name: 'source',
-            elementName: 'Source',
-            typeInfo: '.NetworkLocation'
-          }, {
-            name: 'destination',
-            elementName: 'Destination',
-            typeInfo: '.NetworkLocation'
-          }, {
-            name: 'payload',
-            elementName: 'Payload',
-            typeInfo: '.MultiObject'
-          }]
-      }, {
-        localName: 'And',
-        propertyInfos: [{
-            name: 'queryItems',
-            minOccurs: 0,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'Term',
-                typeInfo: '.Term'
-              }, {
-                elementName: 'And',
-                typeInfo: '.And'
-              }, {
-                elementName: 'Or',
-                typeInfo: '.Or'
-              }, {
-                elementName: 'Not',
-                typeInfo: '.Not'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'PrintJob',
-        typeName: null,
-        propertyInfos: [{
-            name: 'document',
-            required: true,
-            elementName: 'Document',
-            typeInfo: '.Document'
-          }, {
-            name: 'pages',
-            elementName: 'Pages',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'size',
-            elementName: 'Size',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'submitted',
-            elementName: 'Submitted',
-            typeInfo: 'DateTime'
-          }]
-      }, {
-        localName: 'Association',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'objects',
-            required: true,
-            elementName: 'Objects',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Destination',
-        typeName: null,
-        propertyInfos: [{
-            name: 'endpoints',
-            required: true,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'User',
-                typeInfo: '.User'
-              }, {
-                elementName: 'Device',
-                typeInfo: '.Device'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'Banner',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'version',
-            elementName: 'Version'
-          }, {
-            name: 'message',
-            elementName: 'Message'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Chat',
-        baseTypeInfo: '.BaseChat'
-      }, {
-        localName: 'MetaDataTags',
-        propertyInfos: [{
-            name: 'tags',
-            required: true,
-            collection: true,
-            elementName: 'Tag'
-          }]
-      }, {
-        localName: 'BaseObject',
-        propertyInfos: [{
-            name: 'meta',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Meta',
-            typeInfo: '.AnyContent'
-          }, {
-            name: 'type',
-            elementName: 'Type'
-          }, {
-            name: 'id',
-            elementName: 'Id'
-          }, {
-            name: 'name',
-            elementName: 'Name'
-          }, {
-            name: 'description',
-            elementName: 'Description'
-          }, {
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'state',
-            elementName: 'State'
-          }, {
-            name: 'groups',
-            elementName: 'Groups',
-            typeInfo: '.Groups'
-          }, {
-            name: 'permissions',
-            elementName: 'Permissions',
-            typeInfo: '.Permissions'
-          }, {
-            name: 'tags',
-            elementName: 'Tags',
-            typeInfo: '.MetaDataTags'
-          }]
-      }, {
-        localName: 'Events',
-        typeName: null,
-        propertyInfos: [{
-            name: 'event',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Event',
-            typeInfo: '.Event'
-          }, {
-            name: 'version',
-            required: true,
-            values: ['4.0-beta.3'],
-            attributeName: {
-              localPart: 'Version'
-            },
-            type: 'attribute'
-          }]
-      }, {
-        localName: 'EventSource',
-        propertyInfos: [{
-            name: 'eventId',
-            elementName: 'EventId'
-          }, {
-            name: 'sessionId',
-            elementName: 'SessionId'
-          }, {
-            name: 'system',
-            required: true,
-            elementName: 'System',
-            typeInfo: '.SystemDetail'
-          }, {
-            name: 'generator',
-            required: true,
-            elementName: 'Generator'
-          }, {
-            name: 'device',
-            required: true,
-            elementName: 'Device',
-            typeInfo: '.Device'
-          }, {
-            name: 'client',
-            elementName: 'Client',
-            typeInfo: '.Device'
-          }, {
-            name: 'server',
-            elementName: 'Server',
-            typeInfo: '.Device'
-          }, {
-            name: 'door',
-            elementName: 'Door',
-            typeInfo: '.Door'
-          }, {
-            name: 'user',
-            elementName: 'User',
-            typeInfo: '.User'
-          }, {
-            name: 'runAs',
-            elementName: 'RunAs',
-            typeInfo: '.User'
-          }, {
-            name: 'interactive',
-            elementName: 'Interactive',
-            typeInfo: 'Boolean'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'UnknownEventAction',
-        typeName: null,
-        propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Purpose',
-        propertyInfos: [{
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'subject',
-            elementName: 'Subject'
-          }, {
-            name: 'stakeholders',
-            elementName: 'Stakeholders'
-          }, {
-            name: 'justification',
-            elementName: 'Justification'
-          }, {
-            name: 'expectedOutcome',
-            elementName: 'ExpectedOutcome'
-          }, {
-            name: 'authorisations',
-            elementName: 'Authorisations',
-            typeInfo: '.Authorisations'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'EventChain',
-        propertyInfos: [{
-            name: 'activity',
-            required: true,
-            elementName: 'Activity',
-            typeInfo: '.Activity'
-          }]
-      }, {
-        localName: 'BaseChat',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'sessionId',
-            elementName: 'SessionId'
-          }, {
-            name: 'room',
-            elementName: 'Room'
-          }, {
-            name: 'from',
-            elementName: 'From',
-            typeInfo: '.User'
-          }, {
-            name: 'to',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'To',
-            typeInfo: '.User'
-          }, {
-            name: 'content',
-            elementName: 'Content'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Hash',
-        propertyInfos: [{
-            name: 'value',
-            type: 'value'
-          }, {
-            name: 'type',
-            attributeName: {
-              localPart: 'Type'
-            },
-            type: 'attribute'
-          }]
-      }, {
-        localName: 'Door',
-        typeName: null,
-        propertyInfos: [{
-            name: 'name',
-            required: true,
-            elementName: 'Name'
-          }, {
-            name: 'description',
-            elementName: 'Description'
-          }, {
-            name: 'location',
-            required: true,
-            elementName: 'Location',
-            typeInfo: '.Location'
-          }, {
-            name: 'singleEntry',
-            elementName: 'SingleEntry',
-            typeInfo: 'Boolean'
-          }, {
-            name: 'removeAll',
-            elementName: 'RemoveAll',
-            typeInfo: 'Boolean'
-          }, {
-            name: 'addAccess',
-            required: true,
-            elementName: 'AddAccess',
-            typeInfo: '.AddAccess'
-          }]
-      }, {
-        localName: 'Authorisations',
-        typeName: null,
-        propertyInfos: [{
-            name: 'auth',
-            required: true,
-            collection: true,
-            elementName: 'Auth',
-            typeInfo: '.Auth'
-          }]
-      }, {
-        localName: 'BaseObjectOutcome',
-        propertyInfos: [{
-            name: 'objects',
-            required: true,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'Association',
-                typeInfo: '.Association'
-              }, {
-                elementName: 'Banner',
-                typeInfo: '.Banner'
-              }, {
-                elementName: 'Chat',
-                typeInfo: '.Chat'
-              }, {
-                elementName: 'Configuration',
-                typeInfo: '.Configuration'
-              }, {
-                elementName: 'Criteria',
-                typeInfo: '.Criteria'
-              }, {
-                elementName: 'Document',
-                typeInfo: '.Document'
-              }, {
-                elementName: 'Email',
-                typeInfo: '.Email'
-              }, {
-                elementName: 'File',
-                typeInfo: '.File'
-              }, {
-                elementName: 'Folder',
-                typeInfo: '.Folder'
-              }, {
-                elementName: 'Group',
-                typeInfo: '.Group'
-              }, {
-                elementName: 'GroupChat',
-                typeInfo: '.GroupChat'
-              }, {
-                elementName: 'Object',
-                typeInfo: '.OtherObject'
-              }, {
-                elementName: 'SearchResults',
-                typeInfo: '.SearchResults'
-              }, {
-                elementName: 'Shortcut',
-                typeInfo: '.Shortcut'
-              }, {
-                elementName: 'User',
-                typeInfo: '.User'
-              }, {
-                elementName: 'VirtualSession',
-                typeInfo: '.VirtualSession'
-              }, {
-                elementName: 'VOIP',
-                typeInfo: '.VOIP'
-              }, {
-                elementName: 'Resource',
-                typeInfo: '.Resource'
-              }],
-            type: 'elements'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'AccessControlGroups',
-        propertyInfos: [{
-            name: 'accessControlGroups',
-            required: true,
-            collection: true,
-            elementName: 'AccessControlGroup'
           }]
       }, {
         localName: 'AuthService',
@@ -800,495 +232,6 @@ var event_logging_Module_Factory = function () {
             name: 'cacheTimeout',
             elementName: 'CacheTimeout',
             typeInfo: 'PositiveInteger'
-          }]
-      }, {
-        localName: 'Permission',
-        typeName: null,
-        propertyInfos: [{
-            name: 'permissionEntity',
-            required: true,
-            elementTypeInfos: [{
-                elementName: 'User',
-                typeInfo: '.User'
-              }, {
-                elementName: 'Group',
-                typeInfo: '.Group'
-              }],
-            type: 'elements'
-          }, {
-            name: 'allowAttributes',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Allow',
-            typeInfo: '.PermissionAttribute'
-          }, {
-            name: 'denyAttributes',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Deny',
-            typeInfo: '.PermissionAttribute'
-          }]
-      }, {
-        localName: 'DisseminationControls',
-        typeName: null,
-        propertyInfos: [{
-            name: 'disseminationControl',
-            required: true,
-            collection: true,
-            elementName: 'DisseminationControl'
-          }]
-      }, {
-        localName: 'Data',
-        propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }, {
-            name: 'name',
-            required: true,
-            attributeName: {
-              localPart: 'Name'
-            },
-            type: 'attribute'
-          }, {
-            name: 'value',
-            attributeName: {
-              localPart: 'Value'
-            },
-            type: 'attribute'
-          }]
-      }, {
-        localName: 'AddGroups',
-        typeName: null,
-        propertyInfos: [{
-            name: 'groups',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Group',
-            typeInfo: '.Group'
-          }]
-      }, {
-        localName: 'Disposition',
-        typeName: null,
-        propertyInfos: [{
-            name: 'date',
-            required: true,
-            elementName: 'Date',
-            typeInfo: 'DateTime'
-          }, {
-            name: 'process',
-            required: true,
-            elementName: 'Process'
-          }]
-      }, {
-        localName: 'NetworkOutcome',
-        baseTypeInfo: '.BaseNetwork',
-        propertyInfos: [{
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'ReceiveEventAction',
-        typeName: 'Receive',
-        propertyInfos: [{
-            name: 'source',
-            required: true,
-            elementName: 'Source',
-            typeInfo: '.Source'
-          }, {
-            name: 'destination',
-            required: true,
-            elementName: 'Destination',
-            typeInfo: '.Destination'
-          }, {
-            name: 'payload',
-            elementName: 'Payload',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Outcome',
-        baseTypeInfo: '.BaseOutcome',
-        propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'MultiObject',
-        propertyInfos: [{
-            name: 'objects',
-            required: true,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'Association',
-                typeInfo: '.Association'
-              }, {
-                elementName: 'Banner',
-                typeInfo: '.Banner'
-              }, {
-                elementName: 'Chat',
-                typeInfo: '.Chat'
-              }, {
-                elementName: 'Configuration',
-                typeInfo: '.Configuration'
-              }, {
-                elementName: 'Criteria',
-                typeInfo: '.Criteria'
-              }, {
-                elementName: 'Document',
-                typeInfo: '.Document'
-              }, {
-                elementName: 'Email',
-                typeInfo: '.Email'
-              }, {
-                elementName: 'File',
-                typeInfo: '.File'
-              }, {
-                elementName: 'Folder',
-                typeInfo: '.Folder'
-              }, {
-                elementName: 'Group',
-                typeInfo: '.Group'
-              }, {
-                elementName: 'GroupChat',
-                typeInfo: '.GroupChat'
-              }, {
-                elementName: 'Object',
-                typeInfo: '.OtherObject'
-              }, {
-                elementName: 'SearchResults',
-                typeInfo: '.SearchResults'
-              }, {
-                elementName: 'Shortcut',
-                typeInfo: '.Shortcut'
-              }, {
-                elementName: 'User',
-                typeInfo: '.User'
-              }, {
-                elementName: 'VirtualSession',
-                typeInfo: '.VirtualSession'
-              }, {
-                elementName: 'VOIP',
-                typeInfo: '.VOIP'
-              }, {
-                elementName: 'Resource',
-                typeInfo: '.Resource'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'Descriptors',
-        typeName: null,
-        propertyInfos: [{
-            name: 'descriptor',
-            required: true,
-            collection: true,
-            elementName: 'Descriptor'
-          }]
-      }, {
-        localName: 'Groups',
-        propertyInfos: [{
-            name: 'groups',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Group',
-            typeInfo: '.Group'
-          }]
-      }, {
-        localName: 'AuthenticateEventAction',
-        typeName: 'Authenticate',
-        propertyInfos: [{
-            name: 'action',
-            required: true,
-            elementName: 'Action',
-            typeInfo: '.AuthenticateAction'
-          }, {
-            name: 'logonType',
-            elementName: 'LogonType',
-            typeInfo: '.AuthenticateLogonType'
-          }, {
-            name: 'authenticationEntity',
-            required: true,
-            elementTypeInfos: [{
-                elementName: 'User',
-                typeInfo: '.User'
-              }, {
-                elementName: 'Device',
-                typeInfo: '.Device'
-              }, {
-                elementName: 'Group',
-                typeInfo: '.Group'
-              }],
-            type: 'elements'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.AuthenticateOutcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Classification',
-        propertyInfos: [{
-            name: 'text',
-            elementName: 'Text'
-          }, {
-            name: 'originator',
-            elementName: 'Originator',
-            typeInfo: '.Organisation'
-          }, {
-            name: 'custodian',
-            elementName: 'Custodian',
-            typeInfo: '.Organisation'
-          }, {
-            name: 'classification',
-            elementName: 'Classification'
-          }, {
-            name: 'descriptors',
-            elementName: 'Descriptors',
-            typeInfo: '.Descriptors'
-          }, {
-            name: 'orGroups',
-            elementName: 'OrGroups',
-            typeInfo: '.AccessControlGroups'
-          }, {
-            name: 'andGroups',
-            elementName: 'AndGroups',
-            typeInfo: '.AccessControlGroups'
-          }, {
-            name: 'permittedNationalities',
-            elementName: 'PermittedNationalities',
-            typeInfo: '.PermittedNationalities'
-          }, {
-            name: 'permittedOrganisations',
-            elementName: 'PermittedOrganisations',
-            typeInfo: '.PermittedOrganisations'
-          }, {
-            name: 'disseminationControls',
-            elementName: 'DisseminationControls',
-            typeInfo: '.DisseminationControls'
-          }, {
-            name: 'disposition',
-            elementName: 'Disposition',
-            typeInfo: '.Disposition'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'ExportEventAction',
-        typeName: 'Export',
-        propertyInfos: [{
-            name: 'source',
-            elementName: 'Source',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'destination',
-            elementName: 'Destination',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Shortcut',
-        baseTypeInfo: '.BaseFile'
-      }, {
-        localName: 'AnyContent',
-        propertyInfos: [{
-            name: 'content',
-            collection: true,
-            type: 'anyElement'
-          }, {
-            name: 'contentType',
-            attributeName: {
-              localPart: 'ContentType'
-            },
-            type: 'attribute'
-          }, {
-            name: 'version',
-            attributeName: {
-              localPart: 'Version'
-            },
-            type: 'attribute'
-          }]
-      }, {
-        localName: 'Organisation',
-        propertyInfos: [{
-            name: 'country',
-            elementName: 'Country'
-          }, {
-            name: 'organisation',
-            required: true,
-            elementName: 'Organisation'
-          }]
-      }, {
-        localName: 'CopyMoveOutcome',
-        baseTypeInfo: '.BaseOutcome',
-        propertyInfos: [{
-            name: 'reason',
-            elementName: 'Reason',
-            typeInfo: '.CopyMoveOutcomeReason'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Resource',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'title',
-            elementName: 'Title'
-          }, {
-            name: 'url',
-            elementName: 'URL'
-          }, {
-            name: 'referrer',
-            elementName: 'Referrer'
-          }, {
-            name: 'sessionId',
-            elementName: 'SessionId'
-          }, {
-            name: 'httpMethod',
-            elementName: 'HTTPMethod'
-          }, {
-            name: 'httpVersion',
-            elementName: 'HTTPVersion'
-          }, {
-            name: 'userAgent',
-            elementName: 'UserAgent'
-          }, {
-            name: 'inboundSize',
-            elementName: 'InboundSize',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'inboundContentSize',
-            elementName: 'InboundContentSize',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'inboundHeader',
-            elementName: 'InboundHeader'
-          }, {
-            name: 'outboundSize',
-            elementName: 'OutboundSize',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'outboundContentSize',
-            elementName: 'OutboundContentSize',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'outboundHeader',
-            elementName: 'OutboundHeader'
-          }, {
-            name: 'requestTime',
-            elementName: 'RequestTime',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'connectionStatus',
-            elementName: 'ConnectionStatus'
-          }, {
-            name: 'initialResponseCode',
-            elementName: 'InitialResponseCode'
-          }, {
-            name: 'responseCode',
-            elementName: 'ResponseCode'
-          }, {
-            name: 'mimeType',
-            elementName: 'MimeType'
-          }, {
-            name: 'category',
-            elementName: 'Category'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Approvers',
-        typeName: null,
-        propertyInfos: [{
-            name: 'approvers',
-            required: true,
-            collection: true,
-            elementName: 'Approver',
-            typeInfo: '.User'
-          }]
-      }, {
-        localName: 'BaseFile',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'path',
-            elementName: 'Path'
-          }, {
-            name: 'created',
-            elementName: 'Created',
-            typeInfo: 'DateTime'
-          }, {
-            name: 'modified',
-            elementName: 'Modified',
-            typeInfo: 'DateTime'
-          }, {
-            name: 'accessed',
-            elementName: 'Accessed',
-            typeInfo: 'DateTime'
-          }, {
-            name: 'size',
-            elementName: 'Size',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'media',
-            elementName: 'Media',
-            typeInfo: '.Media'
-          }, {
-            name: 'hash',
-            elementName: 'Hash',
-            typeInfo: '.Hash'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
           }]
       }, {
         localName: 'SearchEventAction',
@@ -1362,65 +305,30 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'Coordinates',
+        localName: 'Query',
         propertyInfos: [{
-            name: 'latitude',
-            required: true,
-            elementName: 'Latitude',
-            typeInfo: 'Decimal'
-          }, {
-            name: 'longitude',
-            required: true,
-            elementName: 'Longitude',
-            typeInfo: 'Decimal'
-          }]
-      }, {
-        localName: 'Media',
-        propertyInfos: [{
-            name: 'type',
-            required: true,
-            elementName: 'Type',
-            typeInfo: '.MediaType'
-          }, {
             name: 'id',
             elementName: 'Id'
           }, {
             name: 'name',
             elementName: 'Name'
           }, {
-            name: 'removable',
-            elementName: 'Removable',
-            typeInfo: 'Boolean'
+            name: 'description',
+            elementName: 'Description'
           }, {
-            name: 'readWrite',
-            elementName: 'ReadWrite',
-            typeInfo: 'Boolean'
+            name: 'advanced',
+            elementName: 'Advanced',
+            typeInfo: '.AdvancedQuery'
           }, {
-            name: 'capacity',
-            elementName: 'Capacity',
-            typeInfo: 'PositiveInteger'
+            name: 'simple',
+            elementName: 'Simple',
+            typeInfo: '.SimpleQuery'
           }, {
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
+            name: 'raw',
+            elementName: 'Raw'
           }]
       }, {
-        localName: 'PermittedOrganisations',
-        typeName: null,
-        propertyInfos: [{
-            name: 'permittedOrganisation',
-            required: true,
-            elementName: 'PermittedOrganisation',
-            typeInfo: '.Organisation'
-          }]
-      }, {
-        localName: 'Or',
+        localName: 'Not',
         propertyInfos: [{
             name: 'queryItems',
             minOccurs: 0,
@@ -1441,36 +349,27 @@ var event_logging_Module_Factory = function () {
             type: 'elements'
           }]
       }, {
-        localName: 'DeleteEventAction',
-        typeName: 'Delete',
-        baseTypeInfo: '.BaseObjectOutcome'
-      }, {
-        localName: 'CreateEventAction',
-        typeName: 'Create',
-        baseTypeInfo: '.BaseObjectOutcome'
-      }, {
-        localName: 'Criteria',
+        localName: 'BaseChat',
         baseTypeInfo: '.BaseObject',
         propertyInfos: [{
-            name: 'dataSources',
-            elementName: 'DataSources',
-            typeInfo: '.DataSources'
+            name: 'sessionId',
+            elementName: 'SessionId'
           }, {
-            name: 'query',
-            elementName: 'Query',
-            typeInfo: '.Query'
+            name: 'room',
+            elementName: 'Room'
           }, {
-            name: 'resultPage',
-            elementName: 'ResultPage',
-            typeInfo: '.ResultPage'
+            name: 'from',
+            elementName: 'From',
+            typeInfo: '.User'
           }, {
-            name: 'totalResults',
-            elementName: 'TotalResults',
-            typeInfo: 'NonNegativeInteger'
+            name: 'to',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'To',
+            typeInfo: '.User'
           }, {
-            name: 'results',
-            elementName: 'Results',
-            typeInfo: '.MultiObject'
+            name: 'content',
+            elementName: 'Content'
           }, {
             name: 'data',
             minOccurs: 0,
@@ -1479,19 +378,30 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'AuthenticateOutcome',
-        baseTypeInfo: '.BaseOutcome',
+        localName: 'Data',
         propertyInfos: [{
-            name: 'reason',
-            elementName: 'Reason',
-            typeInfo: '.AuthenticateOutcomeReason'
-          }, {
             name: 'data',
             minOccurs: 0,
             collection: true,
             elementName: 'Data',
             typeInfo: '.Data'
+          }, {
+            name: 'name',
+            required: true,
+            attributeName: {
+              localPart: 'Name'
+            },
+            type: 'attribute'
+          }, {
+            name: 'value',
+            attributeName: {
+              localPart: 'Value'
+            },
+            type: 'attribute'
           }]
+      }, {
+        localName: 'File',
+        baseTypeInfo: '.BaseFile'
       }, {
         localName: 'InstallEventAction',
         typeName: 'Install',
@@ -1521,99 +431,6 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'SystemDetail',
-        typeName: 'System',
-        propertyInfos: [{
-            name: 'name',
-            required: true,
-            elementName: 'Name'
-          }, {
-            name: 'description',
-            elementName: 'Description'
-          }, {
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'environment',
-            required: true,
-            elementName: 'Environment'
-          }, {
-            name: 'organisation',
-            elementName: 'Organisation'
-          }, {
-            name: 'version',
-            elementName: 'Version'
-          }, {
-            name: 'tags',
-            elementName: 'Tags',
-            typeInfo: '.Tags'
-          }]
-      }, {
-        localName: 'ResultPage',
-        typeName: null,
-        propertyInfos: [{
-            name: 'totalPages',
-            elementName: 'TotalPages',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'perPage',
-            elementName: 'PerPage',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'pageNumber',
-            elementName: 'PageNumber',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'from',
-            elementName: 'From',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'to',
-            elementName: 'To',
-            typeInfo: 'NonNegativeInteger'
-          }]
-      }, {
-        localName: 'RemoveGroups',
-        typeName: null,
-        propertyInfos: [{
-            name: 'groups',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Group',
-            typeInfo: '.Group'
-          }]
-      }, {
-        localName: 'SearchResults',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'dataSources',
-            elementName: 'DataSources',
-            typeInfo: '.DataSources'
-          }, {
-            name: 'query',
-            elementName: 'Query',
-            typeInfo: '.Query'
-          }, {
-            name: 'resultPage',
-            elementName: 'ResultPage',
-            typeInfo: '.ResultPage'
-          }, {
-            name: 'totalResults',
-            elementName: 'TotalResults',
-            typeInfo: 'NonNegativeInteger'
-          }, {
-            name: 'results',
-            elementName: 'Results',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
         localName: 'Tags',
         typeName: null,
         propertyInfos: [{
@@ -1623,619 +440,31 @@ var event_logging_Module_Factory = function () {
             elementName: 'Tag'
           }]
       }, {
-        localName: 'GroupChat',
-        baseTypeInfo: '.BaseChat'
-      }, {
-        localName: 'NetworkEventAction',
-        propertyInfos: [{
-            name: 'bind',
-            required: true,
-            elementName: 'Bind',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'connect',
-            required: true,
-            elementName: 'Connect',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'open',
-            required: true,
-            elementName: 'Open',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'close',
-            required: true,
-            elementName: 'Close',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'send',
-            required: true,
-            elementName: 'Send',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'receive',
-            required: true,
-            elementName: 'Receive',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'listen',
-            required: true,
-            elementName: 'Listen',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'permit',
-            required: true,
-            elementName: 'Permit',
-            typeInfo: '.NetworkOutcome'
-          }, {
-            name: 'deny',
-            required: true,
-            elementName: 'Deny',
-            typeInfo: '.NetworkOutcome'
-          }]
-      }, {
-        localName: 'Hardware',
-        propertyInfos: [{
-            name: 'type',
-            required: true,
-            elementName: 'Type',
-            typeInfo: '.HardwareType'
-          }, {
-            name: 'id',
-            elementName: 'Id'
-          }, {
-            name: 'name',
-            elementName: 'Name'
-          }, {
-            name: 'model',
-            elementName: 'Model'
-          }, {
-            name: 'manufacturer',
-            elementName: 'Manufacturer'
-          }, {
-            name: 'capacity',
-            elementName: 'Capacity',
-            typeInfo: 'PositiveInteger'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'ApprovalEventAction',
-        typeName: 'Approval',
-        propertyInfos: [{
-            name: 'action',
-            required: true,
-            elementName: 'Action',
-            typeInfo: '.ApprovalAction'
-          }, {
-            name: 'id',
-            elementName: 'Id'
-          }, {
-            name: 'subject',
-            elementName: 'Subject',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'requestors',
-            elementName: 'Requestors',
-            typeInfo: '.Requestors'
-          }, {
-            name: 'approvers',
-            elementName: 'Approvers',
-            typeInfo: '.Approvers'
-          }, {
-            name: 'reason',
-            elementName: 'Reason'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'SendEventAction',
-        typeName: 'Send',
-        propertyInfos: [{
-            name: 'source',
-            required: true,
-            elementName: 'Source',
-            typeInfo: '.Source'
-          }, {
-            name: 'destination',
-            required: true,
-            elementName: 'Destination',
-            typeInfo: '.Destination'
-          }, {
-            name: 'payload',
-            elementName: 'Payload',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Configuration',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'EventTime',
-        propertyInfos: [{
-            name: 'timeCreated',
-            required: true,
-            elementName: 'TimeCreated',
-            typeInfo: 'DateTime'
-          }, {
-            name: 'timeSource',
-            elementName: 'TimeSource',
-            typeInfo: '.Device'
-          }]
-      }, {
-        localName: 'VOIP',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'phoneNumber',
-            elementName: 'PhoneNumber'
-          }, {
-            name: 'from',
-            elementName: 'From',
-            typeInfo: '.User'
-          }, {
-            name: 'to',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'To',
-            typeInfo: '.User'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'PermittedNationalities',
-        typeName: null,
-        propertyInfos: [{
-            name: 'nationalities',
-            required: true,
-            collection: true,
-            elementName: 'Nationality'
-          }]
-      }, {
-        localName: 'MoveEventAction',
-        typeName: 'Move',
-        propertyInfos: [{
-            name: 'source',
-            required: true,
-            elementName: 'Source',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'destination',
-            required: true,
-            elementName: 'Destination',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.CopyMoveOutcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'AlertEventAction',
-        typeName: 'Alert',
-        propertyInfos: [{
-            name: 'type',
-            required: true,
-            elementName: 'Type',
-            typeInfo: '.AlertType'
-          }, {
-            name: 'severity',
-            elementName: 'Severity',
-            typeInfo: '.AlertSeverity'
-          }, {
-            name: 'priority',
-            elementName: 'Priority',
-            typeInfo: '.AlertPriority'
-          }, {
-            name: 'subject',
-            elementName: 'Subject'
-          }, {
-            name: 'description',
-            elementName: 'Description'
-          }, {
-            name: 'ids',
-            elementName: 'IDS',
-            typeInfo: '.IDS'
-          }, {
-            name: 'malware',
-            elementName: 'Malware',
-            typeInfo: '.AntiMalwareThreat'
-          }, {
-            name: 'network',
-            elementName: 'Network',
-            typeInfo: '.Network'
-          }, {
-            name: 'change',
-            elementName: 'Change',
-            typeInfo: '.Change'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'UninstallEventAction',
-        typeName: 'Uninstall',
-        propertyInfos: [{
-            name: 'installationEntity',
-            required: true,
-            elementTypeInfos: [{
-                elementName: 'Software',
-                typeInfo: '.Software'
-              }, {
-                elementName: 'Hardware',
-                typeInfo: '.Hardware'
-              }, {
-                elementName: 'Media',
-                typeInfo: '.Media'
-              }],
-            type: 'elements'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Event',
-        typeName: null,
-        propertyInfos: [{
-            name: 'meta',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Meta',
-            typeInfo: '.AnyContent'
-          }, {
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'eventTime',
-            required: true,
-            elementName: 'EventTime',
-            typeInfo: '.EventTime'
-          }, {
-            name: 'eventSource',
-            required: true,
-            elementName: 'EventSource',
-            typeInfo: '.EventSource'
-          }, {
-            name: 'eventDetail',
-            required: true,
-            elementName: 'EventDetail',
-            typeInfo: '.EventDetail'
-          }, {
-            name: 'eventChain',
-            elementName: 'EventChain',
-            typeInfo: '.EventChain'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'Requestors',
-        typeName: null,
-        propertyInfos: [{
-            name: 'requestors',
-            required: true,
-            collection: true,
-            elementName: 'Requestor',
-            typeInfo: '.User'
-          }]
-      }, {
-        localName: 'Device',
-        propertyInfos: [{
-            name: 'id',
-            elementName: 'Id'
-          }, {
-            name: 'name',
-            elementName: 'Name'
-          }, {
-            name: 'classification',
-            elementName: 'Classification',
-            typeInfo: '.Classification'
-          }, {
-            name: 'hostName',
-            elementName: 'HostName'
-          }, {
-            name: 'ipAddress',
-            elementName: 'IPAddress'
-          }, {
-            name: 'macAddress',
-            elementName: 'MACAddress'
-          }, {
-            name: 'port',
-            elementName: 'Port',
-            typeInfo: 'Int'
-          }, {
-            name: 'location',
-            elementName: 'Location',
-            typeInfo: '.Location'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'AddAccess',
-        typeName: null,
-        propertyInfos: [{
-            name: 'accessZones',
-            required: true,
-            collection: true,
-            elementName: 'AccessZone'
-          }]
-      }, {
-        localName: 'File',
+        localName: 'Folder',
         baseTypeInfo: '.BaseFile'
       }, {
-        localName: 'Term',
+        localName: 'Activity',
         propertyInfos: [{
-            name: 'name',
+            name: 'id',
             required: true,
+            elementName: 'Id'
+          }, {
+            name: 'name',
             elementName: 'Name'
           }, {
-            name: 'condition',
-            required: true,
-            elementName: 'Condition',
-            typeInfo: '.TermCondition'
-          }, {
-            name: 'value',
-            required: true,
-            elementName: 'Value'
+            name: 'parent',
+            elementName: 'Parent',
+            typeInfo: '.Activity'
           }]
       }, {
-        localName: 'Signature',
-        typeName: null,
+        localName: 'Banner',
+        baseTypeInfo: '.BaseObject',
         propertyInfos: [{
             name: 'version',
             elementName: 'Version'
           }, {
-            name: 'updated',
-            elementName: 'Updated',
-            typeInfo: 'DateTime'
-          }]
-      }, {
-        localName: 'Threat',
-        typeName: null,
-        propertyInfos: [{
-            name: 'category',
-            required: true,
-            elementName: 'Category',
-            typeInfo: '.ThreatCategory'
-          }, {
-            name: 'name',
-            required: true,
-            elementName: 'Name'
-          }]
-      }, {
-        localName: 'Network',
-        baseTypeInfo: '.BaseNetwork'
-      }, {
-        localName: 'SimpleQuery',
-        typeName: null,
-        propertyInfos: [{
-            name: 'include',
-            elementName: 'Include'
-          }, {
-            name: 'exclude',
-            elementName: 'Exclude'
-          }]
-      }, {
-        localName: 'DataSources',
-        typeName: null,
-        propertyInfos: [{
-            name: 'dataSource',
-            required: true,
-            collection: true,
-            elementName: 'DataSource'
-          }]
-      }, {
-        localName: 'NetworkLocation',
-        propertyInfos: [{
-            name: 'device',
-            elementName: 'Device',
-            typeInfo: '.Device'
-          }, {
-            name: 'application',
-            elementName: 'Application'
-          }, {
-            name: 'transportProtocol',
-            elementName: 'TransportProtocol',
-            typeInfo: '.NetworkProtocol'
-          }, {
-            name: 'icmpType',
-            elementName: 'ICMPType',
-            typeInfo: 'Integer'
-          }, {
-            name: 'httpMethod',
-            elementName: 'HTTPMethod'
-          }, {
-            name: 'applicationProtocol',
-            elementName: 'ApplicationProtocol'
-          }, {
-            name: 'port',
-            elementName: 'Port',
-            typeInfo: 'Int'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'ProcessEventAction',
-        typeName: 'Process',
-        propertyInfos: [{
-            name: 'action',
-            required: true,
-            elementName: 'Action',
-            typeInfo: '.ProcessAction'
-          }, {
-            name: 'type',
-            required: true,
-            elementName: 'Type',
-            typeInfo: '.ProcessType'
-          }, {
-            name: 'command',
-            required: true,
-            elementName: 'Command'
-          }, {
-            name: 'arguments',
-            elementName: 'Arguments'
-          }, {
-            name: 'processId',
-            elementName: 'ProcessId'
-          }, {
-            name: 'threadId',
-            elementName: 'ThreadId',
-            typeInfo: 'PositiveInteger'
-          }, {
-            name: 'rule',
-            elementName: 'Rule'
-          }, {
-            name: 'input',
-            elementName: 'Input',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'output',
-            elementName: 'Output',
-            typeInfo: '.MultiObject'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
-          }, {
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'AntiMalwareThreat',
-        propertyInfos: [{
-            name: 'product',
-            elementName: 'Product',
-            typeInfo: '.Software'
-          }, {
-            name: 'signature',
-            elementName: 'Signature',
-            typeInfo: '.Signature'
-          }, {
-            name: 'threat',
-            elementName: 'Threat',
-            typeInfo: '.Threat'
-          }, {
-            name: 'infected',
-            elementName: 'Infected',
-            typeInfo: '.MultiObject'
-          }]
-      }, {
-        localName: 'Not',
-        propertyInfos: [{
-            name: 'queryItems',
-            minOccurs: 0,
-            collection: true,
-            elementTypeInfos: [{
-                elementName: 'Term',
-                typeInfo: '.Term'
-              }, {
-                elementName: 'And',
-                typeInfo: '.And'
-              }, {
-                elementName: 'Or',
-                typeInfo: '.Or'
-              }, {
-                elementName: 'Not',
-                typeInfo: '.Not'
-              }],
-            type: 'elements'
-          }]
-      }, {
-        localName: 'Group',
-        baseTypeInfo: '.BaseObject',
-        propertyInfos: [{
-            name: 'data',
-            minOccurs: 0,
-            collection: true,
-            elementName: 'Data',
-            typeInfo: '.Data'
-          }]
-      }, {
-        localName: 'PrintEventAction',
-        typeName: 'Print',
-        propertyInfos: [{
-            name: 'action',
-            required: true,
-            elementName: 'Action',
-            typeInfo: '.PrintAction'
-          }, {
-            name: 'printJob',
-            required: true,
-            elementName: 'PrintJob',
-            typeInfo: '.PrintJob'
-          }, {
-            name: 'printSettings',
-            elementName: 'PrintSettings',
-            typeInfo: '.PrintSettings'
-          }, {
-            name: 'printer',
-            elementName: 'Printer',
-            typeInfo: '.Device'
-          }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.Outcome'
+            name: 'message',
+            elementName: 'Message'
           }, {
             name: 'data',
             minOccurs: 0,
@@ -2330,7 +559,723 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'Source',
+        localName: 'EventDetail',
+        propertyInfos: [{
+            name: 'typeId',
+            required: true,
+            elementName: 'TypeId'
+          }, {
+            name: 'description',
+            elementName: 'Description'
+          }, {
+            name: 'purpose',
+            elementName: 'Purpose',
+            typeInfo: '.Purpose'
+          }, {
+            name: 'eventAction',
+            required: true,
+            elementTypeInfos: [{
+                elementName: 'Authenticate',
+                typeInfo: '.AuthenticateEventAction'
+              }, {
+                elementName: 'Authorise',
+                typeInfo: '.AuthoriseEventAction'
+              }, {
+                elementName: 'Search',
+                typeInfo: '.SearchEventAction'
+              }, {
+                elementName: 'Copy',
+                typeInfo: '.CopyEventAction'
+              }, {
+                elementName: 'Move',
+                typeInfo: '.MoveEventAction'
+              }, {
+                elementName: 'Create',
+                typeInfo: '.CreateEventAction'
+              }, {
+                elementName: 'View',
+                typeInfo: '.ViewEventAction'
+              }, {
+                elementName: 'Import',
+                typeInfo: '.ImportEventAction'
+              }, {
+                elementName: 'Export',
+                typeInfo: '.ExportEventAction'
+              }, {
+                elementName: 'Update',
+                typeInfo: '.UpdateEventAction'
+              }, {
+                elementName: 'Delete',
+                typeInfo: '.DeleteEventAction'
+              }, {
+                elementName: 'Process',
+                typeInfo: '.ProcessEventAction'
+              }, {
+                elementName: 'Print',
+                typeInfo: '.PrintEventAction'
+              }, {
+                elementName: 'Install',
+                typeInfo: '.InstallEventAction'
+              }, {
+                elementName: 'Uninstall',
+                typeInfo: '.UninstallEventAction'
+              }, {
+                elementName: 'Network',
+                typeInfo: '.NetworkEventAction'
+              }, {
+                elementName: 'Alert',
+                typeInfo: '.AlertEventAction'
+              }, {
+                elementName: 'Send',
+                typeInfo: '.SendEventAction'
+              }, {
+                elementName: 'Receive',
+                typeInfo: '.ReceiveEventAction'
+              }, {
+                elementName: 'Approval',
+                typeInfo: '.ApprovalEventAction'
+              }, {
+                elementName: 'Unknown',
+                typeInfo: '.UnknownEventAction'
+              }],
+            type: 'elements'
+          }]
+      }, {
+        localName: 'Media',
+        propertyInfos: [{
+            name: 'type',
+            required: true,
+            elementName: 'Type',
+            typeInfo: '.MediaType'
+          }, {
+            name: 'id',
+            elementName: 'Id'
+          }, {
+            name: 'name',
+            elementName: 'Name'
+          }, {
+            name: 'removable',
+            elementName: 'Removable',
+            typeInfo: 'Boolean'
+          }, {
+            name: 'readWrite',
+            elementName: 'ReadWrite',
+            typeInfo: 'Boolean'
+          }, {
+            name: 'capacity',
+            elementName: 'Capacity',
+            typeInfo: 'PositiveInteger'
+          }, {
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'UserDetails'
+      }, {
+        localName: 'Classification',
+        propertyInfos: [{
+            name: 'text',
+            elementName: 'Text'
+          }, {
+            name: 'originator',
+            elementName: 'Originator',
+            typeInfo: '.Organisation'
+          }, {
+            name: 'custodian',
+            elementName: 'Custodian',
+            typeInfo: '.Organisation'
+          }, {
+            name: 'classification',
+            elementName: 'Classification'
+          }, {
+            name: 'descriptors',
+            elementName: 'Descriptors',
+            typeInfo: '.Descriptors'
+          }, {
+            name: 'orGroups',
+            elementName: 'OrGroups',
+            typeInfo: '.AccessControlGroups'
+          }, {
+            name: 'andGroups',
+            elementName: 'AndGroups',
+            typeInfo: '.AccessControlGroups'
+          }, {
+            name: 'permittedNationalities',
+            elementName: 'PermittedNationalities',
+            typeInfo: '.PermittedNationalities'
+          }, {
+            name: 'permittedOrganisations',
+            elementName: 'PermittedOrganisations',
+            typeInfo: '.PermittedOrganisations'
+          }, {
+            name: 'disseminationControls',
+            elementName: 'DisseminationControls',
+            typeInfo: '.DisseminationControls'
+          }, {
+            name: 'disposition',
+            elementName: 'Disposition',
+            typeInfo: '.Disposition'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'PrintJob',
+        typeName: null,
+        propertyInfos: [{
+            name: 'document',
+            required: true,
+            elementName: 'Document',
+            typeInfo: '.Document'
+          }, {
+            name: 'pages',
+            elementName: 'Pages',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'size',
+            elementName: 'Size',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'submitted',
+            elementName: 'Submitted',
+            typeInfo: 'DateTime'
+          }]
+      }, {
+        localName: 'Association',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'objects',
+            required: true,
+            elementName: 'Objects',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'BaseNetwork',
+        propertyInfos: [{
+            name: 'source',
+            required: true,
+            elementName: 'Source',
+            typeInfo: '.NetworkLocation'
+          }, {
+            name: 'destination',
+            elementName: 'Destination',
+            typeInfo: '.NetworkLocation'
+          }, {
+            name: 'processName',
+            elementName: 'ProcessName'
+          }, {
+            name: 'payload',
+            elementName: 'Payload',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'rule',
+            elementName: 'Rule'
+          }]
+      }, {
+        localName: 'RemoveGroups',
+        typeName: null,
+        propertyInfos: [{
+            name: 'groups',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Group',
+            typeInfo: '.Group'
+          }]
+      }, {
+        localName: 'Authorisations',
+        typeName: null,
+        propertyInfos: [{
+            name: 'auth',
+            required: true,
+            collection: true,
+            elementName: 'Auth',
+            typeInfo: '.Auth'
+          }]
+      }, {
+        localName: 'AuthenticateOutcome',
+        baseTypeInfo: '.BaseOutcome',
+        propertyInfos: [{
+            name: 'reason',
+            elementName: 'Reason',
+            typeInfo: '.AuthenticateOutcomeReason'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'AntiMalwareThreat',
+        propertyInfos: [{
+            name: 'product',
+            elementName: 'Product',
+            typeInfo: '.Software'
+          }, {
+            name: 'signature',
+            elementName: 'Signature',
+            typeInfo: '.Signature'
+          }, {
+            name: 'threat',
+            elementName: 'Threat',
+            typeInfo: '.Threat'
+          }, {
+            name: 'infected',
+            elementName: 'Infected',
+            typeInfo: '.MultiObject'
+          }]
+      }, {
+        localName: 'Requestors',
+        typeName: null,
+        propertyInfos: [{
+            name: 'requestors',
+            required: true,
+            collection: true,
+            elementName: 'Requestor',
+            typeInfo: '.User'
+          }]
+      }, {
+        localName: 'NetworkLocation',
+        propertyInfos: [{
+            name: 'device',
+            elementName: 'Device',
+            typeInfo: '.Device'
+          }, {
+            name: 'application',
+            elementName: 'Application'
+          }, {
+            name: 'transportProtocol',
+            elementName: 'TransportProtocol',
+            typeInfo: '.NetworkProtocol'
+          }, {
+            name: 'icmpType',
+            elementName: 'ICMPType',
+            typeInfo: 'Integer'
+          }, {
+            name: 'httpMethod',
+            elementName: 'HTTPMethod'
+          }, {
+            name: 'applicationProtocol',
+            elementName: 'ApplicationProtocol'
+          }, {
+            name: 'port',
+            elementName: 'Port',
+            typeInfo: 'Int'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'DeleteEventAction',
+        typeName: 'Delete',
+        baseTypeInfo: '.BaseObjectOutcome'
+      }, {
+        localName: 'CopyEventAction',
+        typeName: 'Copy',
+        propertyInfos: [{
+            name: 'source',
+            required: true,
+            elementName: 'Source',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'destination',
+            required: true,
+            elementName: 'Destination',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.CopyMoveOutcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'EventChain',
+        propertyInfos: [{
+            name: 'activity',
+            required: true,
+            elementName: 'Activity',
+            typeInfo: '.Activity'
+          }]
+      }, {
+        localName: 'SimpleQuery',
+        typeName: null,
+        propertyInfos: [{
+            name: 'include',
+            elementName: 'Include'
+          }, {
+            name: 'exclude',
+            elementName: 'Exclude'
+          }]
+      }, {
+        localName: 'Descriptors',
+        typeName: null,
+        propertyInfos: [{
+            name: 'descriptor',
+            required: true,
+            collection: true,
+            elementName: 'Descriptor'
+          }]
+      }, {
+        localName: 'Software',
+        propertyInfos: [{
+            name: 'id',
+            elementName: 'Id'
+          }, {
+            name: 'name',
+            required: true,
+            elementName: 'Name'
+          }, {
+            name: 'version',
+            elementName: 'Version'
+          }, {
+            name: 'manufacturer',
+            elementName: 'Manufacturer'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'MultiObject',
+        propertyInfos: [{
+            name: 'objects',
+            required: true,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'Association',
+                typeInfo: '.Association'
+              }, {
+                elementName: 'Banner',
+                typeInfo: '.Banner'
+              }, {
+                elementName: 'Chat',
+                typeInfo: '.Chat'
+              }, {
+                elementName: 'Configuration',
+                typeInfo: '.Configuration'
+              }, {
+                elementName: 'Criteria',
+                typeInfo: '.Criteria'
+              }, {
+                elementName: 'Document',
+                typeInfo: '.Document'
+              }, {
+                elementName: 'Email',
+                typeInfo: '.Email'
+              }, {
+                elementName: 'File',
+                typeInfo: '.File'
+              }, {
+                elementName: 'Folder',
+                typeInfo: '.Folder'
+              }, {
+                elementName: 'Group',
+                typeInfo: '.Group'
+              }, {
+                elementName: 'GroupChat',
+                typeInfo: '.GroupChat'
+              }, {
+                elementName: 'Object',
+                typeInfo: '.OtherObject'
+              }, {
+                elementName: 'SearchResults',
+                typeInfo: '.SearchResults'
+              }, {
+                elementName: 'Shortcut',
+                typeInfo: '.Shortcut'
+              }, {
+                elementName: 'User',
+                typeInfo: '.User'
+              }, {
+                elementName: 'VirtualSession',
+                typeInfo: '.VirtualSession'
+              }, {
+                elementName: 'VOIP',
+                typeInfo: '.VOIP'
+              }, {
+                elementName: 'Resource',
+                typeInfo: '.Resource'
+              }],
+            type: 'elements'
+          }]
+      }, {
+        localName: 'UninstallEventAction',
+        typeName: 'Uninstall',
+        propertyInfos: [{
+            name: 'installationEntity',
+            required: true,
+            elementTypeInfos: [{
+                elementName: 'Software',
+                typeInfo: '.Software'
+              }, {
+                elementName: 'Hardware',
+                typeInfo: '.Hardware'
+              }, {
+                elementName: 'Media',
+                typeInfo: '.Media'
+              }],
+            type: 'elements'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'AlertEventAction',
+        typeName: 'Alert',
+        propertyInfos: [{
+            name: 'type',
+            required: true,
+            elementName: 'Type',
+            typeInfo: '.AlertType'
+          }, {
+            name: 'severity',
+            elementName: 'Severity',
+            typeInfo: '.AlertSeverity'
+          }, {
+            name: 'priority',
+            elementName: 'Priority',
+            typeInfo: '.AlertPriority'
+          }, {
+            name: 'subject',
+            elementName: 'Subject'
+          }, {
+            name: 'description',
+            elementName: 'Description'
+          }, {
+            name: 'ids',
+            elementName: 'IDS',
+            typeInfo: '.IDS'
+          }, {
+            name: 'malware',
+            elementName: 'Malware',
+            typeInfo: '.AntiMalwareThreat'
+          }, {
+            name: 'network',
+            elementName: 'Network',
+            typeInfo: '.Network'
+          }, {
+            name: 'change',
+            elementName: 'Change',
+            typeInfo: '.Change'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Groups',
+        propertyInfos: [{
+            name: 'groups',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Group',
+            typeInfo: '.Group'
+          }]
+      }, {
+        localName: 'Shortcut',
+        baseTypeInfo: '.BaseFile'
+      }, {
+        localName: 'AdvancedQuery',
+        typeName: null,
+        propertyInfos: [{
+            name: 'queryItems',
+            minOccurs: 0,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'Term',
+                typeInfo: '.Term'
+              }, {
+                elementName: 'And',
+                typeInfo: '.And'
+              }, {
+                elementName: 'Or',
+                typeInfo: '.Or'
+              }, {
+                elementName: 'Not',
+                typeInfo: '.Not'
+              }],
+            type: 'elements'
+          }]
+      }, {
+        localName: 'Permissions',
+        typeName: null,
+        propertyInfos: [{
+            name: 'permissions',
+            required: true,
+            collection: true,
+            elementName: 'Permission',
+            typeInfo: '.Permission'
+          }]
+      }, {
+        localName: 'BaseObjectOutcome',
+        propertyInfos: [{
+            name: 'objects',
+            required: true,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'Association',
+                typeInfo: '.Association'
+              }, {
+                elementName: 'Banner',
+                typeInfo: '.Banner'
+              }, {
+                elementName: 'Chat',
+                typeInfo: '.Chat'
+              }, {
+                elementName: 'Configuration',
+                typeInfo: '.Configuration'
+              }, {
+                elementName: 'Criteria',
+                typeInfo: '.Criteria'
+              }, {
+                elementName: 'Document',
+                typeInfo: '.Document'
+              }, {
+                elementName: 'Email',
+                typeInfo: '.Email'
+              }, {
+                elementName: 'File',
+                typeInfo: '.File'
+              }, {
+                elementName: 'Folder',
+                typeInfo: '.Folder'
+              }, {
+                elementName: 'Group',
+                typeInfo: '.Group'
+              }, {
+                elementName: 'GroupChat',
+                typeInfo: '.GroupChat'
+              }, {
+                elementName: 'Object',
+                typeInfo: '.OtherObject'
+              }, {
+                elementName: 'SearchResults',
+                typeInfo: '.SearchResults'
+              }, {
+                elementName: 'Shortcut',
+                typeInfo: '.Shortcut'
+              }, {
+                elementName: 'User',
+                typeInfo: '.User'
+              }, {
+                elementName: 'VirtualSession',
+                typeInfo: '.VirtualSession'
+              }, {
+                elementName: 'VOIP',
+                typeInfo: '.VOIP'
+              }, {
+                elementName: 'Resource',
+                typeInfo: '.Resource'
+              }],
+            type: 'elements'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Threat',
+        typeName: null,
+        propertyInfos: [{
+            name: 'category',
+            required: true,
+            elementName: 'Category',
+            typeInfo: '.ThreatCategory'
+          }, {
+            name: 'name',
+            required: true,
+            elementName: 'Name'
+          }]
+      }, {
+        localName: 'UnknownEventAction',
+        typeName: null,
+        propertyInfos: [{
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ApprovalEventAction',
+        typeName: 'Approval',
+        propertyInfos: [{
+            name: 'action',
+            required: true,
+            elementName: 'Action',
+            typeInfo: '.ApprovalAction'
+          }, {
+            name: 'id',
+            elementName: 'Id'
+          }, {
+            name: 'subject',
+            elementName: 'Subject',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'requestors',
+            elementName: 'Requestors',
+            typeInfo: '.Requestors'
+          }, {
+            name: 'approvers',
+            elementName: 'Approvers',
+            typeInfo: '.Approvers'
+          }, {
+            name: 'reason',
+            elementName: 'Reason'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Destination',
         typeName: null,
         propertyInfos: [{
             name: 'endpoints',
@@ -2345,8 +1290,6 @@ var event_logging_Module_Factory = function () {
               }],
             type: 'elements'
           }]
-      }, {
-        localName: 'UserDetails'
       }, {
         localName: 'BaseOutcome',
         propertyInfos: [{
@@ -2366,7 +1309,76 @@ var event_logging_Module_Factory = function () {
             elementName: 'Description'
           }]
       }, {
-        localName: 'Query',
+        localName: 'MoveEventAction',
+        typeName: 'Move',
+        propertyInfos: [{
+            name: 'source',
+            required: true,
+            elementName: 'Source',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'destination',
+            required: true,
+            elementName: 'Destination',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.CopyMoveOutcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Signature',
+        typeName: null,
+        propertyInfos: [{
+            name: 'version',
+            elementName: 'Version'
+          }, {
+            name: 'updated',
+            elementName: 'Updated',
+            typeInfo: 'DateTime'
+          }]
+      }, {
+        localName: 'MetaDataTags',
+        propertyInfos: [{
+            name: 'tags',
+            required: true,
+            collection: true,
+            elementName: 'Tag'
+          }]
+      }, {
+        localName: 'GroupChat',
+        baseTypeInfo: '.BaseChat'
+      }, {
+        localName: 'VOIP',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'phoneNumber',
+            elementName: 'PhoneNumber'
+          }, {
+            name: 'from',
+            elementName: 'From',
+            typeInfo: '.User'
+          }, {
+            name: 'to',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'To',
+            typeInfo: '.User'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Device',
         propertyInfos: [{
             name: 'id',
             elementName: 'Id'
@@ -2374,19 +1386,226 @@ var event_logging_Module_Factory = function () {
             name: 'name',
             elementName: 'Name'
           }, {
-            name: 'description',
-            elementName: 'Description'
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
           }, {
-            name: 'advanced',
-            elementName: 'Advanced',
-            typeInfo: '.AdvancedQuery'
+            name: 'hostName',
+            elementName: 'HostName'
           }, {
-            name: 'simple',
-            elementName: 'Simple',
-            typeInfo: '.SimpleQuery'
+            name: 'ipAddress',
+            elementName: 'IPAddress'
           }, {
-            name: 'raw',
-            elementName: 'Raw'
+            name: 'macAddress',
+            elementName: 'MACAddress'
+          }, {
+            name: 'port',
+            elementName: 'Port',
+            typeInfo: 'Int'
+          }, {
+            name: 'location',
+            elementName: 'Location',
+            typeInfo: '.Location'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ViewEventAction',
+        typeName: 'View',
+        baseTypeInfo: '.BaseObjectOutcome'
+      }, {
+        localName: 'Outcome',
+        baseTypeInfo: '.BaseOutcome',
+        propertyInfos: [{
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'NetworkOutcome',
+        baseTypeInfo: '.BaseNetwork',
+        propertyInfos: [{
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Resource',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'title',
+            elementName: 'Title'
+          }, {
+            name: 'url',
+            elementName: 'URL'
+          }, {
+            name: 'referrer',
+            elementName: 'Referrer'
+          }, {
+            name: 'sessionId',
+            elementName: 'SessionId'
+          }, {
+            name: 'httpMethod',
+            elementName: 'HTTPMethod'
+          }, {
+            name: 'httpVersion',
+            elementName: 'HTTPVersion'
+          }, {
+            name: 'userAgent',
+            elementName: 'UserAgent'
+          }, {
+            name: 'inboundSize',
+            elementName: 'InboundSize',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'inboundContentSize',
+            elementName: 'InboundContentSize',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'inboundHeader',
+            elementName: 'InboundHeader'
+          }, {
+            name: 'outboundSize',
+            elementName: 'OutboundSize',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'outboundContentSize',
+            elementName: 'OutboundContentSize',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'outboundHeader',
+            elementName: 'OutboundHeader'
+          }, {
+            name: 'requestTime',
+            elementName: 'RequestTime',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'connectionStatus',
+            elementName: 'ConnectionStatus'
+          }, {
+            name: 'initialResponseCode',
+            elementName: 'InitialResponseCode'
+          }, {
+            name: 'responseCode',
+            elementName: 'ResponseCode'
+          }, {
+            name: 'mimeType',
+            elementName: 'MimeType'
+          }, {
+            name: 'category',
+            elementName: 'Category'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Chat',
+        baseTypeInfo: '.BaseChat'
+      }, {
+        localName: 'Hardware',
+        propertyInfos: [{
+            name: 'type',
+            required: true,
+            elementName: 'Type',
+            typeInfo: '.HardwareType'
+          }, {
+            name: 'id',
+            elementName: 'Id'
+          }, {
+            name: 'name',
+            elementName: 'Name'
+          }, {
+            name: 'model',
+            elementName: 'Model'
+          }, {
+            name: 'manufacturer',
+            elementName: 'Manufacturer'
+          }, {
+            name: 'capacity',
+            elementName: 'Capacity',
+            typeInfo: 'PositiveInteger'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'AuthenticateEventAction',
+        typeName: 'Authenticate',
+        propertyInfos: [{
+            name: 'action',
+            required: true,
+            elementName: 'Action',
+            typeInfo: '.AuthenticateAction'
+          }, {
+            name: 'logonType',
+            elementName: 'LogonType',
+            typeInfo: '.AuthenticateLogonType'
+          }, {
+            name: 'authenticationEntity',
+            required: true,
+            elementTypeInfos: [{
+                elementName: 'User',
+                typeInfo: '.User'
+              }, {
+                elementName: 'Device',
+                typeInfo: '.Device'
+              }, {
+                elementName: 'Group',
+                typeInfo: '.Group'
+              }],
+            type: 'elements'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.AuthenticateOutcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ResultPage',
+        typeName: null,
+        propertyInfos: [{
+            name: 'totalPages',
+            elementName: 'TotalPages',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'perPage',
+            elementName: 'PerPage',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'pageNumber',
+            elementName: 'PageNumber',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'from',
+            elementName: 'From',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'to',
+            elementName: 'To',
+            typeInfo: 'NonNegativeInteger'
           }]
       }, {
         localName: 'Location',
@@ -2436,6 +1655,650 @@ var event_logging_Module_Factory = function () {
             elementName: 'AccessZone'
           }]
       }, {
+        localName: 'NetworkEventAction',
+        propertyInfos: [{
+            name: 'bind',
+            required: true,
+            elementName: 'Bind',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'connect',
+            required: true,
+            elementName: 'Connect',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'open',
+            required: true,
+            elementName: 'Open',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'close',
+            required: true,
+            elementName: 'Close',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'send',
+            required: true,
+            elementName: 'Send',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'receive',
+            required: true,
+            elementName: 'Receive',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'listen',
+            required: true,
+            elementName: 'Listen',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'permit',
+            required: true,
+            elementName: 'Permit',
+            typeInfo: '.NetworkOutcome'
+          }, {
+            name: 'deny',
+            required: true,
+            elementName: 'Deny',
+            typeInfo: '.NetworkOutcome'
+          }]
+      }, {
+        localName: 'AccessControlGroups',
+        propertyInfos: [{
+            name: 'accessControlGroups',
+            required: true,
+            collection: true,
+            elementName: 'AccessControlGroup'
+          }]
+      }, {
+        localName: 'Coordinates',
+        propertyInfos: [{
+            name: 'latitude',
+            required: true,
+            elementName: 'Latitude',
+            typeInfo: 'Decimal'
+          }, {
+            name: 'longitude',
+            required: true,
+            elementName: 'Longitude',
+            typeInfo: 'Decimal'
+          }]
+      }, {
+        localName: 'Source',
+        typeName: null,
+        propertyInfos: [{
+            name: 'endpoints',
+            required: true,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'User',
+                typeInfo: '.User'
+              }, {
+                elementName: 'Device',
+                typeInfo: '.Device'
+              }],
+            type: 'elements'
+          }]
+      }, {
+        localName: 'Event',
+        typeName: null,
+        propertyInfos: [{
+            name: 'meta',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Meta',
+            typeInfo: '.AnyContent'
+          }, {
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
+          }, {
+            name: 'eventTime',
+            required: true,
+            elementName: 'EventTime',
+            typeInfo: '.EventTime'
+          }, {
+            name: 'eventSource',
+            required: true,
+            elementName: 'EventSource',
+            typeInfo: '.EventSource'
+          }, {
+            name: 'eventDetail',
+            required: true,
+            elementName: 'EventDetail',
+            typeInfo: '.EventDetail'
+          }, {
+            name: 'eventChain',
+            elementName: 'EventChain',
+            typeInfo: '.EventChain'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Hash',
+        propertyInfos: [{
+            name: 'value',
+            type: 'value'
+          }, {
+            name: 'type',
+            attributeName: {
+              localPart: 'Type'
+            },
+            type: 'attribute'
+          }]
+      }, {
+        localName: 'Purpose',
+        propertyInfos: [{
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
+          }, {
+            name: 'subject',
+            elementName: 'Subject'
+          }, {
+            name: 'stakeholders',
+            elementName: 'Stakeholders'
+          }, {
+            name: 'justification',
+            elementName: 'Justification'
+          }, {
+            name: 'expectedOutcome',
+            elementName: 'ExpectedOutcome'
+          }, {
+            name: 'authorisations',
+            elementName: 'Authorisations',
+            typeInfo: '.Authorisations'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'EventTime',
+        propertyInfos: [{
+            name: 'timeCreated',
+            required: true,
+            elementName: 'TimeCreated',
+            typeInfo: 'DateTime'
+          }, {
+            name: 'timeSource',
+            elementName: 'TimeSource',
+            typeInfo: '.Device'
+          }]
+      }, {
+        localName: 'Group',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'CreateEventAction',
+        typeName: 'Create',
+        baseTypeInfo: '.BaseObjectOutcome'
+      }, {
+        localName: 'Organisation',
+        propertyInfos: [{
+            name: 'country',
+            elementName: 'Country'
+          }, {
+            name: 'organisation',
+            required: true,
+            elementName: 'Organisation'
+          }]
+      }, {
+        localName: 'DisseminationControls',
+        typeName: null,
+        propertyInfos: [{
+            name: 'disseminationControl',
+            required: true,
+            collection: true,
+            elementName: 'DisseminationControl'
+          }]
+      }, {
+        localName: 'AnyContent',
+        propertyInfos: [{
+            name: 'content',
+            collection: true,
+            type: 'anyElement'
+          }, {
+            name: 'contentType',
+            attributeName: {
+              localPart: 'ContentType'
+            },
+            type: 'attribute'
+          }, {
+            name: 'version',
+            attributeName: {
+              localPart: 'Version'
+            },
+            type: 'attribute'
+          }]
+      }, {
+        localName: 'BaseFile',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'path',
+            elementName: 'Path'
+          }, {
+            name: 'created',
+            elementName: 'Created',
+            typeInfo: 'DateTime'
+          }, {
+            name: 'modified',
+            elementName: 'Modified',
+            typeInfo: 'DateTime'
+          }, {
+            name: 'accessed',
+            elementName: 'Accessed',
+            typeInfo: 'DateTime'
+          }, {
+            name: 'size',
+            elementName: 'Size',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'media',
+            elementName: 'Media',
+            typeInfo: '.Media'
+          }, {
+            name: 'hash',
+            elementName: 'Hash',
+            typeInfo: '.Hash'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'EventSource',
+        propertyInfos: [{
+            name: 'eventId',
+            elementName: 'EventId'
+          }, {
+            name: 'sessionId',
+            elementName: 'SessionId'
+          }, {
+            name: 'system',
+            required: true,
+            elementName: 'System',
+            typeInfo: '.SystemDetail'
+          }, {
+            name: 'generator',
+            required: true,
+            elementName: 'Generator'
+          }, {
+            name: 'device',
+            required: true,
+            elementName: 'Device',
+            typeInfo: '.Device'
+          }, {
+            name: 'client',
+            elementName: 'Client',
+            typeInfo: '.Device'
+          }, {
+            name: 'server',
+            elementName: 'Server',
+            typeInfo: '.Device'
+          }, {
+            name: 'door',
+            elementName: 'Door',
+            typeInfo: '.Door'
+          }, {
+            name: 'user',
+            elementName: 'User',
+            typeInfo: '.User'
+          }, {
+            name: 'runAs',
+            elementName: 'RunAs',
+            typeInfo: '.User'
+          }, {
+            name: 'interactive',
+            elementName: 'Interactive',
+            typeInfo: 'Boolean'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'AddAccess',
+        typeName: null,
+        propertyInfos: [{
+            name: 'accessZones',
+            required: true,
+            collection: true,
+            elementName: 'AccessZone'
+          }]
+      }, {
+        localName: 'DataSources',
+        typeName: null,
+        propertyInfos: [{
+            name: 'dataSource',
+            required: true,
+            collection: true,
+            elementName: 'DataSource'
+          }]
+      }, {
+        localName: 'ProcessEventAction',
+        typeName: 'Process',
+        propertyInfos: [{
+            name: 'action',
+            required: true,
+            elementName: 'Action',
+            typeInfo: '.ProcessAction'
+          }, {
+            name: 'type',
+            required: true,
+            elementName: 'Type',
+            typeInfo: '.ProcessType'
+          }, {
+            name: 'command',
+            required: true,
+            elementName: 'Command'
+          }, {
+            name: 'arguments',
+            elementName: 'Arguments'
+          }, {
+            name: 'processId',
+            elementName: 'ProcessId'
+          }, {
+            name: 'threadId',
+            elementName: 'ThreadId',
+            typeInfo: 'PositiveInteger'
+          }, {
+            name: 'rule',
+            elementName: 'Rule'
+          }, {
+            name: 'input',
+            elementName: 'Input',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'output',
+            elementName: 'Output',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'User',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'domain',
+            elementName: 'Domain'
+          }, {
+            name: 'emailAddress',
+            elementName: 'EmailAddress'
+          }, {
+            name: 'userDetails',
+            elementName: 'UserDetails',
+            typeInfo: '.UserDetails'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Events',
+        typeName: null,
+        propertyInfos: [{
+            name: 'event',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Event',
+            typeInfo: '.Event'
+          }, {
+            name: 'version',
+            required: true,
+            values: ['4.0-beta.3'],
+            attributeName: {
+              localPart: 'Version'
+            },
+            type: 'attribute'
+          }]
+      }, {
+        localName: 'Permission',
+        typeName: null,
+        propertyInfos: [{
+            name: 'permissionEntity',
+            required: true,
+            elementTypeInfos: [{
+                elementName: 'User',
+                typeInfo: '.User'
+              }, {
+                elementName: 'Group',
+                typeInfo: '.Group'
+              }],
+            type: 'elements'
+          }, {
+            name: 'allowAttributes',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Allow',
+            typeInfo: '.PermissionAttribute'
+          }, {
+            name: 'denyAttributes',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Deny',
+            typeInfo: '.PermissionAttribute'
+          }]
+      }, {
+        localName: 'Door',
+        typeName: null,
+        propertyInfos: [{
+            name: 'name',
+            required: true,
+            elementName: 'Name'
+          }, {
+            name: 'description',
+            elementName: 'Description'
+          }, {
+            name: 'location',
+            required: true,
+            elementName: 'Location',
+            typeInfo: '.Location'
+          }, {
+            name: 'singleEntry',
+            elementName: 'SingleEntry',
+            typeInfo: 'Boolean'
+          }, {
+            name: 'removeAll',
+            elementName: 'RemoveAll',
+            typeInfo: 'Boolean'
+          }, {
+            name: 'addAccess',
+            required: true,
+            elementName: 'AddAccess',
+            typeInfo: '.AddAccess'
+          }]
+      }, {
+        localName: 'IDS',
+        typeName: null,
+        propertyInfos: [{
+            name: 'rule',
+            elementName: 'Rule'
+          }, {
+            name: 'source',
+            elementName: 'Source',
+            typeInfo: '.NetworkLocation'
+          }, {
+            name: 'destination',
+            elementName: 'Destination',
+            typeInfo: '.NetworkLocation'
+          }, {
+            name: 'payload',
+            elementName: 'Payload',
+            typeInfo: '.MultiObject'
+          }]
+      }, {
+        localName: 'Network',
+        baseTypeInfo: '.BaseNetwork'
+      }, {
+        localName: 'OtherObject',
+        typeName: 'Object',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'CopyMoveOutcome',
+        baseTypeInfo: '.BaseOutcome',
+        propertyInfos: [{
+            name: 'reason',
+            elementName: 'Reason',
+            typeInfo: '.CopyMoveOutcomeReason'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'UpdateEventAction',
+        typeName: 'Update',
+        propertyInfos: [{
+            name: 'before',
+            elementName: 'Before',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'after',
+            required: true,
+            elementName: 'After',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'Auth',
+        typeName: null,
+        propertyInfos: [{
+            name: 'refNo',
+            elementName: 'RefNo'
+          }, {
+            name: 'detail',
+            elementName: 'Detail'
+          }]
+      }, {
+        localName: 'PrintEventAction',
+        typeName: 'Print',
+        propertyInfos: [{
+            name: 'action',
+            required: true,
+            elementName: 'Action',
+            typeInfo: '.PrintAction'
+          }, {
+            name: 'printJob',
+            required: true,
+            elementName: 'PrintJob',
+            typeInfo: '.PrintJob'
+          }, {
+            name: 'printSettings',
+            elementName: 'PrintSettings',
+            typeInfo: '.PrintSettings'
+          }, {
+            name: 'printer',
+            elementName: 'Printer',
+            typeInfo: '.Device'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ImportEventAction',
+        typeName: 'Import',
+        propertyInfos: [{
+            name: 'source',
+            elementName: 'Source',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'destination',
+            elementName: 'Destination',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'PermittedNationalities',
+        typeName: null,
+        propertyInfos: [{
+            name: 'nationalities',
+            required: true,
+            collection: true,
+            elementName: 'Nationality'
+          }]
+      }, {
+        localName: 'Or',
+        propertyInfos: [{
+            name: 'queryItems',
+            minOccurs: 0,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'Term',
+                typeInfo: '.Term'
+              }, {
+                elementName: 'And',
+                typeInfo: '.And'
+              }, {
+                elementName: 'Or',
+                typeInfo: '.Or'
+              }, {
+                elementName: 'Not',
+                typeInfo: '.Not'
+              }],
+            type: 'elements'
+          }]
+      }, {
         localName: 'Change',
         typeName: null,
         propertyInfos: [{
@@ -2456,35 +2319,57 @@ var event_logging_Module_Factory = function () {
             elementName: 'Rule'
           }]
       }, {
-        localName: 'Permissions',
+        localName: 'Disposition',
         typeName: null,
         propertyInfos: [{
-            name: 'permissions',
+            name: 'date',
             required: true,
-            collection: true,
-            elementName: 'Permission',
-            typeInfo: '.Permission'
+            elementName: 'Date',
+            typeInfo: 'DateTime'
+          }, {
+            name: 'process',
+            required: true,
+            elementName: 'Process'
           }]
       }, {
-        localName: 'Folder',
-        baseTypeInfo: '.BaseFile'
-      }, {
-        localName: 'CopyEventAction',
-        typeName: 'Copy',
+        localName: 'Term',
         propertyInfos: [{
-            name: 'source',
+            name: 'name',
             required: true,
-            elementName: 'Source',
-            typeInfo: '.MultiObject'
+            elementName: 'Name'
           }, {
-            name: 'destination',
+            name: 'condition',
             required: true,
-            elementName: 'Destination',
-            typeInfo: '.MultiObject'
+            elementName: 'Condition',
+            typeInfo: '.TermCondition'
           }, {
-            name: 'outcome',
-            elementName: 'Outcome',
-            typeInfo: '.CopyMoveOutcome'
+            name: 'value',
+            required: true,
+            elementName: 'Value'
+          }]
+      }, {
+        localName: 'SearchResults',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'dataSources',
+            elementName: 'DataSources',
+            typeInfo: '.DataSources'
+          }, {
+            name: 'query',
+            elementName: 'Query',
+            typeInfo: '.Query'
+          }, {
+            name: 'resultPage',
+            elementName: 'ResultPage',
+            typeInfo: '.ResultPage'
+          }, {
+            name: 'totalResults',
+            elementName: 'TotalResults',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'results',
+            elementName: 'Results',
+            typeInfo: '.MultiObject'
           }, {
             name: 'data',
             minOccurs: 0,
@@ -2493,41 +2378,180 @@ var event_logging_Module_Factory = function () {
             typeInfo: '.Data'
           }]
       }, {
-        localName: 'Activity',
+        localName: 'SystemDetail',
+        typeName: 'System',
         propertyInfos: [{
-            name: 'id',
-            required: true,
-            elementName: 'Id'
-          }, {
             name: 'name',
+            required: true,
             elementName: 'Name'
           }, {
-            name: 'parent',
-            elementName: 'Parent',
-            typeInfo: '.Activity'
+            name: 'description',
+            elementName: 'Description'
+          }, {
+            name: 'classification',
+            elementName: 'Classification',
+            typeInfo: '.Classification'
+          }, {
+            name: 'environment',
+            required: true,
+            elementName: 'Environment'
+          }, {
+            name: 'organisation',
+            elementName: 'Organisation'
+          }, {
+            name: 'version',
+            elementName: 'Version'
+          }, {
+            name: 'tags',
+            elementName: 'Tags',
+            typeInfo: '.Tags'
           }]
       }, {
-        localName: 'Auth',
+        localName: 'Criteria',
+        baseTypeInfo: '.BaseObject',
+        propertyInfos: [{
+            name: 'dataSources',
+            elementName: 'DataSources',
+            typeInfo: '.DataSources'
+          }, {
+            name: 'query',
+            elementName: 'Query',
+            typeInfo: '.Query'
+          }, {
+            name: 'resultPage',
+            elementName: 'ResultPage',
+            typeInfo: '.ResultPage'
+          }, {
+            name: 'totalResults',
+            elementName: 'TotalResults',
+            typeInfo: 'NonNegativeInteger'
+          }, {
+            name: 'results',
+            elementName: 'Results',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'ExportEventAction',
+        typeName: 'Export',
+        propertyInfos: [{
+            name: 'source',
+            elementName: 'Source',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'destination',
+            elementName: 'Destination',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'SendEventAction',
+        typeName: 'Send',
+        propertyInfos: [{
+            name: 'source',
+            required: true,
+            elementName: 'Source',
+            typeInfo: '.Source'
+          }, {
+            name: 'destination',
+            required: true,
+            elementName: 'Destination',
+            typeInfo: '.Destination'
+          }, {
+            name: 'payload',
+            elementName: 'Payload',
+            typeInfo: '.MultiObject'
+          }, {
+            name: 'outcome',
+            elementName: 'Outcome',
+            typeInfo: '.Outcome'
+          }, {
+            name: 'data',
+            minOccurs: 0,
+            collection: true,
+            elementName: 'Data',
+            typeInfo: '.Data'
+          }]
+      }, {
+        localName: 'PermittedOrganisations',
         typeName: null,
         propertyInfos: [{
-            name: 'refNo',
-            elementName: 'RefNo'
-          }, {
-            name: 'detail',
-            elementName: 'Detail'
+            name: 'permittedOrganisation',
+            required: true,
+            elementName: 'PermittedOrganisation',
+            typeInfo: '.Organisation'
           }]
+      }, {
+        localName: 'And',
+        propertyInfos: [{
+            name: 'queryItems',
+            minOccurs: 0,
+            collection: true,
+            elementTypeInfos: [{
+                elementName: 'Term',
+                typeInfo: '.Term'
+              }, {
+                elementName: 'And',
+                typeInfo: '.And'
+              }, {
+                elementName: 'Or',
+                typeInfo: '.Or'
+              }, {
+                elementName: 'Not',
+                typeInfo: '.Not'
+              }],
+            type: 'elements'
+          }]
+      }, {
+        type: 'enumInfo',
+        localName: 'AlertPriority',
+        values: ['None', 'Low', 'Normal', 'High', 'Urgent', 'Immediate']
       }, {
         type: 'enumInfo',
         localName: 'AlertSeverity',
         values: ['Info', 'Minor', 'Major', 'Critical']
       }, {
         type: 'enumInfo',
-        localName: 'TermCondition',
-        values: ['Exists', 'NotExists', 'Contains', 'NotContains', 'Empty', 'NotEmpty', 'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanEqualTo', 'LessThan', 'LessThanEqualTo', 'StartsWith', 'NotStartsWith', 'Regex', 'NotRegex']
-      }, {
-        type: 'enumInfo',
         localName: 'ThreatCategory',
         values: ['Virus', 'Worm', 'HackingTool', 'Spyware', 'TrojanHorse', 'Adware', 'Other']
+      }, {
+        type: 'enumInfo',
+        localName: 'ProcessAction',
+        values: ['Startup', 'Shutdown', 'Execute', 'Terminate', 'ChangeDir', 'Call', 'Access', 'RequestObjectHandle', 'Register']
+      }, {
+        type: 'enumInfo',
+        localName: 'HardwareType',
+        values: ['OpticalDrive', 'HardDisk', 'USBMassStorage', 'Printer', 'Modem', 'Keyboard', 'Mouse', 'Webcam', 'Other']
+      }, {
+        type: 'enumInfo',
+        localName: 'AuthenticateOutcomeReason',
+        values: ['IncorrectUsernameOrPassword', 'IncorrectUsername', 'IncorrectPassword', 'ExpiredCertificate', 'RevokedCertificate', 'IncorrectCA', 'ExpiredCA', 'AccountLocked', 'AccountNotValidForLoginType', 'Other']
+      }, {
+        type: 'enumInfo',
+        localName: 'ProcessType',
+        values: ['OS', 'Service', 'Application']
+      }, {
+        type: 'enumInfo',
+        localName: 'AlertType',
+        values: ['Vulnerability', 'IDS', 'Malware', 'Network', 'Change', 'Error', 'Other']
+      }, {
+        type: 'enumInfo',
+        localName: 'AuthenticateLogonType',
+        values: ['Interactive', 'Network', 'Batch', 'Service', 'Unlock', 'NetworkCleartext', 'NewCredentials', 'RemoteInteractive', 'CachedInteractive', 'CachedRemoteInteractive', 'CachedUnlock', 'Proxy', 'PhysicalAccess', 'Other']
       }, {
         type: 'enumInfo',
         localName: 'VirtualSessionSessionState',
@@ -2538,75 +2562,51 @@ var event_logging_Module_Factory = function () {
         values: ['Approve', 'Accept', 'Reject', 'RequestApproval', 'Other']
       }, {
         type: 'enumInfo',
-        localName: 'AlertPriority',
-        values: ['None', 'Low', 'Normal', 'High', 'Urgent', 'Immediate']
-      }, {
-        type: 'enumInfo',
-        localName: 'PrintSettingsOrientation',
-        values: ['Portrait', 'Landscape']
-      }, {
-        type: 'enumInfo',
-        localName: 'AuthenticateLogonType',
-        values: ['Interactive', 'Network', 'Batch', 'Service', 'Unlock', 'NetworkCleartext', 'NewCredentials', 'RemoteInteractive', 'CachedInteractive', 'CachedRemoteInteractive', 'CachedUnlock', 'Proxy', 'PhysicalAccess', 'Other']
-      }, {
-        type: 'enumInfo',
-        localName: 'AuthenticateAction',
-        values: ['Logon', 'Logoff', 'ChangePassword', 'ResetPassword', 'ScreenLock', 'ScreenUnlock', 'AccountLock', 'AccountUnlock', 'Reconnect', 'Disconnect', 'Connect', 'ElevatePrivilege', 'ReadToken', 'Other']
-      }, {
-        type: 'enumInfo',
-        localName: 'MediaType',
-        values: ['HardDisk', 'USBMassStorage', 'BluRay', 'DVD', 'CD', 'FloppyDisk', 'Tape', 'MemoryCard', 'Other']
-      }, {
-        type: 'enumInfo',
-        localName: 'AlertType',
-        values: ['Vulnerability', 'IDS', 'Malware', 'Network', 'Change', 'Error', 'Other']
-      }, {
-        type: 'enumInfo',
-        localName: 'PermissionAttribute',
-        values: ['Author', 'Owner', 'Read', 'Write', 'Execute']
-      }, {
-        type: 'enumInfo',
-        localName: 'ProcessAction',
-        values: ['Startup', 'Shutdown', 'Execute', 'Terminate', 'ChangeDir', 'Call', 'Access', 'RequestObjectHandle', 'Register']
+        localName: 'AuthorisationActionType',
+        values: ['Request', 'Modify']
       }, {
         type: 'enumInfo',
         localName: 'PrintAction',
         values: ['CreateJob', 'CancelJob', 'PauseJob', 'ResumeJob', 'StartPrint', 'FinishPrint', 'CancelPrint', 'FailedPrint', 'Other']
       }, {
         type: 'enumInfo',
-        localName: 'ChangeAction',
-        values: ['StartScan', 'StopScan', 'FileAdded', 'FileRemoved', 'FileModified']
-      }, {
-        type: 'enumInfo',
-        localName: 'ProcessType',
-        values: ['OS', 'Service', 'Application']
-      }, {
-        type: 'enumInfo',
-        localName: 'AuthorisationActionType',
-        values: ['Request', 'Modify']
-      }, {
-        type: 'enumInfo',
-        localName: 'CopyMoveOutcomeReason',
-        values: ['DeviceFull', 'IOError', 'InvalidPath', 'PermissionDenied', 'ReadOnly']
+        localName: 'AuthenticateAction',
+        values: ['Logon', 'Logoff', 'ChangePassword', 'ResetPassword', 'ScreenLock', 'ScreenUnlock', 'AccountLock', 'AccountUnlock', 'Reconnect', 'Disconnect', 'Connect', 'ElevatePrivilege', 'ReadToken', 'Other']
       }, {
         type: 'enumInfo',
         localName: 'NetworkProtocol',
         values: ['TCP', 'UDP', 'ICMP', 'IGMP', 'Other']
       }, {
         type: 'enumInfo',
-        localName: 'AuthenticateOutcomeReason',
-        values: ['IncorrectUsernameOrPassword', 'IncorrectUsername', 'IncorrectPassword', 'ExpiredCertificate', 'RevokedCertificate', 'IncorrectCA', 'ExpiredCA', 'AccountLocked', 'AccountNotValidForLoginType', 'Other']
+        localName: 'PrintSettingsOrientation',
+        values: ['Portrait', 'Landscape']
       }, {
         type: 'enumInfo',
-        localName: 'HardwareType',
-        values: ['OpticalDrive', 'HardDisk', 'USBMassStorage', 'Printer', 'Modem', 'Keyboard', 'Mouse', 'Webcam', 'Other']
+        localName: 'CopyMoveOutcomeReason',
+        values: ['DeviceFull', 'IOError', 'InvalidPath', 'PermissionDenied', 'ReadOnly']
+      }, {
+        type: 'enumInfo',
+        localName: 'TermCondition',
+        values: ['Exists', 'NotExists', 'Contains', 'NotContains', 'Empty', 'NotEmpty', 'Equals', 'NotEquals', 'GreaterThan', 'GreaterThanEqualTo', 'LessThan', 'LessThanEqualTo', 'StartsWith', 'NotStartsWith', 'Regex', 'NotRegex']
+      }, {
+        type: 'enumInfo',
+        localName: 'ChangeAction',
+        values: ['StartScan', 'StopScan', 'FileAdded', 'FileRemoved', 'FileModified']
+      }, {
+        type: 'enumInfo',
+        localName: 'PermissionAttribute',
+        values: ['Author', 'Owner', 'Read', 'Write', 'Execute']
+      }, {
+        type: 'enumInfo',
+        localName: 'MediaType',
+        values: ['HardDisk', 'USBMassStorage', 'BluRay', 'DVD', 'CD', 'FloppyDisk', 'Tape', 'MemoryCard', 'Other']
       }],
     elementInfos: [{
-        typeInfo: '.Events',
-        elementName: 'Events'
-      }, {
         typeInfo: '.Event',
         elementName: 'Event'
+      }, {
+        typeInfo: '.Events',
+        elementName: 'Events'
       }]
   };
   return {
