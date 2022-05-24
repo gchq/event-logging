@@ -19,6 +19,7 @@ plugins {
     id "signing"
     id 'java-library'
     id "maven-publish"
+    id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.7"
 }
 
 //must be applied to all projects including root
@@ -160,6 +161,7 @@ ext.versions = [
     junit_jupiter        : '5.8.2',
     logback              : '1.2.3',
     mockito              : '3.12.4',
+    swagger              : '2.1.12',
 ]
 
 // NOTE
@@ -173,6 +175,8 @@ ext.libs = [
     classgraph                     : "io.github.classgraph:classgraph:4.8.146",
     jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.3",
     jackson_databind               : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
+    jakarta_servlet_api            : "jakarta.servlet:jakarta.servlet-api:4.0.4",
+    jakarta_ws_rs_api              : "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6",
     jaxb_api                       : "javax.xml.bind:jaxb-api", // Version set by jaxb_bom
     jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
     jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:2.1.0",
@@ -188,6 +192,7 @@ ext.libs = [
     mockito_junit_jupiter          : "org.mockito:mockito-junit-jupiter:$versions.mockito",
     saxon_he                       : "net.sf.saxon:Saxon-HE:9.7.0-21",
     slf4j_api                      : "org.slf4j:slf4j-api:1.7.30",
+    swagger_annotations            : "io.swagger.core.v3:swagger-annotations:$versions.swagger",
 ]
 
 // NOTE

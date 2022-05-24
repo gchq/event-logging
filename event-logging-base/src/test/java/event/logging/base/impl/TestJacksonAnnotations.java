@@ -35,32 +35,60 @@ import java.util.stream.Collectors;
 public class TestJacksonAnnotations {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestJacksonAnnotations.class);
 
+    private final Map<Class<?>, SubClasses> subClassCache = new HashMap<>();
+
     @Test
     void test() throws Exception {
-        final Class<?> rootClass = Event.class;
+        int iteration = 0;
+        while (true) {
+            iteration++;
 
-        final Object object;
-        try (final ScanResult scanResult =
-                     new ClassGraph()
-                             .enableAllInfo()             // Scan classes, methods, fields, annotations
-                             .acceptPackages(rootClass.getPackage().getName())  // Scan com.xyz and subpackages (omit to scan all packages)
-                             .scan()) {                   // Start the scan
-            object = createObject(scanResult, Collections.emptySet(), rootClass, null);
+            final Class<?> rootClass = Event.class;
+            final SubClassesCall parentCall = new SubClassesCall(null, new ArrayList<>());
+
+            final Object object;
+            try (final ScanResult scanResult =
+                         new ClassGraph()
+                                 .enableAllInfo()             // Scan classes, methods, fields, annotations
+                                 .acceptPackages(rootClass.getPackage().getName())  // Scan com.xyz and subpackages (omit to scan all packages)
+                                 .scan()) {                   // Start the scan
+                object = createObject(scanResult, Collections.emptySet(), parentCall, rootClass, null);
+            }
+
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
+            mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+            LOGGER.info("Iteration " + iteration);
+            final String json = mapper.writeValueAsString(object);
+            LOGGER.info(json);
+            final Object result = mapper.readValue(json, rootClass);
+            LOGGER.info(result.toString());
+
+            // Increment call order.
+            final boolean incremented = increment(parentCall);
+            if (!incremented) {
+                break;
+            }
         }
+    }
 
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        final String json = mapper.writeValueAsString(object);
-        LOGGER.info(json);
-        final Object result = mapper.readValue(json, rootClass);
-        LOGGER.info(result.toString());
+    private boolean increment(final SubClassesCall parentCall) {
+        final List<SubClassesCall> children = parentCall.childCalls;
+        if (children != null) {
+            for (final SubClassesCall child : children) {
+                if (increment(child)) {
+                    return true;
+                }
+            }
+        }
+        return parentCall.increment();
     }
 
     private Object createObject(final ScanResult scanResult,
                                 final Set<Class<?>> parentStack,
+                                final SubClassesCall parentCall,
                                 final Class<?> clazz,
                                 final Type type) {
         if (Object.class == clazz) {
@@ -74,7 +102,10 @@ public class TestJacksonAnnotations {
 //            final Class<?> typeClass1 = (Class<?>) ;
 
 //            final Class<?> typeClass1 = clazz.getTypeParameters()[0].getGenericDeclaration();
-            final Object o = createObject(scanResult, parentStack, (Class<?>) type1, type1);
+            final Object o = createObject(scanResult, parentStack, parentCall, (Class<?>) type1, type1);
+            if (o == null) {
+                return Collections.emptyList();
+            }
             return Collections.singletonList(o);
 
 //            final Type type = parameter.getParameterizedType();
@@ -86,8 +117,8 @@ public class TestJacksonAnnotations {
 //                o = inspect(scanResult, typeClass1);
 //            }
 //            objects[i] = Collections.singletonList(o);
-        } else if (Map.class.isAssignableFrom(clazz)) {
-            return Collections.emptyMap();
+//        } else if (Map.class.isAssignableFrom(clazz)) {
+//            return Collections.emptyMap();
         } else if (Collection.class.isAssignableFrom(clazz)) {
             throw new RuntimeException("Unexpected collection type: " + clazz);
         } else if (String.class.isAssignableFrom(clazz)) {
@@ -113,27 +144,73 @@ public class TestJacksonAnnotations {
         } else if (clazz.isEnum()) {
             return clazz.getEnumConstants()[0];
         } else {
-            Class<?> selectedClass = clazz;
-
             // See if there are subclasses.
-            final List<Class<?>> subClasses = getSubClasses(scanResult, clazz); // TODO : FORK HERE SOMEHOW
-            if (subClasses.size() > 0) {
-                selectedClass = subClasses.get(0);
-            }
+            final SubClasses subClasses = subClassCache.computeIfAbsent(clazz, k ->
+                    new SubClasses(k, getSubClasses(scanResult, k)));
+
+            final Class<?> selectedClass = subClasses.get();
 
             if (parentStack.contains(selectedClass)) {
                 // Don't go any deeper else we will SO.
                 return null;
             } else {
+                final SubClassesCall call = new SubClassesCall(subClasses, new ArrayList<>());
+                parentCall.childCalls.add(call);
+
                 final Set<Class<?>> stack = new HashSet<>(parentStack);
-                stack.add(clazz);
-                return createCustomObject(scanResult, stack, selectedClass);
+                stack.add(selectedClass);
+                return createCustomObject(scanResult, stack, call, selectedClass);
             }
+        }
+    }
+
+    private static class SubClassesCall {
+        private final SubClasses subClasses;
+        private final List<SubClassesCall> childCalls;
+
+        public SubClassesCall(final SubClasses subClasses, final List<SubClassesCall> childCalls) {
+            this.subClasses = subClasses;
+            this.childCalls = childCalls;
+        }
+
+        public boolean increment() {
+            if (subClasses != null) {
+                return subClasses.increment();
+            }
+            return false;
+        }
+    }
+
+    private static class SubClasses {
+        private final Class<?> superClass;
+        private final List<Class<?>> subClasses;
+        private int index = 0;
+
+        public SubClasses(final Class<?> superClass,
+                          final List<Class<?>> subClasses) {
+            this.superClass = superClass;
+            this.subClasses = subClasses;
+        }
+
+        public Class<?> get() {
+            if (subClasses.size() == 0) {
+                return superClass;
+            }
+            return subClasses.get(index);
+        }
+
+        public boolean increment() {
+            if (index < subClasses.size() - 1) {
+                index++;
+                return true;
+            }
+            return false;
         }
     }
 
     private Object createCustomObject(final ScanResult scanResult,
                                       final Set<Class<?>> parentStack,
+                                      final SubClassesCall parentCall,
                                       final Class<?> clazz) {
         // Determine which constructor to use.
         final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
@@ -160,7 +237,12 @@ public class TestJacksonAnnotations {
         for (int i = 0; i < parameters.length; i++) {
             final Parameter parameter = parameters[i];
             final Class<?> paramType = parameter.getType();
-            objects[i] = createObject(scanResult, parentStack, paramType, parameter.getParameterizedType());
+            objects[i] = createObject(
+                    scanResult,
+                    parentStack,
+                    parentCall,
+                    paramType,
+                    parameter.getParameterizedType());
         }
 
         final Object result;

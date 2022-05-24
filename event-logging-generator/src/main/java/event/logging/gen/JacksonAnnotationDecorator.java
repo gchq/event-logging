@@ -128,7 +128,7 @@ public class JacksonAnnotationDecorator {
         final StringBuilder sb = new StringBuilder();
         sb.append("@JsonTypeInfo(\n");
         sb.append("        use = JsonTypeInfo.Id.NAME,\n");
-        sb.append("        property = \"type\"\n");
+        sb.append("        property = \"@type\"\n");
         sb.append(")\n");
         sb.append("@JsonSubTypes({\n");
 
