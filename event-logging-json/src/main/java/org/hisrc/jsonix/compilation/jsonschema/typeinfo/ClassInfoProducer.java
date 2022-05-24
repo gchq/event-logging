@@ -7,13 +7,6 @@ package org.hisrc.jsonix.compilation.jsonschema.typeinfo;
 
 import com.sun.tools.xjc.model.CClassInfo;
 import com.sun.tools.xjc.model.Multiplicity;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.xml.namespace.QName;
 import org.apache.commons.lang3.Validate;
 import org.hisrc.jsonix.compilation.jsonschema.JsonSchemaMappingCompiler;
 import org.hisrc.jsonix.compilation.jsonschema.JsonSchemaPropertyInfoProducerVisitor;
@@ -26,12 +19,20 @@ import org.jvnet.jaxb2_commons.xml.bind.model.MClassTypeInfo;
 import org.jvnet.jaxb2_commons.xml.bind.model.MPackagedTypeInfo;
 import org.jvnet.jaxb2_commons.xml.bind.model.MPropertyInfo;
 
+import javax.xml.namespace.QName;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ClassInfoProducer<T, C extends T> extends PackagedTypeInfoProducer<T, C> {
     private final XSFunctionApplier<Multiplicity> multiplicityCounter;
     private final MClassInfo<T, C> classInfo;
 
     public ClassInfoProducer(MClassInfo<T, C> classInfo) {
-        super((MPackagedTypeInfo)Validate.notNull(classInfo));
+        super((MPackagedTypeInfo) Validate.notNull(classInfo));
         this.multiplicityCounter = new XSFunctionApplier(ParticleMultiplicityCounter.INSTANCE);
         this.classInfo = classInfo;
     }
@@ -44,7 +45,15 @@ public class ClassInfoProducer<T, C extends T> extends PackagedTypeInfoProducer<
 
         if (this.classInfo.getTargetType() instanceof CClassInfo) {
             final CClassInfo cClassInfo = (CClassInfo) this.classInfo.getTargetType();
-            if (cClassInfo.javadoc != null) {
+            if (cClassInfo.getSchemaComponent() != null &&
+                    cClassInfo.getSchemaComponent().getAnnotation() != null &&
+                    (cClassInfo.getSchemaComponent().getAnnotation().getAnnotation() instanceof
+                            com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo)) {
+                final com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo bindInfo =
+                        (com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo)
+                                cClassInfo.getSchemaComponent().getAnnotation().getAnnotation();
+                classInfoSchema.addDescription(bindInfo.getDocumentation());
+            } else if (cClassInfo.javadoc != null) {
                 classInfoSchema.addDescription(cClassInfo.javadoc);
             }
         }
@@ -66,9 +75,9 @@ public class ClassInfoProducer<T, C extends T> extends PackagedTypeInfoProducer<
         classInfoSchema.addProperties(propertyInfoSchemas);
         Iterator i$ = this.classInfo.getProperties().iterator();
 
-        while(i$.hasNext()) {
-            MPropertyInfo<T, C> propertyInfo = (MPropertyInfo)i$.next();
-            Multiplicity multiplicity = (Multiplicity)this.multiplicityCounter.apply(propertyInfo.getOrigin());
+        while (i$.hasNext()) {
+            MPropertyInfo<T, C> propertyInfo = (MPropertyInfo) i$.next();
+            Multiplicity multiplicity = (Multiplicity) this.multiplicityCounter.apply(propertyInfo.getOrigin());
             if (multiplicity != null && multiplicity.min != null && multiplicity.min.compareTo(BigInteger.ZERO) > 0) {
                 typeInfoSchema.addRequired(propertyInfo.getPrivateName());
             }
@@ -91,8 +100,8 @@ public class ClassInfoProducer<T, C extends T> extends PackagedTypeInfoProducer<
         Map<String, JsonSchemaBuilder> propertyInfoSchemas = new LinkedHashMap(this.classInfo.getProperties().size());
         Iterator i$ = this.classInfo.getProperties().iterator();
 
-        while(i$.hasNext()) {
-            MPropertyInfo<T, C> propertyInfo = (MPropertyInfo)i$.next();
+        while (i$.hasNext()) {
+            MPropertyInfo<T, C> propertyInfo = (MPropertyInfo) i$.next();
             if (mappingCompiler.getMapping().getPropertyInfos().contains(propertyInfo)) {
                 propertyInfoSchemas.put(propertyInfo.getPrivateName(), (JsonSchemaBuilder) propertyInfo.acceptPropertyInfoVisitor(new JsonSchemaPropertyInfoProducerVisitor(mappingCompiler)));
             }
