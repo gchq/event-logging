@@ -1,0 +1,44 @@
+ext.moduleName = 'event.logging.json'
+
+//plugins {
+//    id 'java'
+//}
+//
+//group 'uk.gov.gchq.eventlogging'
+//version 'schema-v4.0-beta.3-SNAPSHOT'
+//
+//repositories {
+//    mavenCentral()
+//}
+
+dependencies {
+    implementation project(':event-logging-api')
+    implementation project(':event-logging-base')
+    implementation 'org.hisrc.jsonix:jsonix-schema-compiler-full:2.3.9'
+
+//    implementation libs.jaxb_xjc
+//    implementation libs.slf4j_api
+
+//    runtimeOnly libs.jaxb_runtime
+//    runtimeOnly libs.jaxb_rich_contract_plugin
+    runtimeOnly libs.jaxb_basics
+
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+//test {
+//    useJUnitPlatform()
+//}
+
+task xsdToJson(type: JavaExec) {
+
+//    dependsOn runGenClasses
+
+    group = "Execution"
+    description = "XSD to JSON"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.hisrc.jsonix.JsonixMain"
+    args = ["-generateJsonSchema", "-p", "event.logging", "-Xinheritance", "-b", "../event-logging-generator/simple-binding.xjb", "../event-logging-generator/schema/schema.mod.xsd"]
+}
+
