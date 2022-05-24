@@ -5,13 +5,9 @@
 
 package org.hisrc.jsonix.compilation.jsonschema;
 
-import com.sun.tools.xjc.model.CElementPropertyInfo;
+import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.Multiplicity;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import javax.xml.namespace.QName;
-
+import com.sun.tools.xjc.reader.xmlschema.bindinfo.BindInfo;
 import com.sun.xml.xsom.XSComponent;
 import org.apache.commons.lang3.Validate;
 import org.hisrc.jsonix.JsonixConstants;
@@ -39,6 +35,11 @@ import org.jvnet.jaxb2_commons.xml.bind.model.origin.MElementOrigin;
 import org.jvnet.jaxb2_commons.xml.bind.model.origin.MElementTypeRefOrigin;
 import org.jvnet.jaxb2_commons.xml.bind.model.origin.MOriginated;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MPropertyInfoVisitor<T, C, JsonSchemaBuilder> {
     private final XSFunctionApplier<Multiplicity> multiplicityCounter;
     private JsonSchemaMappingCompiler<T, C> mappingCompiler;
@@ -52,21 +53,6 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
     public JsonSchemaBuilder visitElementPropertyInfo(MElementPropertyInfo<T, C> info) {
         JsonSchemaBuilder schema = new JsonSchemaBuilder();
         this.addPropertyInfoSchema(info, schema);
-
-        if (info.getOrigin() instanceof XJCCMPropertyInfoOrigin) {
-            final XJCCMPropertyInfoOrigin xjccmPropertyInfoOrigin = (XJCCMPropertyInfoOrigin) info.getOrigin();
-            if (xjccmPropertyInfoOrigin.getSource() instanceof CElementPropertyInfo) {
-                final CElementPropertyInfo cElementPropertyInfo = (CElementPropertyInfo) xjccmPropertyInfoOrigin.getSource();
-                final XSComponent xsComponent = cElementPropertyInfo.getSchemaComponent();
-                if (xsComponent != null) {
-                    if (xsComponent.getAnnotation() != null && xsComponent.getAnnotation().getAnnotation() != null) {
-                        final String annotation = xsComponent.getAnnotation().getAnnotation().toString();
-                        schema.addDescription(annotation);
-                    }
-                }
-            }
-        }
-//        schema.addDescription(info.getOrigin().toString());
         this.addPropertyInfoTypeSchema("element", schema);
         this.addElementNameSchema(info.getElementName(), schema);
         this.addWrappableSchema(info, schema);
@@ -194,6 +180,31 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
 
     private void addPropertyInfoSchema(MPropertyInfo<T, C> propertyInfo, JsonSchemaBuilder schema) {
         schema.addTitle(propertyInfo.getPrivateName());
+        final String description = getDescription(propertyInfo);
+        if (description != null) {
+            schema.addDescription(description);
+        }
+    }
+
+    private String getDescription(final MPropertyInfo<T, C> info) {
+        if (info.getOrigin() instanceof XJCCMPropertyInfoOrigin) {
+            final XJCCMPropertyInfoOrigin xjccmPropertyInfoOrigin = (XJCCMPropertyInfoOrigin) info.getOrigin();
+            final CPropertyInfo cElementPropertyInfo = xjccmPropertyInfoOrigin.getSource();
+            final XSComponent xsComponent = cElementPropertyInfo.getSchemaComponent();
+            if (xsComponent != null) {
+                if (xsComponent.getAnnotation() != null &&
+                        xsComponent.getAnnotation().getAnnotation() != null) {
+                    if (xsComponent.getAnnotation().getAnnotation() instanceof BindInfo) {
+                        return ((BindInfo) xsComponent.getAnnotation().getAnnotation()).getDocumentation();
+                    } else {
+                        System.out.println("ink");
+                    }
+                }
+            }
+        } else {
+            System.out.println("ink");
+        }
+        return null;
     }
 
     private void addWrappableSchema(MWrappable info, JsonSchemaBuilder schema) {
@@ -225,8 +236,8 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
         if (!info.getElementTypeInfos().isEmpty()) {
             Iterator i$ = info.getElementTypeInfos().iterator();
 
-            while(i$.hasNext()) {
-                MElementTypeRef<T, C> elementTypeInfo = (MElementTypeRef)i$.next();
+            while (i$.hasNext()) {
+                MElementTypeRef<T, C> elementTypeInfo = (MElementTypeRef) i$.next();
                 JsonSchemaBuilder elementTypeInfoSchema = this.createElementTypeInfoSchema(elementTypeInfo);
                 schema.addAnyOf(elementTypeInfoSchema);
             }
@@ -247,8 +258,8 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
         List<JsonSchemaBuilder> schemas = new ArrayList(elementTypeInfos.size());
         Iterator i$ = elementTypeInfos.iterator();
 
-        while(i$.hasNext()) {
-            MElement<T, C> elementTypeInfo = (MElement)i$.next();
+        while (i$.hasNext()) {
+            MElement<T, C> elementTypeInfo = (MElement) i$.next();
             JsonSchemaBuilder elementTypeInfoSchema = this.createElementRefSchema(elementTypeInfo);
             schemas.add(elementTypeInfoSchema);
         }
@@ -269,7 +280,7 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
         if (schemas.size() == 0) {
             return new JsonSchemaBuilder();
         } else if (schemas.size() == 1) {
-            return (JsonSchemaBuilder)schemas.get(0);
+            return (JsonSchemaBuilder) schemas.get(0);
         } else {
             JsonSchemaBuilder schema = new JsonSchemaBuilder();
             schema.addAnyOf(schemas);
@@ -282,7 +293,7 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
         if (propertyInfo.isCollection()) {
             typeSchema = new JsonSchemaBuilder();
             typeSchema.addType("array").addItem(itemTypeSchema);
-            Multiplicity multiplicity = (Multiplicity)this.multiplicityCounter.apply(propertyInfo.getOrigin());
+            Multiplicity multiplicity = (Multiplicity) this.multiplicityCounter.apply(propertyInfo.getOrigin());
             if (multiplicity != null) {
                 if (multiplicity.min != null) {
                     typeSchema.addMinItems(multiplicity.min);
@@ -300,6 +311,6 @@ public class JsonSchemaPropertyInfoProducerVisitor<T, C extends T> implements MP
     }
 
     private <M extends MOriginated<O>, O> JsonSchemaBuilder createTypeSchema(M originated, MTypeInfo<T, C> typeInfo) {
-        return (JsonSchemaBuilder)typeInfo.acceptTypeInfoVisitor(new CreateTypeInfoSchema(this.mappingCompiler, originated));
+        return (JsonSchemaBuilder) typeInfo.acceptTypeInfoVisitor(new CreateTypeInfoSchema(this.mappingCompiler, originated));
     }
 }

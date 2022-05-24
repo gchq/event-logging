@@ -56,6 +56,8 @@ public class ClassInfoProducer<T, C extends T> extends PackagedTypeInfoProducer<
             } else if (cClassInfo.javadoc != null) {
                 classInfoSchema.addDescription(cClassInfo.javadoc);
             }
+        } else {
+            System.out.println("unk");
         }
 
         MClassTypeInfo<T, C, ?> baseTypeInfo = this.classInfo.getBaseTypeInfo();

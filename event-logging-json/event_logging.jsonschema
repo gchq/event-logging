@@ -535,6 +535,7 @@
             "properties":{
                 "content":{
                     "title":"content",
+                    "description":"This type is used to contain any content conforming to an agreed format/specification that is defined outside of this XML Schema.",
                     "allOf":[
                         {
                             "type":"array",
