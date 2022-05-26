@@ -12,6 +12,11 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v5.0-beta.32_schema-v4.0-beta.10] - 2022-05-26
+
+* Update schema to schema-v4.0-beta.10 which fixes a number of typos in the schema annotations and thus the event-logging javadoc.
+
+
 ## [v5.0-beta.31_schema-v4.0-beta.3] - 2022-04-29
 
 * Issue **#14** : Change DeviceUtil to strip square brackets from IPv6 addresses to ensure they are valid in the Schema.
@@ -215,7 +220,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.31_schema-v4.0-beta.3...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.32_schema-v4.0-beta.10...HEAD
+[v5.0-beta.32_schema-v4.0-beta.10]: https://github.com/gchq/event-logging/compare/v5.0-beta.31_schema-v4.0-beta.3...v5.0-beta.32_schema-v4.0-beta.10
 [v5.0-beta.31_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.30_schema-v4.0-beta.3...v5.0-beta.31_schema-v4.0-beta.3
 [v5.0-beta.30_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.29_schema-v4.0-beta.3...v5.0-beta.30_schema-v4.0-beta.3
 [v5.0-beta.29_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.28_schema-v4.0-beta.3...v5.0-beta.29_schema-v4.0-beta.3
