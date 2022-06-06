@@ -52,6 +52,7 @@ dependencies {
 
     // Used for logging in this example application's code
     // SLF4J is also a transitive runtime dependency of event-logging
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
     implementation 'org.slf4j:slf4j-api:1.7.30'
 
     // Used by this example application at run time to log output to the console

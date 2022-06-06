@@ -1,6 +1,7 @@
 //apply plugin: 'ca.cutterslade.analyze'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
+apply plugin: 'io.swagger.core.v3.swagger-gradle-plugin'
 
 ext.moduleName = 'event.logging.api'
 
@@ -11,7 +12,12 @@ def schemaDir = project.file('schema')
 archivesBaseName = "event-logging"
 
 dependencies {
+    implementation libs.jackson_annotations
+    implementation libs.jackson_databind
+    compileOnly libs.jakarta_servlet_api
+    implementation libs.jakarta_ws_rs_api
     implementation libs.jaxb_api
+    implementation libs.swagger_annotations
 
     // The production code uses the SLF4J logging API at compile time
     implementation libs.slf4j_api
@@ -19,6 +25,7 @@ dependencies {
     // The JAXB implementation required for event serialisation to XML
     runtimeOnly libs.jaxb_runtime
 
+    testImplementation libs.classgraph
     testImplementation libs.junit_jupiter_api
     testImplementation libs.junit_jupiter_params
     testImplementation libs.assertj_core
@@ -36,6 +43,17 @@ java {
     withJavadocJar()
     //package Sources as part of publication
     withSourcesJar()
+}
+
+resolve {
+    outputFileName = 'event-logging'
+    outputFormat = 'JSONANDYAML'
+    prettyPrint = 'TRUE'
+    sortOutput = 'TRUE'
+    openApiFile = file('openapi.yaml')
+    classpath = sourceSets.main.runtimeClasspath
+    resourcePackages = ['event.logging.resource']
+    outputDir = file('src/main/resources/swagger')
 }
 
 jar {
