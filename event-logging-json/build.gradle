@@ -14,7 +14,38 @@ ext.moduleName = 'event.logging.json'
 dependencies {
     implementation project(':event-logging-api')
     implementation project(':event-logging-base')
-    implementation 'org.hisrc.jsonix:jsonix-schema-compiler-full:2.3.9'
+//    implementation 'org.hisrc.jsonix:jsonix-schema-compiler-full:2.3.9'
+
+    implementation 'com.kjetland:mbknor-jackson-jsonschema_2.13:1.0.39'
+
+//    // JAXB
+//    implementation "org.glassfish.jaxb:jaxb-runtime:2.2.11"
+//    implementation "org.glassfish.jaxb:jaxb-core:2.2.11"
+//    implementation "org.glassfish.jaxb:jaxb-xjc:2.2.11"
+//    // Jsonix Schema Compiler
+//    implementation "org.hisrc.jsonix:jsonix-schema-compiler-full:2.3.9"
+//    implementation "org.hisrc.jsonix:jsonix-schema-compiler:2.3.9"
+//    // Jsonix
+//    implementation "org.hisrc.jsonix:jsonix-scripts:2.3.8"
+//    <version>${project.version}</version>
+//			</dependency>
+//            <dependency>
+//            implementation "junit:
+//				<artifactId>junit</artifactId>
+//    <version>4.11</version>
+//			</dependency>
+//            // Legato Testing -->
+//            <dependency>
+//            implementation "net.disy.legato:
+//				<artifactId>legato-testing</artifactId>
+//    <version>1.1.1</version>
+//			</dependency>
+//    <dependency>
+//            implementation "net.disy.legato:
+//				<artifactId>legato-tools</artifactId>
+//            <version>1.1.1</version>
+//			</dependency>
+
 
 //    implementation libs.jaxb_xjc
 //    implementation libs.slf4j_api

@@ -9,7 +9,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +40,7 @@ public class JacksonAnnotationDecorator {
     private static final Pattern EXTENDS_PATTERN =
             Pattern.compile("(class|interface|enum|record)\\s+([A-Za-z0-9.]+)\\s+(extends|implements)\\s+([^{]+)");
     private static final String CLASS = " class ";
+    private static final String REQUIRED = "required = true";
 
     private final boolean overwrite;
     private final boolean relocate;
@@ -362,7 +371,7 @@ public class JacksonAnnotationDecorator {
                             comment = comment.replaceAll("[ ]*\n", "\n"); // Remove spaces from end of lines.
                             comment = comment.trim(); // Trim ends.
                             comment = comment.replaceAll("\"", "\\\\\""); // Escape embedded quotes.
-                            comment = comment.replaceAll("\n", "\" +\n            \""); // Add indentation and quotes to each line.
+                            comment = comment.replaceAll("\n", " \" +\n            \""); // Add indentation and quotes to each line.
                             comment = comment.replaceAll("^\"", ""); // Strip start quote.
                             comment = comment.replaceAll("$\"", ""); // Strip end quote.
                             comment = comment.trim(); // Trim ends.
@@ -381,7 +390,11 @@ public class JacksonAnnotationDecorator {
 
                     start = findMemberPos(java, fieldInfo);
                     if (start != -1) {
-                        java = insert(java, "@JsonProperty\n    ", start);
+                        if (fieldInfo.required) {
+                            java = insert(java, "@JsonProperty(required = true)\n    ", start);
+                        } else {
+                            java = insert(java, "@JsonProperty\n    ", start);
+                        }
                     }
                 }
             }
@@ -522,6 +535,7 @@ public class JacksonAnnotationDecorator {
                 nextClassPos = Integer.MAX_VALUE;
             }
 
+            int nextRequired = java.indexOf(REQUIRED);
             final Matcher fieldMatcher = FIELD_PATTERN.matcher(java);
             while (fieldMatcher.find()) {
                 final int start = fieldMatcher.start();
@@ -530,9 +544,17 @@ public class JacksonAnnotationDecorator {
                     break;
                 }
 
+                boolean required = false;
+                if (nextRequired != -1) {
+                    if (nextRequired < start) {
+                        required = true;
+                        nextRequired = java.indexOf(REQUIRED, nextRequired + REQUIRED.length());
+                    }
+                }
+
                 final String fieldType = fieldMatcher.group(2);
                 final String fieldName = fieldMatcher.group(3);
-                final FieldInfo fieldInfo = new FieldInfo(fieldName, fieldType);
+                final FieldInfo fieldInfo = new FieldInfo(fieldName, fieldType, required);
                 if (fields.contains(fieldInfo)) {
                     throw new RuntimeException("Duplicate field: " + fieldName);
                 }
@@ -609,10 +631,14 @@ public class JacksonAnnotationDecorator {
     private static class FieldInfo {
         private final String name;
         private final String type;
+        private final boolean required;
 
-        public FieldInfo(String name, String type) {
+        public FieldInfo(final String name,
+                         final String type,
+                         final boolean required) {
             this.name = name;
             this.type = type;
+            this.required = required;
         }
 
         @Override
