@@ -5,12 +5,19 @@
         const response = await fetch('https://api.github.com/repos/gchq/event-logging/contents/?ref=gh-pages');
         const data = await response.json();
         let htmlString = '<h1>event-logging Documentation</h1>';
-        htmlString += '<table><tr><th>Version</th><th>Swagger UI</th><th>Javadoc</th></tr>';
+        htmlString += '<table><tr>';
+        htmlString += '<th>Version</th>';
+        htmlString += '<th>Swagger UI</th>';
+        htmlString += '<th>Javadoc</th>';
+        htmlString += '</tr>';
         
+        // Add a row for each minor version dir in gh-pages
         for (let file of data) {
-          if (filr.type === "dir" && file.name.match("^[0-9]+\.[0-9]+") ) {
+          if (file.type === "dir" && file.name.match("^[0-9]+\.[0-9]+") ) {
+            // Get the actual patch version of this minor version e.g. v1.2.3 for minor version v1.2
+            let version = await fetch(`https://gchq.github.io/event-logging/${file.name}/version.txt`);
             htmlString += '<tr>';
-            htmlString += `<td><a href="${file.path}">${file.name}</a></td>`;
+            htmlString += `<td>${version}</td>`;
             htmlString += `<td><a href="${file.path}/swagger-ui/">Link</a></td>`;
             htmlString += `<td><a href="${file.path}/javadoc/">Link</a></td>`;
             htmlString += '</tr>';

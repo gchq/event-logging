@@ -90,6 +90,9 @@ main() {
     "${repo_uri}" \
     "${gh_pages_clone_dir}"
 
+  # Copy our root index directory page
+  cp "${GITHUB_WORKSPACE}/index.html" "${gh_pages_clone_dir}/"
+
   pushd "${gh_pages_clone_dir}" > /dev/null
 
   mkdir -p "${gh_pages_versioned_dir}"
