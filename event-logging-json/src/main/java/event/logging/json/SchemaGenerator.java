@@ -9,18 +9,22 @@ import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 import event.logging.Events;
 
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class SchemaGenerator {
-    public static void main(String[] args) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-        JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator(mapper);
+    private static final String MODULE_NAME = "event-logging-json";
+
+    public static void main(String[] args) throws Exception {
+        final ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+                .configure(SerializationFeature.INDENT_OUTPUT, true)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        final JsonSchemaGenerator jsonSchemaGenerator = new JsonSchemaGenerator(mapper);
 
         // If using JsonSchema to generate HTML5 GUI:
         // JsonSchemaGenerator html5 = new JsonSchemaGenerator(objectMapper, JsonSchemaConfig.html5EnabledSchema() );
@@ -29,24 +33,40 @@ public class SchemaGenerator {
         // JsonSchemaConfig config = JsonSchemaConfig.create(...);
         // JsonSchemaGenerator generator = new JsonSchemaGenerator(objectMapper, config);
 
-
-        JsonNode jsonSchema = jsonSchemaGenerator.generateJsonSchema(Events.class);
+        final JsonNode jsonSchema = jsonSchemaGenerator.generateJsonSchema(Events.class);
 
         String jsonSchemaAsString = mapper.writeValueAsString(jsonSchema);
 
-        try (final Writer writer = Files.newBufferedWriter(Paths.get("event-logging-json").resolve("json-schema.json"))) {
+        Path rootDir = Paths.get(".").normalize().toAbsolutePath();
+        if (!rootDir.endsWith(MODULE_NAME)) {
+            //running from within the module so go up one
+            rootDir = rootDir.resolve(MODULE_NAME).normalize().toAbsolutePath();
+        }
+        System.out.println("Using root directory: " + rootDir);
+
+        final Path schemaPath = rootDir.resolve("json-schema.json");
+        final Path swaggerOutputPath = rootDir.resolve("swagger-output.json");
+        final Path wrapperPath = rootDir.resolve("swagger-wrapper.json");
+
+        System.out.println("Writing schema file: " + schemaPath.toAbsolutePath().normalize());
+        try (final Writer writer = Files.newBufferedWriter(schemaPath)) {
             writer.write(jsonSchemaAsString);
         }
 
-        final Path wrapperPath = Paths.get("event-logging-json").resolve("swagger-wrapper.json");
-        final String wrapper = new String(Files.readAllBytes(wrapperPath), "UTF-8");
-        jsonSchemaAsString = jsonSchemaAsString.replaceAll("\n", "\n  ");
-        jsonSchemaAsString = jsonSchemaAsString.replaceAll("#/definitions/", "#/components/schemas/");
+        System.out.println("Reading wrapper file: " + wrapperPath.toAbsolutePath().normalize());
+        final String wrapper = new String(Files.readAllBytes(wrapperPath), StandardCharsets.UTF_8);
+
+        jsonSchemaAsString = jsonSchemaAsString.replaceAll("\n", "\n  ")
+                .replaceAll("#/definitions/", "#/components/schemas/");
         int index = jsonSchemaAsString.indexOf("  \"definitions\" : {\n") + "  \"definitions\" : {\n".length();
         final String definitions = jsonSchemaAsString.substring(index);
         final String result = wrapper + definitions + "\n}\n";
-        try (final Writer writer = Files.newBufferedWriter(Paths.get("event-logging-json").resolve("swagger-output.json"))) {
+
+        System.out.println("Writing swagger output file: " + swaggerOutputPath.toAbsolutePath().normalize());
+
+        try (final Writer writer = Files.newBufferedWriter(swaggerOutputPath)) {
             writer.write(result);
         }
+        System.out.println("Done");
     }
 }

@@ -27,7 +27,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to the event as long as it conforms to an allowed format/specification (defined outside of this XML Schema).  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to the event as long as it conforms to an allowed format/specification (defined outside this XML Schema).  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "classification" : {
           "$ref" : "#/definitions/Classification",
@@ -43,11 +43,11 @@
         },
         "eventDetail" : {
           "$ref" : "#/definitions/EventDetail",
-          "description" : "This element describes the details of what heppend in the event: the type of the event, why it happened and the event action.  <P> Gets the value of the eventDetail property.  @return possible object is {@link EventDetail }"
+          "description" : "This element describes the details of what happened in the event: the type of the event, why it happened and the event action.  <P> Gets the value of the eventDetail property.  @return possible object is {@link EventDetail }"
         },
         "eventChain" : {
           "$ref" : "#/definitions/EventChain",
-          "description" : "This element can be used to create relationships between different events, i.e where one event is the child of another.  <P> Gets the value of the eventChain property.  @return possible object is {@link EventChain }"
+          "description" : "This element can be used to create relationships between different events, i.e. where one event is the child of another.  <P> Gets the value of the eventChain property.  @return possible object is {@link EventChain }"
         },
         "data" : {
           "type" : "array",
@@ -68,11 +68,11 @@
           "items" : {
             "$ref" : "#/definitions/Object"
           },
-          "description" : "This type is used to contain any content conforming to an agreed format/specification that is defined outside of this XML Schema.  <P> This type is used to contain any content conforming to an agreed format/specification that is defined outside of this XML Schema.Gets the value of the content property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the content property.  <p> For example, to add a new item, do as follows: <pre> getContent().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link Element } {@link Object } {@link String }"
+          "description" : "This type is used to contain any content conforming to an agreed format/specification that is defined outside this XML Schema.  <P> This type is used to contain any content conforming to an agreed format/specification that is defined outside this XML Schema.Gets the value of the content property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the content property.  <p> For example, to add a new item, do as follows: <pre> getContent().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link Element } {@link Object } {@link String }"
         },
         "contentType" : {
           "type" : "string",
-          "description" : "String to describe the format type and specification of the content, e.g. JSON or XML. The valid values are defined outside of this XML Schema.  <P> Gets the value of the contentType property.  @return possible object is {@link String }"
+          "description" : "String to describe the format type and specification of the content, e.g. JSON or XML. The valid values are defined outside this XML Schema.  <P> Gets the value of the contentType property.  @return possible object is {@link String }"
         },
         "version" : {
           "type" : "string",
@@ -91,7 +91,7 @@
       "properties" : {
         "text" : {
           "type" : "string",
-          "description" : "Optional full human readable text of the protective marking that can combine the various elements in this Classification structure, e.g 'Commercial in Confidence'.  <P> Gets the value of the text property.  @return possible object is {@link String }"
+          "description" : "Optional full human-readable text of the protective marking that can combine the various elements in this Classification structure, e.g 'Commercial in Confidence'.  <P> Gets the value of the text property.  @return possible object is {@link String }"
         },
         "originator" : {
           "$ref" : "#/definitions/Organisation",
@@ -249,7 +249,7 @@
           "items" : {
             "$ref" : "#/definitions/Data"
           },
-          "description" : "A child data item that may itself have descendents.  <P> Gets the value of the data property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the data property.  <p> For example, to add a new item, do as follows: <pre> getData().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link Data }"
+          "description" : "A child data item that may itself have descendants.  <P> Gets the value of the data property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the data property.  <p> For example, to add a new item, do as follows: <pre> getData().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link Data }"
         },
         "name" : {
           "type" : "string",
@@ -289,7 +289,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "Identifier used to uniquely identify the device within the organisation's asset register/system. Also this can be used to identify a device that does not have HostName/IPAddress/MACAddress.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "Identifier used to uniquely identify the device within the organisation's asset register/system. Also, this can be used to identify a device that does not have HostName/IPAddress/MACAddress.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -356,7 +356,7 @@
         },
         "site" : {
           "type" : "string",
-          "description" : "The name of the site of the location, e.g. where an organistation has multiple distinct sites or campuses. Specifiying the site is particularly important when the sites are in the same town/city.  <P> Gets the value of the site property.  @return possible object is {@link String }"
+          "description" : "The name of the site of the location, e.g. where an organisation has multiple distinct sites or campuses. Specifying the site is particularly important when the sites are in the same town/city.  <P> Gets the value of the site property.  @return possible object is {@link String }"
         },
         "building" : {
           "type" : "string",
@@ -380,7 +380,7 @@
         },
         "position" : {
           "type" : "string",
-          "description" : "The position of the device where the location refers to a rack mounted device in a rack/cabinet. E.g. where a 4U device occupies U positions 1-4 in a cabinet (numbered from the bottom of the cabinet, satrting from 1), the position would be '1'.  <P> Gets the value of the position property.  @return possible object is {@link String }"
+          "description" : "The position of the device where the location refers to a rack mounted device in a rack/cabinet. E.g. where a 4U device occupies U positions 1-4 in a cabinet (numbered from the bottom of the cabinet, starting from 1), the position would be '1'.  <P> Gets the value of the position property.  @return possible object is {@link String }"
         },
         "timeZoneName" : {
           "type" : "string",
@@ -417,11 +417,11 @@
       "properties" : {
         "eventId" : {
           "type" : "string",
-          "description" : "A unique identifier known to the source system that created the event. This identifier may not be unique outside of the source system. It can be used for linking related events within the source system, e.g. where an event is part of a chain of events or is child of another event. Linking of events can be recorded with the Event/EventChain element.  <P> Gets the value of the eventId property.  @return possible object is {@link String }"
+          "description" : "A unique identifier known to the source system that created the event. This identifier may not be unique outside the source system. It can be used for linking related events within the source system, e.g. where an event is part of a chain of events or is child of another event. Linking of events can be recorded with the Event/EventChain element.  <P> Gets the value of the eventId property.  @return possible object is {@link String }"
         },
         "sessionId" : {
           "type" : "string",
-          "description" : "Where an event is part of a session the identifier for that session can be recorded here to allow subsequent grouping of events for the same session. The SessionId should be a uniqiue identifier for the session within the source system. It is not expected that the SessionId have meaning or be unique outside of the source system.  <P> Gets the value of the sessionId property.  @return possible object is {@link String }"
+          "description" : "Where an event is part of a session the identifier for that session can be recorded here to allow subsequent grouping of events for the same session. The SessionId should be a unique identifier for the session within the source system. It is not expected that the SessionId have meaning or be unique outside the source system.  <P> Gets the value of the sessionId property.  @return possible object is {@link String }"
         },
         "system" : {
           "$ref" : "#/definitions/SystemDetail",
@@ -491,7 +491,7 @@
         },
         "organisation" : {
           "type" : "string",
-          "description" : "Describes the organisation that owns or has responsiblity for the system.  <P> Gets the value of the organisation property.  @return possible object is {@link String }"
+          "description" : "Describes the organisation that owns or has responsibility for the system.  <P> Gets the value of the organisation property.  @return possible object is {@link String }"
         },
         "version" : {
           "type" : "string",
@@ -540,7 +540,7 @@
         },
         "removeAll" : {
           "type" : "boolean",
-          "description" : "This element is used to tell us to remove all access zones from the list of currently accesible zones for a user before adding a new one. This is the case whenever a user moves from one zone to another and loses all possible access to the zones they were previously in, i.e. they would need to re-authenticate to regain access rather than just pass back through the door. If not specified this element is considered to be true as most movement through a door removes access to previously accessible zones. Removal of all access zones provides anti pass-back protection.  <P> Gets the value of the removeAll property.  @return possible object is {@link Boolean }"
+          "description" : "This element is used to tell us to remove all access zones from the list of currently accessible zones for a user before adding a new one. This is the case whenever a user moves from one zone to another and loses all possible access to the zones they were previously in, i.e. they would need to re-authenticate to regain access rather than just pass back through the door. If not specified this element is considered to be true as most movement through a door removes access to previously accessible zones. Removal of all access zones provides anti pass-back protection.  <P> Gets the value of the removeAll property.  @return possible object is {@link Boolean }"
         },
         "addAccess" : {
           "$ref" : "#/definitions/AddAccess",
@@ -577,7 +577,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -585,7 +585,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -617,7 +617,7 @@
         },
         "domain" : {
           "type" : "string",
-          "description" : "The security domain that the user exists within, e.g. an Active Directory or OpenLDAP doamin.  <P> Gets the value of the domain property.  @return possible object is {@link String }"
+          "description" : "The security domain that the user exists within, e.g. an Active Directory or OpenLDAP domain.  <P> Gets the value of the domain property.  @return possible object is {@link String }"
         },
         "emailAddress" : {
           "type" : "string",
@@ -665,7 +665,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -673,7 +673,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -783,11 +783,11 @@
       "properties" : {
         "typeId" : {
           "type" : "string",
-          "description" : "A name/code/ID to uniquely identify the logical event type within the service providing the events. E.g a Windows eventId (i.e representing 'Failed logon', 'Change password attempt', etc.) or for application logging: SaveRecord, ViewUserRecord, ViewSearchResults, etc. The granularity will depend on the application. Typically the number of unique TypeIds will be in the 10s. Note, the values of the TypeId are not meant to be globally consistent, they will only be relevant within that service providing the events.  <P> Gets the value of the typeId property.  @return possible object is {@link String }"
+          "description" : "A name/code/ID to uniquely identify the logical event type within the service providing the events. E.g. a Windows eventId (i.e. representing 'Failed logon', 'Change password attempt', etc.) or for application logging: SaveRecord, ViewUserRecord, ViewSearchResults, etc. The granularity will depend on the application. Typically, the number of unique TypeIds will be in the 10s. Note, the values of the TypeId are not meant to be globally consistent, they will only be relevant within that service providing the events.  <P> Gets the value of the typeId property.  @return possible object is {@link String }"
         },
         "description" : {
           "type" : "string",
-          "description" : "Some human readable descriptive text for the event type.  <P> Gets the value of the description property.  @return possible object is {@link String }"
+          "description" : "Some human-readable descriptive text for the event type.  <P> Gets the value of the description property.  @return possible object is {@link String }"
         },
         "purpose" : {
           "$ref" : "#/definitions/Purpose",
@@ -919,7 +919,7 @@
         "type" : {
           "type" : "string",
           "enum" : [ "VULNERABILITY", "IDS", "MALWARE", "NETWORK", "CHANGE", "ERROR", "OTHER" ],
-          "description" : "The type of alert that has been fired, e.g Error, Malware, etc.  <P> Gets the value of the type property.  @return possible object is {@link AlertType }"
+          "description" : "The type of alert that has been fired, e.g. Error, Malware, etc.  <P> Gets the value of the type property.  @return possible object is {@link AlertType }"
         },
         "severity" : {
           "type" : "string",
@@ -1096,7 +1096,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1104,7 +1104,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1163,7 +1163,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1171,7 +1171,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1234,7 +1234,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1242,7 +1242,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1320,7 +1320,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1328,7 +1328,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1383,7 +1383,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1391,7 +1391,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1435,11 +1435,11 @@
         },
         "totalResults" : {
           "type" : "integer",
-          "description" : "The total number or results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
+          "description" : "The total number of results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
         },
         "results" : {
           "$ref" : "#/definitions/MultiObject",
-          "description" : "Describes the results returned by the search if they are know at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
+          "description" : "Describes the results returned by the search if they are known at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
         },
         "data" : {
           "type" : "array",
@@ -1480,7 +1480,7 @@
         },
         "description" : {
           "type" : "string",
-          "description" : "A human readble description of what the query is searching for.  <P> Gets the value of the description property.  @return possible object is {@link String }"
+          "description" : "A human-readable description of what the query is searching for.  <P> Gets the value of the description property.  @return possible object is {@link String }"
         },
         "advanced" : {
           "$ref" : "#/definitions/AdvancedQuery",
@@ -1488,7 +1488,7 @@
         },
         "simple" : {
           "$ref" : "#/definitions/SimpleQuery",
-          "description" : "A simple representation of a query using includes and excludes terms. This is suitable for simple filtered lists, e.g for a list of names excluding \"John,Bob\".  <P> Gets the value of the simple property.  @return possible object is {@link SimpleQuery }"
+          "description" : "A simple representation of a query using includes and excludes terms. This is suitable for simple filtered lists, e.g. for a list of names excluding \"John,Bob\".  <P> Gets the value of the simple property.  @return possible object is {@link SimpleQuery }"
         },
         "raw" : {
           "type" : "string",
@@ -1681,7 +1681,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1689,7 +1689,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1783,7 +1783,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1791,7 +1791,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1883,7 +1883,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -1891,7 +1891,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -1979,7 +1979,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "The identifier for the removabel media. This may be an identifer provided by the media (e.g. the Card Identification or CID of an SD card) or assigned by device monitoring software.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "The identifier for the removable media. This may be an identifier provided by the media (e.g. the Card Identification or CID of an SD card) or assigned by device monitoring software.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2040,7 +2040,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2048,7 +2048,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2134,7 +2134,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2142,7 +2142,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2220,7 +2220,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2228,7 +2228,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2283,7 +2283,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2291,7 +2291,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2401,10 +2401,10 @@
           },
           "description" : "Any other event data that does not fit into a schema element but may be useful for the purpose of audit.  <P> Gets the value of the data property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the data property.  <p> For example, to add a new item, do as follows: <pre> getData().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link Data }"
         },
-        "httpversion" : {
+        "httpmethod" : {
           "type" : "string"
         },
-        "httpmethod" : {
+        "httpversion" : {
           "type" : "string"
         }
       },
@@ -2425,7 +2425,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2433,7 +2433,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2477,11 +2477,11 @@
         },
         "totalResults" : {
           "type" : "integer",
-          "description" : "The total number or results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
+          "description" : "The total number of results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
         },
         "results" : {
           "$ref" : "#/definitions/MultiObject",
-          "description" : "Describes the results returned by the search if they are know at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
+          "description" : "Describes the results returned by the search if they are known at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
         },
         "data" : {
           "type" : "array",
@@ -2508,7 +2508,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2516,7 +2516,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2602,7 +2602,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2610,7 +2610,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2653,7 +2653,7 @@
           "items" : {
             "$ref" : "#/definitions/User"
           },
-          "description" : "The user that is the recipient of the call or a collection of users in the case of a conferrence type call.  <P> Gets the value of the to property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the to property.  <p> For example, to add a new item, do as follows: <pre> getTo().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link User }"
+          "description" : "The user that is the recipient of the call or a collection of users in the case of a conference type call.  <P> Gets the value of the to property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the to property.  <p> For example, to add a new item, do as follows: <pre> getTo().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link User }"
         },
         "data" : {
           "type" : "array",
@@ -2680,7 +2680,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -2688,7 +2688,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -2999,7 +2999,7 @@
       "properties" : {
         "id" : {
           "type" : "string",
-          "description" : "An identitfier for the authorisation service, usually a URI string.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the authorisation service, usually a URI string.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "cacheTimeout" : {
           "type" : "integer",
@@ -3147,7 +3147,7 @@
         "action" : {
           "type" : "string",
           "enum" : [ "REQUEST", "MODIFY" ],
-          "description" : "The type of the evnet action, e.g. a modification to authorisation rules/groups or the request to be authorised.  <P> Gets the value of the action property.  @return possible object is {@link AuthorisationActionType }"
+          "description" : "The type of the event action, e.g. a modification to authorisation rules/groups or the request to be authorised.  <P> Gets the value of the action property.  @return possible object is {@link AuthorisationActionType }"
         },
         "addGroups" : {
           "$ref" : "#/definitions/AddGroups",
@@ -3258,7 +3258,7 @@
         "reason" : {
           "type" : "string",
           "enum" : [ "DEVICE_FULL", "IO_ERROR", "INVALID_PATH", "PERMISSION_DENIED", "READ_ONLY" ],
-          "description" : "Used to explain the reson for failure, e.g. Device full.  <P> Gets the value of the reason property.  @return possible object is {@link CopyMoveOutcomeReason }"
+          "description" : "Used to explain the reason for failure, e.g. Device full.  <P> Gets the value of the reason property.  @return possible object is {@link CopyMoveOutcomeReason }"
         },
         "data" : {
           "type" : "array",
@@ -3519,11 +3519,11 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "A unique identifer for the piece of hardware, e.g. an asset number.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "A unique identifier for the piece of hardware, e.g. an asset number.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
-          "description" : "A friendly name for the hardware, e.g. a name that has been deinfed in an asset management or device monitoring system.  <P> Gets the value of the name property.  @return possible object is {@link String }"
+          "description" : "A friendly name for the hardware, e.g. a name that has been defined in an asset management or device monitoring system.  <P> Gets the value of the name property.  @return possible object is {@link String }"
         },
         "model" : {
           "type" : "string",
@@ -3619,11 +3619,11 @@
         },
         "permit" : {
           "$ref" : "#/definitions/NetworkOutcome",
-          "description" : "The action of network traffic being permitted by an Access Contol List (ACL).  <P> Gets the value of the permit property.  @return possible object is {@link NetworkOutcome }"
+          "description" : "The action of network traffic being permitted by an Access Control List (ACL).  <P> Gets the value of the permit property.  @return possible object is {@link NetworkOutcome }"
         },
         "deny" : {
           "$ref" : "#/definitions/NetworkOutcome",
-          "description" : "The action of network traffic being denied by an Access Contol List (ACL).  <P> Gets the value of the deny property.  @return possible object is {@link NetworkOutcome }"
+          "description" : "The action of network traffic being denied by an Access Control List (ACL).  <P> Gets the value of the deny property.  @return possible object is {@link NetworkOutcome }"
         }
       },
       "title" : "network",
@@ -3841,7 +3841,7 @@
         },
         "source" : {
           "$ref" : "#/definitions/Source",
-          "description" : "The initiator(s) of the object or resource sent or received. A initiator can be a user and/or device.  <P> Gets the value of the source property.  @return possible object is {@link Source }"
+          "description" : "The initiator(s) of the object or resource sent or received. An initiator can be a user and/or device.  <P> Gets the value of the source property.  @return possible object is {@link Source }"
         },
         "destination" : {
           "$ref" : "#/definitions/Destination",
@@ -3914,7 +3914,7 @@
           "items" : {
             "$ref" : "#/definitions/AnyContent"
           },
-          "description" : "This element can be used to supply any meta data relating to an object as long as it conforms to an allowed format/specification (defined outside of this XML Schema). This can be used for addeding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
+          "description" : "This element can be used to supply any metadata relating to an object as long as it conforms to an allowed format/specification (defined outside this XML Schema). This can be used for adding metadata to the event after receipt.  <P> Gets the value of the meta property.  <p> This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for the meta property.  <p> For example, to add a new item, do as follows: <pre> getMeta().add(newItem); </pre>   <p> Objects of the following type(s) are allowed in the list {@link AnyContent }"
         },
         "type" : {
           "type" : "string",
@@ -3922,7 +3922,7 @@
         },
         "id" : {
           "type" : "string",
-          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specifc to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "An identifier for the object, e.g a document ID in a document management system. This ID is likely to be specific to the system that generated the event.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
@@ -3966,11 +3966,11 @@
         },
         "totalResults" : {
           "type" : "integer",
-          "description" : "The total number or results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
+          "description" : "The total number of results returned by the query, if known at query time. In situations where only a sub-set of results are displayed/returned to the user then this element represents the count of ALL results and ResultPage should be used to provide details of which results are actually viewed/returned by the user.  <P> Gets the value of the totalResults property.  @return possible object is {@link BigInteger }"
         },
         "results" : {
           "$ref" : "#/definitions/MultiObject",
-          "description" : "Describes the results returned by the search if they are know at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
+          "description" : "Describes the results returned by the search if they are known at the time of the Search event (a synchronous search). If the results are not know at execution time (an asynchronous search) and will be viewed as part of a separate event then View/SearchResults can be used to model that event.  <P> Gets the value of the results property.  @return possible object is {@link MultiObject }"
         },
         "outcome" : {
           "$ref" : "#/definitions/Outcome",
@@ -3998,7 +3998,7 @@
         },
         "source" : {
           "$ref" : "#/definitions/Source",
-          "description" : "The initiator(s) of the object or resource sent or received. A initiator can be a user and/or device.  <P> Gets the value of the source property.  @return possible object is {@link Source }"
+          "description" : "The initiator(s) of the object or resource sent or received. An initiator can be a user and/or device.  <P> Gets the value of the source property.  @return possible object is {@link Source }"
         },
         "destination" : {
           "$ref" : "#/definitions/Destination",
@@ -4193,7 +4193,7 @@
       "properties" : {
         "id" : {
           "type" : "string",
-          "description" : "The unique identifer of the event that is being referenced. This will be the value of Event/EventSource/EventId on the referenced event. E.g where an event with Event/EventSource/EventId=101 is a child of an event with Event/EventSource/EventId=99, the value in this element would be 99.  <P> Gets the value of the id property.  @return possible object is {@link String }"
+          "description" : "The unique identifier of the event that is being referenced. This will be the value of Event/EventSource/EventId on the referenced event. E.g. where an event with Event/EventSource/EventId=101 is a child of an event with Event/EventSource/EventId=99, the value in this element would be 99.  <P> Gets the value of the id property.  @return possible object is {@link String }"
         },
         "name" : {
           "type" : "string",
