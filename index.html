@@ -1,31 +1,53 @@
 <html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>event-logging Versions</title>
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" 
+      crossorigin="anonymous">
+  </head>
+
   <body>
+    <h1 class="text-center display-2">event-logging Versions</h1>
+
+    <div class="container">
+      <div class="mt-4 text-center">This table lists the latest patch release for each minor version of event-logging.</div>
+      <table class="table mt-4" id="versions-content" />
+    </div>
+
     <script>
+      // Build a table of links for the various versions of event-logging
       (async () => {
+        const ghPagesBaseUrl = 'https://gchq.github.io/event-logging';
         const response = await fetch('https://api.github.com/repos/gchq/event-logging/contents/?ref=gh-pages');
         const data = await response.json();
-        let htmlString = '<h1>event-logging Documentation</h1>';
-        htmlString += '<table><tr>';
-        htmlString += '<th>Version</th>';
+        let htmlString = '';
+        htmlString += '<tr>';
+        htmlString += '<th>Release</th>';
         htmlString += '<th>Swagger UI</th>';
         htmlString += '<th>Javadoc</th>';
         htmlString += '</tr>';
         
         // Add a row for each minor version dir in gh-pages
         for (let file of data) {
-          if (file.type === "dir" && file.name.match("^[0-9]+\.[0-9]+") ) {
+          if (file.type === "dir" && file.name.match("^v[0-9]+\.[0-9]+") ) {
             // Get the actual patch version of this minor version e.g. v1.2.3 for minor version v1.2
-            let version = await fetch(`https://gchq.github.io/event-logging/${file.name}/version.txt`);
+            let version_response = await fetch(`${ghPagesBaseUrl}/${file.name}/version.txt`);
+            let version = await version_response.text();
             htmlString += '<tr>';
-            htmlString += `<td>${version}</td>`;
-            htmlString += `<td><a href="${file.path}/swagger-ui/">Link</a></td>`;
-            htmlString += `<td><a href="${file.path}/javadoc/">Link</a></td>`;
+            htmlString += `<td class="version"><strong><a href="https://github.com/gchq/event-logging/releases/tag/${version}">${version}</a></strong></td>`;
+            htmlString += `<td><a href="${ghPagesBaseUrl}/${file.path}/swagger-ui/">Link</a></td>`;
+            htmlString += `<td><a href="${ghPagesBaseUrl}/${file.path}/javadoc/">Link</a></td>`;
             htmlString += '</tr>';
           }
         }
 
-        htmlString += '</table>';
-        document.getElementsByTagName('body')[0].innerHTML = htmlString;
+        //htmlString += '</table>';
+        document.getElementById('versions-content').innerHTML = htmlString;
       })()
     </script>
   <body>
