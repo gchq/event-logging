@@ -24,7 +24,19 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 
 /**
- * This is the default implementation for creating an event that writes to Log4J when logged.
+ * <p>This is the default implementation of {@link EventLoggingService} for logging events.
+ * By default it writes serialised events to an SLF4J logger when {@link #log(Event)} is called.</p>
+ *
+ * <p>It is recommended to extend this class and override the {{@link #createEvent()}} methods to create
+ * a common skeleton event for your system.</p>
+ *
+ * <p>Set the java system property <code>event.logging.validate</code> to <code>true</code> to enable
+ * validation of the serialised XML against the XML Schema. This has a performance overhead so is
+ * disabled by default.</p>
+ *
+ * <p>If you want the serialised XML events to be consumed by something other than SLF4J then create
+ * your own implementation of {@link LogReceiver} and set the Java system property
+ * <code>event.logging.logreceiver</code> to the class name of your class.</p>
  */
 public class DefaultEventLoggingService implements EventLoggingService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEventLoggingService.class);

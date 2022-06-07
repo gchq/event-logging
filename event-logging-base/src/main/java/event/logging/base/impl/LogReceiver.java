@@ -16,14 +16,18 @@
 package event.logging.base.impl;
 
 /**
- * Interface for objects used to log events.
+ * <p>Interface for classed used to receive serialised events.</p>
+ *
+ * <p>Implementing classes can persist the serialised events and/or send them on to a
+ * system like Stroom.</p>
  */
 public interface LogReceiver {
+
     /**
-     * Logs the supplied data.
+     * Called for each event being logged.
      * 
      * @param data
-     *            The data to log.
+     *            The event in serialised form.
      */
     void log(String data);
 }

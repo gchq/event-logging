@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.function.Supplier;
 
 /**
- * A service for creating events.
+ * A service for recording audit events.
  */
 public interface EventLoggingService {
 

@@ -20,6 +20,11 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * <p>If you want the serialised XML events to be consumed by something other than SLF4J then create
+ * your own implementation of {@link LogReceiver} and set the Java system property
+ * <code>event.logging.logreceiver</code> to the class name of your class.</p>
+ */
 public final class LogReceiverFactory {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(LogReceiverFactory.class);
