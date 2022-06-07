@@ -45,7 +45,7 @@ public class SchemaGenerator {
         System.out.println("Using root directory: " + rootDir);
 
         final Path schemaPath = rootDir.resolve("json-schema.json");
-        final Path swaggerOutputPath = rootDir.resolve("swagger-output.json");
+        final Path swaggerSpecPath = rootDir.resolve("swagger-spec.json");
         final Path wrapperPath = rootDir.resolve("swagger-wrapper.json");
 
         System.out.println("Writing schema file: " + schemaPath.toAbsolutePath().normalize());
@@ -62,9 +62,9 @@ public class SchemaGenerator {
         final String definitions = jsonSchemaAsString.substring(index);
         final String result = wrapper + definitions + "\n}\n";
 
-        System.out.println("Writing swagger output file: " + swaggerOutputPath.toAbsolutePath().normalize());
+        System.out.println("Writing swagger spec file: " + swaggerSpecPath.toAbsolutePath().normalize());
 
-        try (final Writer writer = Files.newBufferedWriter(swaggerOutputPath)) {
+        try (final Writer writer = Files.newBufferedWriter(swaggerSpecPath)) {
             writer.write(result);
         }
         System.out.println("Done");

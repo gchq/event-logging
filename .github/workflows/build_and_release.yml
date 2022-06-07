@@ -35,6 +35,11 @@ jobs:
           java-version: '8.0.312+7'
           cache: 'gradle'
 
+        # Make sure the wrapper jar has not been tampered with
+      - name: Validate gradle wrapper jar
+        id: validate_gradle_wrapper
+        uses: gradle/wrapper-validation-action@v1
+
         # Set variables in github's special env file which are then automatically 
         # read into env vars in each subsequent step
       - name: Set Environment Variables
@@ -127,3 +132,17 @@ jobs:
         run: |
           rm -f ~/.gradle/caches/modules-2/modules-2.lock
           rm -f ~/.gradle/caches/modules-2/gc.properties
+
+      - name: Update gh-pages
+        id: update_gh-pages
+        if: ${{ env.BUILD_IS_RELEASE == 'true' }}
+        env:
+          # Github provided secret. To set it up do:
+          # Use this to generate the pub/priv key pair
+          #   ssh-keygen -t rsa -b 4096 -f <repo>_deploy_key
+          # Create a repo deploy key with the public key, name 'Actions Deploy Key' and with write access
+          #   https://github.com/<namespace>/<repo>/settings/keys/new
+          # Create a repo secret with the private key, name 'SSH_DEPLOY_KEY'
+          #   https://github.com/<namespace>/<repo>/settings/secrets/actions/new
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+        run: "${ACTIONS_SCRIPTS_DIR}/update_gh_pages.sh"
