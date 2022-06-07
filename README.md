@@ -10,12 +10,22 @@ The [schema documentation](https://gchq.github.io/event-logging-schema/) provide
 The Javadoc for the latest release of the library is available [here](https://gchq.github.io/event-logging/).
 
 This library requires Java 8 as a minimum.
-The only dependencies it brings with it are `javax.xml.bind:jaxb-api` and `org.slf4j:slf4j-api`.
+The only dependencies it brings with it are:
+
+* `javax.xml.bind:jaxb-api` 
+* `org.glassfish.jaxb:jaxb-runtime` 
+* `org.slf4j:slf4j-api`
 
 By default the created events are serialised to XML and passed to an SLF4J logger which would typically be linked to a rolling file appender.
 If the events are destined for [Stroom](https://github.com/gchq/stroom) then standard practice is to serialise the events to files locally.
 Another process, e.g. a cron job, then sends the logs to their destination using curl or similar.
 [stroom-log-sender](https://hub.docker.com/r/gchq/stroom-log-sender) can also be used for sending log files to stroom.
+
+
+## Versions
+
+For a list of the versions of this library see [here](https://gchq.github.io/event-logging/)
+
 
 ## What to Log
 
