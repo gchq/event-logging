@@ -12,6 +12,11 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v5.0-beta.33_schema-v4.0-beta.10] - 2022-06-07
+
+* No change to event-logging library. Fix build process.
+
+
 ## [v5.0-beta.32_schema-v4.0-beta.10] - 2022-05-26
 
 * Update schema to schema-v4.0-beta.10 which fixes a number of typos in the schema annotations and thus the event-logging javadoc.
@@ -220,7 +225,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.32_schema-v4.0-beta.10...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0-beta.33_schema-v4.0-beta.10...HEAD
+[v5.0-beta.33_schema-v4.0-beta.10]: https://github.com/gchq/event-logging/compare/v5.0-beta.32_schema-v4.0-beta.10...v5.0-beta.33_schema-v4.0-beta.10
 [v5.0-beta.32_schema-v4.0-beta.10]: https://github.com/gchq/event-logging/compare/v5.0-beta.31_schema-v4.0-beta.3...v5.0-beta.32_schema-v4.0-beta.10
 [v5.0-beta.31_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.30_schema-v4.0-beta.3...v5.0-beta.31_schema-v4.0-beta.3
 [v5.0-beta.30_schema-v4.0-beta.3]: https://github.com/gchq/event-logging/compare/v5.0-beta.29_schema-v4.0-beta.3...v5.0-beta.30_schema-v4.0-beta.3
