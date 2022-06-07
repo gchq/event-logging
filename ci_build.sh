@@ -80,13 +80,7 @@ copy_swagger_ui_content() {
   local swagger_ui_clone_dir="${BUILD_DIR}/_swagger-ui-clone"
   mkdir -p "${swagger_gh_pages_dir}"
 
-  echo "Copying swagger spec files to ${GH_PAGES_DIR}"
-  # copy our generated swagger specs to gh-pages
-  cp \
-    "${BUILD_DIR}"/stroom-app/src/main/resources/ui/noauth/swagger/stroom.* \
-    "${GH_PAGES_DIR}/"
   # clone swagger-ui repo so we can get the ui html/js/etc
-
   echo "Cloning swagger UI at tag ${SWAGGER_UI_GIT_TAG}"
   git clone \
     --depth 1 \
