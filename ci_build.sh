@@ -166,10 +166,6 @@ gather_release_artefacts() {
 copy_gh_pages_content() {
   mkdir -p "${GH_PAGES_DIR}"
 
-  # Add a .nojekyll file to stop github assuming the gh-pages content contains
-  # jekyll templates.
-  touch "${GH_PAGES_DIR}/.nojekyll"
-
   local javadoc_dir="${BUILD_DIR}/event-logging-api/build/docs/javadoc"
   local gh_pages_javadoc_dir="${GH_PAGES_DIR}/javadoc"
   mkdir -p "${gh_pages_javadoc_dir}"

@@ -90,6 +90,10 @@ main() {
     "${repo_uri}" \
     "${gh_pages_clone_dir}"
 
+  # Stop github trying to process the site as jekyll content which means
+  # it ignores some dirs
+  touch "${GITHUB_WORKSPACE}/.nojekyll"
+
   # Copy our root index directory page
   cp "${GITHUB_WORKSPACE}/index.html" "${gh_pages_clone_dir}/"
 
