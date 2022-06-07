@@ -12,7 +12,7 @@
   </head>
 
   <body>
-    <h1 class="text-center display-2">event-logging Versions</h1>
+    <h1 class="text-center display-3"><strong>event-logging Versions</strong></h1>
 
     <div class="container">
       <div class="mt-4 text-center">This table lists the latest patch release for each minor version of event-logging.</div>
@@ -28,25 +28,48 @@
         let htmlString = '';
         htmlString += '<tr>';
         htmlString += '<th>Release</th>';
+        htmlString += '<th>Schema</th>';
         htmlString += '<th>Swagger UI</th>';
         htmlString += '<th>Javadoc</th>';
+        htmlString += '<th>Readme</th>';
+        htmlString += '<th>Change Log</th>';
+        htmlString += '<th>Schema Change Log</th>';
         htmlString += '</tr>';
         
         // Add a row for each minor version dir in gh-pages
+        let dirs = [];
         for (let file of data) {
           if (file.type === "dir" && file.name.match("^v[0-9]+\.[0-9]+") ) {
-            // Get the actual patch version of this minor version e.g. v1.2.3 for minor version v1.2
-            let version_response = await fetch(`${ghPagesBaseUrl}/${file.name}/version.txt`);
-            let version = await version_response.text();
-            htmlString += '<tr>';
-            htmlString += `<td class="version"><strong><a href="https://github.com/gchq/event-logging/releases/tag/${version}">${version}</a></strong></td>`;
-            htmlString += `<td><a href="${ghPagesBaseUrl}/${file.path}/swagger-ui/">Link</a></td>`;
-            htmlString += `<td><a href="${ghPagesBaseUrl}/${file.path}/javadoc/">Link</a></td>`;
-            htmlString += '</tr>';
+            dirs.push(file.name);
           }
         }
 
-        //htmlString += '</table>';
+        // Reverse sort the versions by padding then de-padding the number parts
+        dirs = dirs
+            .map( a => a.replace(/\d+/g, n => +n+100000 ) )
+            .sort(function(a, b){return b-a})
+            .map( a => a.replace(/\d+/g, n => +n-100000 ) );
+
+        for (var i = 0; i < dirs.length; i++) {
+          let dir = dirs[i];
+          // Get the actual patch version of this minor version e.g. v1.2.3 for minor version v1.2
+          let versionResponse = await fetch(`${ghPagesBaseUrl}/${dir}/version.txt`);
+          let versionTag = await versionResponse.text();
+          // versionTag looks like v5.0-beta.35_schema-v4.0-beta.10, so split it up
+          let matchResult = versionTag.match(/(.*)_schema-(.*)/)
+          let libVersion = matchResult[1]
+          let schemaVersion = matchResult[2]
+          htmlString += '<tr>';
+          htmlString += `<td class="version"><strong><a href="https://github.com/gchq/event-logging/releases/tag/${versionTag}">${libVersion}</a></strong></td>`;
+          htmlString += `<td class="version"><a href="https://github.com/gchq/event-logging-schema/releases/tag/${schemaVersion}">${schemaVersion}</a></td>`;
+          htmlString += `<td><a href="${ghPagesBaseUrl}/${dir.path}/swagger-ui/">Link</a></td>`;
+          htmlString += `<td><a href="${ghPagesBaseUrl}/${dir.path}/javadoc/">Link</a></td>`;
+          htmlString += `<td><a href="https://github.com/gchq/event-logging/blob/${versionTag}/README.md">Link</a></td>`;
+          htmlString += `<td><a href="https://github.com/gchq/event-logging/blob/${versionTag}/CHANGELOG.md">Link</a></td>`;
+          htmlString += `<td><a href="https://github.com/gchq/event-logging-schema/blob/${schemaVersion}/CHANGELOG.md">Link</a></td>`;
+          htmlString += '</tr>';
+        };
+
         document.getElementById('versions-content').innerHTML = htmlString;
       })()
     </script>
