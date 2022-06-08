@@ -94,8 +94,11 @@ main() {
   # it ignores some dirs
   touch "${GITHUB_WORKSPACE}/.nojekyll"
 
-  # Copy our root index directory page
-  cp "${GITHUB_WORKSPACE}/index.html" "${gh_pages_clone_dir}/"
+  # Don't want other branches updating it
+  if [[ "${BUILD_BRANCH}" = "master" ]]; then
+    # Copy our root index directory page
+    cp "${GITHUB_WORKSPACE}/index.html" "${gh_pages_clone_dir}/"
+  fi
 
   pushd "${gh_pages_clone_dir}" > /dev/null
 
