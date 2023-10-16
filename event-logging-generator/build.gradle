@@ -41,7 +41,6 @@ task downloadSchema() {
             } 
         } else {
             println "Downloading schema from ${eventLoggingSchemaUrl}"
-            //now get the visualisations pack from a different repo
             download {
                 src eventLoggingSchemaUrl
                 dest schemaDir
