@@ -43,6 +43,7 @@ ext.versions = [
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(8)
+        vendor = JvmVendorSpec.ADOPTIUM
     }
 }
 
@@ -66,6 +67,7 @@ dependencies {
 
     // Use JUnit Jupiter Engine for testing this example application.
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 application {

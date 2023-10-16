@@ -53,12 +53,13 @@ task downloadSchema() {
 
 
 task runGenClasses(type: JavaExec) {
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 
-  dependsOn downloadSchema
+    dependsOn downloadSchema
 
-  classpath = sourceSets.main.runtimeClasspath
+    classpath = sourceSets.main.runtimeClasspath
 
-  main = 'event.logging.gen.GenClasses'
+    main = 'event.logging.gen.GenClasses'
 }
 
 

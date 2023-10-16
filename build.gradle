@@ -144,6 +144,7 @@ if (!eventLoggingSchemaFilePath.isEmpty()) {
     def schemaFile = new File(eventLoggingSchemaFilePath)
     ext.eventLoggingSchemaFilePath = schemaFile.absolutePath.toString()
     println "Setting eventLoggingSchemaFilePath to ${ext.eventLoggingSchemaFilePath}"
+    assert schemaFile.exists()
 }
 
 println "Using project version:         $projectVersion"
@@ -158,7 +159,6 @@ ext.versions = [
     eventLogging         : projectVersionForMaven,
 
     //------------3rd-party------------
-    junit_jupiter        : '5.8.2',
     logback              : '1.2.3',
     mockito              : '3.12.4',
     swagger              : '2.1.12',
@@ -183,9 +183,11 @@ ext.libs = [
     jaxb_runtime                   : "org.glassfish.jaxb:jaxb-runtime", // Version set by jaxb_bom
     jaxb_xjc                       : "org.glassfish.jaxb:jaxb-xjc", // Version set by jaxb_bom
     jaxb_bom                       : "org.glassfish.jaxb:jaxb-bom:2.4.0-b180830.0438",
-    junit_jupiter_api              : "org.junit.jupiter:junit-jupiter-api:$versions.junit_jupiter",
-    junit_jupiter_engine           : "org.junit.jupiter:junit-jupiter-engine:$versions.junit_jupiter",
-    junit_jupiter_params           : "org.junit.jupiter:junit-jupiter-params:$versions.junit_jupiter",
+    junit_bom                      : "org.junit:junit-bom:5.10.0",
+    junit_jupiter_api              : "org.junit.jupiter:junit-jupiter-api", // ver controlled by junit_bom
+    junit_jupiter_engine           : "org.junit.jupiter:junit-jupiter-engine", // ver controlled by junit_bom
+    junit_jupiter_params           : "org.junit.jupiter:junit-jupiter-params", // ver controlled by junit_bom
+    junit_platform_launcher        : "org.junit.platform:junit-platform-launcher", // ver controlled by junit_bom
     logback_classic                : "ch.qos.logback:logback-classic:${versions.logback}",
     logback_core                   : "ch.qos.logback:logback-core:${versions.logback}",
     mockito_core                   : "org.mockito:mockito-core:$versions.mockito",
@@ -208,16 +210,20 @@ subprojects {
 //    apply plugin: 'ca.cutterslade.analyze'
     apply plugin: 'idea'
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
     repositories {
         mavenLocal()
         mavenCentral()
     }
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(8)
+            vendor = JvmVendorSpec.ADOPTIUM
+        }
+    }
+
     dependencies {
-        compile platform(libs.jaxb_bom)
+        implementation platform(libs.jaxb_bom)
     }
 
     //configurations {

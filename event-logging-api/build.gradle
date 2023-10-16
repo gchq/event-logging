@@ -26,12 +26,14 @@ dependencies {
     runtimeOnly libs.jaxb_runtime
 
     testImplementation libs.classgraph
+    testImplementation(platform(libs.junit_bom))
     testImplementation libs.junit_jupiter_api
     testImplementation libs.junit_jupiter_params
     testImplementation libs.assertj_core
     testImplementation libs.mockito_core
 
     testRuntimeOnly libs.junit_jupiter_engine
+    testRuntimeOnly libs.junit_platform_launcher
     testRuntimeOnly libs.logback_classic
     testRuntimeOnly libs.logback_core
 }
