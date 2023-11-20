@@ -17,19 +17,19 @@ set -eo pipefail
 RELEASE_ARTEFACTS_DIR="${BUILD_DIR}/release_artefacts"
 RELEASE_MANIFEST="${RELEASE_ARTEFACTS_DIR}/release-artefacts.txt"
 GH_PAGES_DIR="$BUILD_DIR/gh-pages"
-SWAGGER_UI_GIT_TAG="v4.12.0"
-SWAGGER_SPEC_FILE_NAME="swagger-spec.json"
-SWAGGER_SPEC_SOURCE_FILE="${BUILD_DIR}/event-logging-json/${SWAGGER_SPEC_FILE_NAME}"
+#SWAGGER_UI_GIT_TAG="v4.12.0"
+#SWAGGER_SPEC_FILE_NAME="swagger-spec.json"
+#SWAGGER_SPEC_SOURCE_FILE="${BUILD_DIR}/event-logging-json/${SWAGGER_SPEC_FILE_NAME}"
 
-build_example_app() {
-  echo -e "${GREEN}Now run example application build${NC}"
+#build_example_app() {
+  #echo -e "${GREEN}Now run example application build${NC}"
 
-  pushd example-logged-application >/dev/null
+  #pushd example-logged-application >/dev/null
 
-  ./gradlew clean build
+  #./gradlew clean build
 
-  popd >/dev/null
-}
+  #popd >/dev/null
+#}
 
 copy_release_artefact() {
   local source="$1"; shift
@@ -74,44 +74,44 @@ create_file_hash() {
   echo -e "-------------------------------------------------------"
 }
 
-copy_swagger_ui_content() {
-  echo "::group::Copy Swagger content"
-  local swagger_gh_pages_dir="${GH_PAGES_DIR}/swagger-ui"
-  local swagger_ui_clone_dir="${BUILD_DIR}/_swagger-ui-clone"
-  mkdir -p "${swagger_gh_pages_dir}"
+#copy_swagger_ui_content() {
+  #echo "::group::Copy Swagger content"
+  #local swagger_gh_pages_dir="${GH_PAGES_DIR}/swagger-ui"
+  #local swagger_ui_clone_dir="${BUILD_DIR}/_swagger-ui-clone"
+  #mkdir -p "${swagger_gh_pages_dir}"
 
-  # clone swagger-ui repo so we can get the ui html/js/etc
-  echo "Cloning swagger UI at tag ${SWAGGER_UI_GIT_TAG}"
-  git clone \
-    --depth 1 \
-    --branch "${SWAGGER_UI_GIT_TAG}" \
-    --single-branch \
-    https://github.com/swagger-api/swagger-ui.git \
-    "${swagger_ui_clone_dir}"
+  ## clone swagger-ui repo so we can get the ui html/js/etc
+  #echo "Cloning swagger UI at tag ${SWAGGER_UI_GIT_TAG}"
+  #git clone \
+    #--depth 1 \
+    #--branch "${SWAGGER_UI_GIT_TAG}" \
+    #--single-branch \
+    #https://github.com/swagger-api/swagger-ui.git \
+    #"${swagger_ui_clone_dir}"
 
-  # copy the bits of swagger-ui that we need
-  echo "Copying swagger UI distribution to ${swagger_gh_pages_dir}"
-  cp \
-    -r \
-    "${swagger_ui_clone_dir}"/dist/* \
-    "${swagger_gh_pages_dir}"/
+  ## copy the bits of swagger-ui that we need
+  #echo "Copying swagger UI distribution to ${swagger_gh_pages_dir}"
+  #cp \
+    #-r \
+    #"${swagger_ui_clone_dir}"/dist/* \
+    #"${swagger_gh_pages_dir}"/
 
-  echo "Copying swagger spec to ${swagger_gh_pages_dir}"
-  cp \
-    "${SWAGGER_SPEC_SOURCE_FILE}" \
-    "${swagger_gh_pages_dir}/"
+  #echo "Copying swagger spec to ${swagger_gh_pages_dir}"
+  #cp \
+    #"${SWAGGER_SPEC_SOURCE_FILE}" \
+    #"${swagger_gh_pages_dir}/"
 
-  local minor_version
-  minor_version=$(echo "${BUILD_TAG}" | grep -oP "^v[0-9]+\.[0-9]+")
+  #local minor_version
+  #minor_version=$(echo "${BUILD_TAG}" | grep -oP "^v[0-9]+\.[0-9]+")
 
-  # replace the default swagger spec url in swagger UI
-  # swagger is deployed to a versioned dir
-  sed \
-    -i \
-    "s#url: \".*\"#url: \"https://gchq.github.io/event-logging/${minor_version}/swagger-ui/swagger-spec.json\"#g" \
-    "${swagger_gh_pages_dir}/swagger-initializer.js"
-  echo "::endgroup::"
-}
+  ## replace the default swagger spec url in swagger UI
+  ## swagger is deployed to a versioned dir
+  #sed \
+    #-i \
+    #"s#url: \".*\"#url: \"https://gchq.github.io/event-logging/${minor_version}/swagger-ui/swagger-spec.json\"#g" \
+    #"${swagger_gh_pages_dir}/swagger-initializer.js"
+  #echo "::endgroup::"
+#}
 
 # Put all release artefacts in a dir to make it easier to upload them to
 # Github releases. Some of them are needed by the stack builds in
@@ -152,10 +152,10 @@ gather_release_artefacts() {
     #"${RELEASE_ARTEFACTS_DIR}" \
     #"JSON Schema"
 
-  copy_release_artefact \
-    "${SWAGGER_SPEC_SOURCE_FILE}" \
-    "${RELEASE_ARTEFACTS_DIR}" \
-    "The Swagger spec for the event-logging API."
+  #copy_release_artefact \
+    #"${SWAGGER_SPEC_SOURCE_FILE}" \
+    #"${RELEASE_ARTEFACTS_DIR}" \
+    #"The Swagger spec for the event-logging API."
 
   # Now generate hashes for all the zips
   for file in "${RELEASE_ARTEFACTS_DIR}"/*.jar; do
@@ -179,7 +179,7 @@ copy_gh_pages_content() {
     "${javadoc_dir}/"* \
     "${gh_pages_javadoc_dir}/"
 
-  copy_swagger_ui_content
+  #copy_swagger_ui_content
 }
 
 #establish what version we are building

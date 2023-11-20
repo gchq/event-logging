@@ -30,7 +30,6 @@
         htmlString += '<tr>';
         htmlString += '<th>Release</th>';
         htmlString += '<th>XML Schema</th>';
-        htmlString += '<th>Swagger UI</th>';
         htmlString += '<th>Javadoc</th>';
         htmlString += '<th>Readme</th>';
         htmlString += '<th>Change Log</th>';
@@ -63,7 +62,6 @@
           htmlString += '<tr>';
           htmlString += `<td class="version"><strong><a href="https://github.com/gchq/event-logging/releases/tag/${versionTag}">${versionTag}</a></strong></td>`;
           htmlString += `<td class="version"><a href="https://github.com/gchq/event-logging-schema/releases/tag/${schemaVersion}">${schemaVersion}</a></td>`;
-          htmlString += `<td><a href="${ghPagesBaseUrl}/${dir}/swagger-ui/">Link</a></td>`;
           htmlString += `<td><a href="${ghPagesBaseUrl}/${dir}/javadoc/">Link</a></td>`;
           htmlString += `<td><a href="https://github.com/gchq/event-logging/blob/${versionTag}/README.md">Link</a></td>`;
           htmlString += `<td><a href="https://github.com/gchq/event-logging/blob/${versionTag}/CHANGELOG.md">Link</a></td>`;
