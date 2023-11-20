@@ -14,19 +14,15 @@ dependencies {
     implementation libs.swagger_annotations
 
     testImplementation libs.classgraph
-    //testImplementation "org.junit.jupiter:junit-jupiter-api:${versions.junit}"
+    testImplementation(platform(libs.junit_bom))
     testImplementation libs.junit_jupiter_api
     testImplementation libs.junit_jupiter_params
-    //testImplementation "org.assertj:assertj-core:${versions.assertj}"
     testImplementation libs.assertj_core
-    //testImplementation "org.mockito:mockito-core:${versions.mockito}"
     testImplementation libs.mockito_core
 
-    //testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${versions.junit}"
     testRuntimeOnly libs.junit_jupiter_engine
-    //testRuntimeOnly "ch.qos.logback:logback-classic:${versions.logback}"
+    testRuntimeOnly libs.junit_platform_launcher
     testRuntimeOnly libs.logback_classic
-    //testRuntimeOnly "ch.qos.logback:logback-core:${versions.logback}"
     testRuntimeOnly libs.logback_core
 }
 

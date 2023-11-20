@@ -3,5 +3,4 @@ rootProject.name = 'event-logging'
 include 'event-logging-api'
 include 'event-logging-base'
 include 'event-logging-generator'
-include 'event-logging-json'
 

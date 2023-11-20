@@ -178,9 +178,11 @@ public class GenClasses {
                 apiProjectDir.resolve("src/test/resources"));
 
         // Add Jackson annotations
-        System.out.println("Adding Jackson Annotations");
-        new JacksonAnnotationDecorator(true, false)
-                .addAnnotations(apiProjectDir.resolve("src/main/java/event/logging"));
+        // This was added to see if we could create a json schema from the java classes but
+        // another method was used. Leaving this here in case it is needed again.
+//        System.out.println("Adding Jackson Annotations");
+//        new JacksonAnnotationDecorator(true, false)
+//                .addAnnotations(apiProjectDir.resolve("src/main/java/event/logging"));
 
         // The jaxb2-rich-contract-plugin creates some classes in com.kscs.util.jaxb so move them into
         // event.logging.fluent
