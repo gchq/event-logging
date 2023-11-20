@@ -147,10 +147,10 @@ gather_release_artefacts() {
     "${RELEASE_ARTEFACTS_DIR}" \
     "Javadoc JAR"
 
-  copy_release_artefact \
-    "${BUILD_DIR}/event-logging-json/json-schema.json" \
-    "${RELEASE_ARTEFACTS_DIR}" \
-    "JSON Schema"
+  #copy_release_artefact \
+    #"${BUILD_DIR}/event-logging-json/json-schema.json" \
+    #"${RELEASE_ARTEFACTS_DIR}" \
+    #"JSON Schema"
 
   copy_release_artefact \
     "${SWAGGER_SPEC_SOURCE_FILE}" \
