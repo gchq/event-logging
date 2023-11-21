@@ -12,6 +12,11 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v5.0.3_schema-v4.0.0] - 2023-11-21
+
+* Fix CI build.
+
+
 ## [v5.0.2_schema-v4.0.0] - 2023-11-20
 
 * Fix CI build.
@@ -255,7 +260,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0.2_schema-v4.0.0...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0.3_schema-v4.0.0...HEAD
+[v5.0.3_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.2_schema-v4.0.0...v5.0.3_schema-v4.0.0
 [v5.0.2_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.1_schema-v4.0.0...v5.0.2_schema-v4.0.0
 [v5.0.1_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.0_schema-v4.0.0...v5.0.1_schema-v4.0.0
 [v5.0.0_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0-beta.36_schema-v4.0-beta.10...v5.0.0_schema-v4.0.0
