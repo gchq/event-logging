@@ -21,7 +21,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +71,9 @@ public class GenClasses {
     }
 
     private void run() throws Exception {
+
+        System.setProperty("com.sun.tools.xjc.Options.findServices", "true");
+        System.setProperty("com.sun.tools.internal.xjc.Options.findServices", "true");
 
         Path rootDir = Paths.get(".").normalize().toAbsolutePath();
         if (rootDir.endsWith(GENERATOR_PROJECT_NAME)) {
@@ -132,7 +139,7 @@ public class GenClasses {
                 "-quiet",
                 modXsd.toAbsolutePath().toString(), // the source schema to gen classes from
                 "-Xfluent-builder", // make builder classes/methods
-                "-generateJavadocFromAnnotations=true",
+                "-fluent-builder.generateJavadocFromAnnotations=true",
                 "-Xinheritance",
         };
 

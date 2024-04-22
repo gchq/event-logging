@@ -176,8 +176,11 @@ class FluentEventLoggingServiceIT {
         event.getEventDetail()
                 .setEventAction(AuthenticateEventAction.builder()
                         .withAction(AuthenticateAction.LOGON)
+                        .withData(Data.builder().withName("foo").withValue("bar").build())
                         .withUser(User.builder()
                                 .withId("user1")
+                                .withName("User 1")
+                                .withData(Data.builder().withName("id").withValue("user1").build())
                                 .build())
                         .build());
 
@@ -952,7 +955,7 @@ class FluentEventLoggingServiceIT {
                 .withTypeId("MyTypeId")
                 .withDescription("My description")
                 .withDefaultEventAction(SearchEventAction.builder()
-                       .build())
+                        .build())
                 .withSimpleLoggedResult(() -> {
                     // Do logged work
                     return 42L;
@@ -1036,10 +1039,10 @@ class FluentEventLoggingServiceIT {
 
         // Override the behaviour of the log() method so we can see what gets logged
         Mockito.doAnswer(invocation -> {
-            final Event event = invocation.getArgument(0, Event.class);
-            events.add(event);
-            return null;
-        })
+                    final Event event = invocation.getArgument(0, Event.class);
+                    events.add(event);
+                    return null;
+                })
                 .when(eventLoggingServiceSpy).log(Mockito.any());
         return eventLoggingServiceSpy;
     }
