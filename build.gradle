@@ -172,11 +172,6 @@ ext.versions = [
 
 ext.libs = [
     assertj_core                   : "org.assertj:assertj-core:3.20.2",
-    classgraph                     : "io.github.classgraph:classgraph:4.8.146",
-    jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.3",
-    jackson_databind               : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
-    jakarta_servlet_api            : "jakarta.servlet:jakarta.servlet-api:4.0.4",
-    jakarta_ws_rs_api              : "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6",
     jaxb_api                       : "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2",
     jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
     jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:2.1.0",
@@ -194,8 +189,7 @@ ext.libs = [
     mockito_core                   : "org.mockito:mockito-core:$versions.mockito",
     mockito_junit_jupiter          : "org.mockito:mockito-junit-jupiter:$versions.mockito",
     saxon_he                       : "net.sf.saxon:Saxon-HE:9.7.0-21",
-    slf4j_api                      : "org.slf4j:slf4j-api:1.7.30",
-    swagger_annotations            : "io.swagger.core.v3:swagger-annotations:$versions.swagger",
+    slf4j_api                      : "org.slf4j:slf4j-api:1.7.36",
 ]
 
 // NOTE

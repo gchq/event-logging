@@ -12,8 +12,8 @@ The Javadoc for the latest release of the library is available [here](https://gc
 This library requires Java 8 as a minimum.
 The only dependencies it brings with it are:
 
-* `javax.xml.bind:jaxb-api` 
-* `org.glassfish.jaxb:jaxb-runtime` 
+* `jakarta.xml.bind:jakarta.xml.bind-api` 
+* `com.sun.xml.bind:jaxb-impl` 
 * `org.slf4j:slf4j-api`
 
 By default the created events are serialised to XML and passed to an SLF4J logger which would typically be linked to a rolling file appender.
