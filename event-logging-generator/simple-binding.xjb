@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jaxb:bindings
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+    xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+    xmlns:inheritance="urn:jaxb.jvnet.org:plugin:inheritance"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
     xmlns:evt="event-logging:3"
-    jaxb:extensionBindingPreferences="xjc"
-    jaxb:version="2.0">
+    jaxb:extensionBindingPrefixes="inheritance"
+    jaxb:version="3.0">
 
-    <!-- 
+    <!--
         ~~~~~~~~~~
-        IMPORTANT: 
+        IMPORTANT:
         ~~~~~~~~~~
 
         This binding file operates on the transient schema.mod.xsd file that is derived from the
-        source schema (event-logging.xsd in the event-logging repo).  All types named 
-        XxxComplexType are renamed to Xxx in GenClasses.java.  This is to provide better java 
-        class names. E.g FooBarComplexType becomes FooBar. Thus any xpath queries in here 
+        source schema (event-logging.xsd in the event-logging repo).  All types named
+        XxxComplexType are renamed to Xxx in GenClasses.java.  This is to provide better java
+        class names. E.g FooBarComplexType becomes FooBar. Thus any xpath queries in here
         must use the shorter form of the complex type names.
     -->
 
     <jaxb:bindings schemaLocation="schema/schema.mod.xsd" node="/xs:schema">
 
         <!-- localScoping to prevent nested classes -->
-        <jaxb:globalBindings 
-            generateElementProperty="false" 
+        <jaxb:globalBindings
+            generateElementProperty="false"
             localScoping="toplevel">
 
-            <jaxb:javaType 
-                name="java.util.Date" 
-                xmlType="xs:date" 
-                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+            <jaxb:javaType
+                name="java.util.Date"
+                xmlType="xs:date"
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate"
                 printMethod="event.logging.jaxb.DateAdaptor.printDate" />
-            <jaxb:javaType 
-                name="java.util.Date" 
-                xmlType="evt:DateTime" 
-                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
+            <jaxb:javaType
+                name="java.util.Date"
+                xmlType="evt:DateTime"
+                parseMethod="event.logging.jaxb.DateAdaptor.parseDate"
                 printMethod="event.logging.jaxb.DateAdaptor.printDate" />
         </jaxb:globalBindings>
 
@@ -109,34 +108,34 @@
         </jaxb:bindings>
 
         <!-- make these types implement a common marker interface so we can have a single property -->
-        <jaxb:bindings 
-            multiple="true" 
+        <jaxb:bindings
+            multiple="true"
             node="xs:complexType[@name='User' or @name='Device' or @name='Group']">
 
-            <inheritance:implements>AuthenticationEntity</inheritance:implements> 
+            <inheritance:implements>AuthenticationEntity</inheritance:implements>
         </jaxb:bindings>
 
         <!-- Make (User|Device)ComplexType classes implement Endpoint to make the choice
         in SendreceiveGroup/Source|Dest be List<Endpoint> instead of List<Object> -->
         <jaxb:bindings multiple="true" node="xs:complexType[@name='User' or @name='Device']">
-            <inheritance:implements>Endpoint</inheritance:implements> 
+            <inheritance:implements>Endpoint</inheritance:implements>
         </jaxb:bindings>
 
         <!-- make these types implement a common marker interface so we can have a single property -->
         <jaxb:bindings multiple="true" node="xs:complexType[@name='User' or @name='Group']">
-            <inheritance:implements>PermissionEntity</inheritance:implements> 
+            <inheritance:implements>PermissionEntity</inheritance:implements>
         </jaxb:bindings>
 
         <!-- make any top level complex types with an Outcome complexType element implement HasOutcome to
             make it easier to get the outcome from an action -->
         <jaxb:bindings multiple="true" node="xs:complexType[.//xs:element[@type='evt:Outcome' or @type='evt:CopyMoveOutcome' or @type='evt:AuthenticateOutcome'] or .//xs:group[@ref='evt:InstallationGroup']]">
-            <inheritance:implements>HasOutcome</inheritance:implements> 
+            <inheritance:implements>HasOutcome</inheritance:implements>
         </jaxb:bindings>
 
         <!-- Change prop name from userOrDevice to endpoints-->
         <jaxb:bindings node="xs:group[@name='SendReceiveGroup']/xs:sequence">
-            <jaxb:bindings 
-                multiple="true" 
+            <jaxb:bindings
+                multiple="true"
                 node="xs:element[@name='Source' or @name='Destination']//xs:choice">
 
                 <jaxb:property name="endpoints" >
@@ -148,7 +147,7 @@
 
         <!-- make these types implement a common marker interface so we can have a single property -->
         <jaxb:bindings multiple="true" node="xs:complexType[@name='Software' or @name='Hardware' or @name='Media']">
-            <inheritance:implements>InstallationEntity</inheritance:implements> 
+            <inheritance:implements>InstallationEntity</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:group[@name='InstallationGroup']/xs:sequence/xs:choice">
@@ -159,7 +158,7 @@
 
 
 
-        <!-- 
+        <!--
             Rename all the choices in EventDetail (i.e the schema actions) to
             XxxxEventAction. This is partly for clarity but also to avoid some name
             clashes now we have all top level classes. Also make each class implement
@@ -180,7 +179,7 @@
                 <jaxb:bindings node="xs:complexType">
                     <jaxb:factoryMethod name="UnknownEventAction"/>
                     <jaxb:class name="UnknownEventAction" />
-                    <inheritance:implements>EventAction</inheritance:implements> 
+                    <inheritance:implements>EventAction</inheritance:implements>
                 </jaxb:bindings>
             </jaxb:bindings>
 
@@ -189,7 +188,7 @@
         <jaxb:bindings node="xs:complexType[@name='Authenticate']">
             <jaxb:factoryMethod name="AuthenticateEventAction"/>
             <jaxb:class name="AuthenticateEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
 
             <!-- Change the property name and type for the user|device|group choice -->
             <jaxb:bindings node="xs:sequence/xs:choice">
@@ -203,119 +202,119 @@
         <jaxb:bindings node="xs:complexType[@name='Authorise']">
             <jaxb:factoryMethod name="AuthoriseEventAction"/>
             <jaxb:class name="AuthoriseEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
 
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Copy']">
             <jaxb:factoryMethod name="CopyEventAction"/>
             <jaxb:class name="CopyEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Move']">
             <jaxb:factoryMethod name="MoveEventAction"/>
             <jaxb:class name="MoveEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Create']">
             <jaxb:factoryMethod name="CreateEventAction"/>
             <jaxb:class name="CreateEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='View']">
             <jaxb:factoryMethod name="ViewEventAction"/>
             <jaxb:class name="ViewEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Search']">
             <jaxb:factoryMethod name="SearchEventAction"/>
             <jaxb:class name="SearchEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='BaseObjectOutcome']">
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Import']">
             <jaxb:factoryMethod name="ImportEventAction"/>
             <jaxb:class name="ImportEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Export']">
             <jaxb:factoryMethod name="ExportEventAction"/>
             <jaxb:class name="ExportEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Update']">
             <jaxb:factoryMethod name="UpdateEventAction"/>
             <jaxb:class name="UpdateEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Delete']">
             <jaxb:factoryMethod name="DeleteEventAction"/>
             <jaxb:class name="DeleteEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Process']">
             <jaxb:factoryMethod name="ProcessEventAction"/>
             <jaxb:class name="ProcessEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Print']">
             <jaxb:factoryMethod name="PrintEventAction"/>
             <jaxb:class name="PrintEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Install']">
             <jaxb:factoryMethod name="InstallEventAction"/>
             <jaxb:class name="InstallEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Uninstall']">
             <jaxb:factoryMethod name="UninstallEventAction"/>
             <jaxb:class name="UninstallEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='NetworkEventAction']">
             <!-- no rename needed as the type is already called EventAction -->
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Alert']">
             <jaxb:factoryMethod name="AlertEventAction"/>
             <jaxb:class name="AlertEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Send']">
             <jaxb:factoryMethod name="SendEventAction"/>
             <jaxb:class name="SendEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Receive']">
             <jaxb:factoryMethod name="ReceiveEventAction"/>
             <jaxb:class name="ReceiveEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Approval']">
             <jaxb:factoryMethod name="ApprovalEventAction"/>
             <jaxb:class name="ApprovalEventAction" />
-            <inheritance:implements>EventAction</inheritance:implements> 
+            <inheritance:implements>EventAction</inheritance:implements>
         </jaxb:bindings>
 
         <!-- End of EventAction stuff -->
@@ -334,8 +333,8 @@
         </jaxb:bindings>
 
         <!-- Change the property name and type for the multi object group -->
-        <jaxb:bindings 
-            multiple="true" 
+        <jaxb:bindings
+            multiple="true"
             node="xs:complexType[@name='MultiObject' or @name='BaseObjectOutcome' or @name='Authorise']//xs:group[@ref='evt:MultiObjectGroup']">
 
             <jaxb:property name="objects" >
@@ -346,15 +345,15 @@
         <!-- Make all query items implement the same marker interface so we can have a List<AdvancedQueryItem> -->
 
         <jaxb:bindings multiple="true" node="xs:complexType[@name='Term']">
-            <inheritance:implements>AdvancedQueryItem</inheritance:implements> 
+            <inheritance:implements>AdvancedQueryItem</inheritance:implements>
         </jaxb:bindings>
         <jaxb:bindings multiple="true" node="xs:complexType[@name='And' or @name='Or' or @name='Not']">
             <!-- This extends AdvancedQueryItem -->
-            <inheritance:implements>AdvancedQueryOperator</inheritance:implements> 
+            <inheritance:implements>AdvancedQueryOperator</inheritance:implements>
         </jaxb:bindings>
 
-        <jaxb:bindings 
-            multiple="true" 
+        <jaxb:bindings
+            multiple="true"
             node="xs:complexType[@name='And' or @name='Or' or @name='Not']/xs:group[@ref='evt:AdvancedQueryOperatorGroup']">
 
             <jaxb:property name="queryItems" >
@@ -373,7 +372,7 @@
                         <!-- Force it to be List<AdvancedQueryItem> instead of List<java.lang.Object> -->
                         <jaxb:baseType name="AdvancedQueryItem" />
                     </jaxb:property>
-                </jaxb:bindings>      
+                </jaxb:bindings>
 
                 <jaxb:factoryMethod name="AdvancedQuery"/>
                 <jaxb:class name="AdvancedQuery" />
@@ -392,6 +391,6 @@
         </jaxb:bindings>
 
     </jaxb:bindings> <!-- /xs:schema -->
-</jaxb:bindings> 
+</jaxb:bindings>
 
 <!-- vim:set expandtab shiftwidth=4 tabstop=4: -->

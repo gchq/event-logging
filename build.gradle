@@ -36,7 +36,7 @@ ext.isPropertySet = { propName ->
     }
 }
 
-ext.ensurePropertyIsSet = { propName -> 
+ext.ensurePropertyIsSet = { propName ->
     if (!isPropertySet(propName)) {
         throw new GradleException(
             "Expecting project property [${propName}] or env var [ORG_GRADLE_PROJECT_${propName}] to be set.")
@@ -45,7 +45,7 @@ ext.ensurePropertyIsSet = { propName ->
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
-ext.getPropertyOrDefault = { propName, defaultValue -> 
+ext.getPropertyOrDefault = { propName, defaultValue ->
     def val;
     if (isPropertySet(propName)) {
         val = project.getProperty(propName)
@@ -178,9 +178,8 @@ ext.libs = [
     jakarta_servlet_api            : "jakarta.servlet:jakarta.servlet-api:4.0.4",
     jakarta_ws_rs_api              : "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6",
     jaxb_api                       : "jakarta.xml.bind:jakarta.xml.bind-api", // Version set by jaxb_bom
-    //jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
-    jaxb_plugins                   : "org.jvnet.jaxb:jaxb-plugins:4.0.6",
-    jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:4.1.0",
+    jaxb_plugins                   : "org.jvnet.jaxb:jaxb-plugins:4.0.6", // See https://github.com/highsource/jaxb-tools
+    jaxb_rich_contract_plugin      : "net.codesup.util:jaxb-rich-contract-plugin:4.2.0.0",
     jaxb_runtime                   : "org.glassfish.jaxb:jaxb-runtime", // Version set by jaxb_bom
     jaxb_xjc                       : "org.glassfish.jaxb:jaxb-xjc", // Version set by jaxb_bom
     jaxb_bom                       : "org.glassfish.jaxb:jaxb-bom:4.0.5",
@@ -199,7 +198,7 @@ ext.libs = [
 ]
 
 // NOTE
-// 
+//
 
 allprojects {
     group "uk.gov.gchq.eventlogging" // no spaces as java pkg name convention
@@ -254,7 +253,7 @@ subprojects {
     tasks.withType(Test) {
         reports.html.destination = file("${reporting.baseDir}/${name}")
 
-        //Use full logging for test exceptions so we can see where the failure occurred 
+        //Use full logging for test exceptions so we can see where the failure occurred
         testLogging {
             events "failed"
             exceptionFormat = 'full'

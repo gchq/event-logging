@@ -38,7 +38,7 @@ task downloadSchema() {
             copy {
                 from schemaFile
                 into schemaDir
-            } 
+            }
         } else {
             println "Downloading schema from ${eventLoggingSchemaUrl}"
             download {
