@@ -18,12 +18,11 @@ dependencies {
     implementation libs.jakarta_ws_rs_api
     implementation libs.jaxb_api
     implementation libs.swagger_annotations
+    // The JAXB implementation required for event serialisation to XML
+    runtimeOnly libs.jaxb_impl
 
     // The production code uses the SLF4J logging API at compile time
     implementation libs.slf4j_api
-
-    // The JAXB implementation required for event serialisation to XML
-    runtimeOnly libs.jaxb_runtime
 
     testImplementation libs.classgraph
     testImplementation(platform(libs.junit_bom))

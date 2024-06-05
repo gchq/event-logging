@@ -12,6 +12,7 @@ dependencies {
     implementation libs.jaxb_api
     implementation libs.slf4j_api
     implementation libs.swagger_annotations
+    runtimeOnly libs.jaxb_impl
 
     testImplementation libs.classgraph
     testImplementation(platform(libs.junit_bom))

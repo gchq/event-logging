@@ -42,20 +42,12 @@ import event.logging.Term;
 import event.logging.TermCondition;
 import event.logging.User;
 import event.logging.base.EventLoggingService;
-import event.logging.base.Payload;
 import event.logging.util.DeviceUtil;
 import event.logging.util.EventLoggingUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -585,24 +577,24 @@ public class EventLoggingServiceIT {
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
 
-    private Node buildPayload() throws JAXBException, ParserConfigurationException {
-
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(false);
-        final DocumentBuilder db = dbf.newDocumentBuilder();
-        final org.w3c.dom.Document doc = db.newDocument();
-
-        final JAXBContext jaxbContext = JAXBContext.newInstance(Payload.class);
-
-        final Payload payload = new Payload();
-        payload.setValue("thisIsMyValue");
-
-        jaxbContext.createMarshaller().marshal(payload, java.lang.System.out);
-
-        jaxbContext.createMarshaller().marshal(payload, doc);
-
-        final Element docElm = doc.getDocumentElement();
-
-        return docElm;
-    }
+//    private Node buildPayload() throws JAXBException, ParserConfigurationException {
+//
+//        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+//        dbf.setNamespaceAware(false);
+//        final DocumentBuilder db = dbf.newDocumentBuilder();
+//        final org.w3c.dom.Document doc = db.newDocument();
+//
+//        final JAXBContext jaxbContext = JAXBContext.newInstance(Payload.class);
+//
+//        final Payload payload = new Payload();
+//        payload.setValue("thisIsMyValue");
+//
+//        jaxbContext.createMarshaller().marshal(payload, java.lang.System.out);
+//
+//        jaxbContext.createMarshaller().marshal(payload, doc);
+//
+//        final Element docElm = doc.getDocumentElement();
+//
+//        return docElm;
+//    }
 }

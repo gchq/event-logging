@@ -7,7 +7,7 @@ dependencies {
     implementation libs.jaxb_xjc
     implementation libs.slf4j_api
 
-    runtimeOnly libs.jaxb_runtime
+    runtimeOnly libs.jaxb_runtime_2
     runtimeOnly libs.jaxb_rich_contract_plugin
     runtimeOnly libs.jaxb_basics
     runtimeOnly libs.saxon_he
