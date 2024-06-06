@@ -75,7 +75,7 @@ application {
     mainClass = 'event.logging.example.App'
 }
 
-run{
+run {
     // Application is interactive so attach stdin
     standardInput = System.in
 }
