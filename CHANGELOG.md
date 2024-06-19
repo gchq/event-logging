@@ -12,6 +12,37 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v6.0-beta.1_schema-v4.1.0] - 2024-06-19
+
+* Change to JAXB 4 dependencies (`javax.xml` => `jakarta.xml`).
+
+* Change minimum Java version to Java 11.
+
+* Issue **gchq/event-logging-schema#86** : Change `PermittedOrganisations.permittedOrganisation` from type `Organistaion` to `List<Organistaion>`.
+
+* Issue **gchq/event-logging-schema#62** : Add field `id` to `AnyContent`.
+
+* Issue **gchq/event-logging-schema#84** : Change `BaseFile.hash` type from `Hash` to `List<Hash>`. This also affects the builder methods in `File` and `Folder`. Replace `withHash(myHash)` with `addHash(myHash)` or `withHash(List.of(myHash))`.
+
+* Issue **gchq/event-logging-schema#80** : Change `Location.floor` type from `BigInteger` to `String`.
+
+* Issue **gchq/event-logging-schema#75** : Add field `changes` to `UpdateEventAction`.
+
+* Issue **gchq/event-logging-schema#85** : Add `IN` enumeration to `TermCondition`.
+
+* Issue **gchq/event-logging-schema#67** : Add field `outcome` to `UnknownEventAction`.
+
+* Issue **gchq/event-logging-schema#74** : Add field `date` to `Email`.
+
+* Issue **gchq/event-logging-schema#69** : Add field `data` to the following classes: `AntiMalwareThreat`, `Door`, `EventTime`, `Location`, `NetworkEventAction`, `SystemDetail`.
+
+* Change the class used for representing dates and times from `java.util.Date` to `java.time.Instant`.
+
+* Issue **gchq/event-logging-schema#76** : Add `Data` element to `Permission` to allow for non-enumerated permission types. Add `Create`, `Delete` and `Use` to `PermissionAttributeSimpleType`.
+
+* Change the java module name from `event.logging.api` to `uk.gov.gchq.eventlogging`.
+
+
 ## [v5.0.3_schema-v4.0.0] - 2023-11-21
 
 * Fix CI build.
@@ -260,7 +291,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v5.0.3_schema-v4.0.0...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v6.0-beta.1_schema-v4.1.0...HEAD
+[v6.0-beta.1_schema-v4.1.0]: https://github.com/gchq/event-logging/compare/v5.0.3_schema-v4.0.0...v6.0-beta.1_schema-v4.1.0
 [v5.0.3_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.2_schema-v4.0.0...v5.0.3_schema-v4.0.0
 [v5.0.2_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.1_schema-v4.0.0...v5.0.2_schema-v4.0.0
 [v5.0.1_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.0_schema-v4.0.0...v5.0.1_schema-v4.0.0
