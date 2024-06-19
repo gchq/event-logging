@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
+import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -151,7 +151,7 @@ public class TestValidation {
     private Event createBasicEvent(final EventLoggingService eventLoggingService, final String typeId,
                                    final String description, final EventValidity eventValidState) {
 
-        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createCurrentEventTime();
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
@@ -184,7 +184,7 @@ public class TestValidation {
             authenticateEventAction.setAuthenticationEntity(authUser);
 
             event.getEventDetail().setEventAction(authenticateEventAction);
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
         }
 
         return event;

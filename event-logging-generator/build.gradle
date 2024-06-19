@@ -58,7 +58,7 @@ task runGenClasses(type: JavaExec) {
 
     classpath = sourceSets.main.runtimeClasspath
 
-    main = 'event.logging.gen.GenClasses'
+    mainClass = 'event.logging.gen.GenClasses'
 }
 
 

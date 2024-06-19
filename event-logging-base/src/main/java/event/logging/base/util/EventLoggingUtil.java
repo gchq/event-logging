@@ -25,6 +25,7 @@ import event.logging.TermCondition;
 import event.logging.User;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.Instant;
 import java.util.Date;
 
 public final class EventLoggingUtil {
@@ -33,9 +34,29 @@ public final class EventLoggingUtil {
         // Utility class.
     }
 
+    /**
+     * Use {@link EventLoggingUtil#createEventTime(Instant)} instead.
+     */
+    @Deprecated(forRemoval = true)
     public static EventTime createEventTime(final Date date) {
+        final Instant instant = date != null
+                ? date.toInstant()
+                : null;
+        return createEventTime(instant);
+    }
+
+    public static EventTime createEventTime(final Instant date) {
         return EventTime.builder()
                 .withTimeCreated(date)
+                .build();
+    }
+
+    /**
+     * @return An EventTime for the current time, i.e. {@link Instant#now()}
+     */
+    public static EventTime createCurrentEventTime() {
+        return EventTime.builder()
+                .withTimeCreated(Instant.now())
                 .build();
     }
 

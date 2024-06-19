@@ -54,8 +54,8 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -95,7 +95,7 @@ class FluentEventLoggingServiceIT {
 
         final Event event = Event.builder()
                 .withEventTime(EventTime.builder()
-                        .withTimeCreated(new Date())
+                        .withTimeCreated(Instant.now())
                         .build())
                 .withEventSource(EventSource.builder()
                         .withSystem(SystemDetail.builder()
@@ -132,7 +132,7 @@ class FluentEventLoggingServiceIT {
         // @formatter:off
         final Event event = Event.builder()
                 .withEventTime()
-                    .withTimeCreated(new Date())
+                    .withTimeCreated(Instant.now())
                     .end()
                 .withEventSource()
                     .withSystem()
@@ -186,7 +186,7 @@ class FluentEventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -346,7 +346,7 @@ class FluentEventLoggingServiceIT {
                                                 .build())
                                         .build());
 
-                        event.getEventTime().setTimeCreated(new Date());
+                        event.getEventTime().setTimeCreated(Instant.now());
                         eventLoggingService.setValidate(true);
                         eventLoggingService.log(event);
                         done.incrementAndGet();
@@ -369,7 +369,7 @@ class FluentEventLoggingServiceIT {
 
         return Event.builder()
                 .withEventTime(EventTime.builder()
-                        .withTimeCreated(new Date())
+                        .withTimeCreated(Instant.now())
                         .build())
                 .withEventSource(EventSource.builder()
                         .withSystem(SystemDetail.builder()
@@ -400,7 +400,7 @@ class FluentEventLoggingServiceIT {
 
         return Event.builder()
                 .withEventTime(EventTime.builder()
-                        .withTimeCreated(new Date())
+                        .withTimeCreated(Instant.now())
                         .build())
                 .withEventSource(EventSource.builder()
                         .withSystem(SystemDetail.builder()
@@ -448,7 +448,7 @@ class FluentEventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -487,7 +487,7 @@ class FluentEventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -712,7 +712,7 @@ class FluentEventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -755,7 +755,7 @@ class FluentEventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);

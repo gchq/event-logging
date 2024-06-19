@@ -18,11 +18,13 @@ package event.logging.base.impl;
 import event.logging.Event;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 
 public class DefaultEventSerializer implements EventSerializer {
-    private static JAXBContext context;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEventSerializer.class);
 
     @Override
     public String serialize(final Event event) {
@@ -54,15 +56,26 @@ public class DefaultEventSerializer implements EventSerializer {
         }
     }
 
-    private synchronized static JAXBContext getContext() {
-        try {
-            if (context == null) {
-                context = JAXBContext.newInstance(Event.class);
-            }
+    private static JAXBContext getContext() {
+        // Initialize-on-Demand, Holder Class Idiom
+        return Holder.JAXB_CONTEXT;
+    }
 
-            return context;
+    private static JAXBContext createContext() {
+        try {
+            LOGGER.info("Creating JAXB context");
+            return JAXBContext.newInstance(Event.class);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+
+    // --------------------------------------------------------------------------------
+
+
+    // Initialize-on-Demand, Holder Class Idiom
+    private static class Holder {
+        private static final JAXBContext JAXB_CONTEXT = createContext();
     }
 }

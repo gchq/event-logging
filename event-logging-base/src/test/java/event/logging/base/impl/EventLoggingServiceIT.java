@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,7 +98,7 @@ public class EventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -138,7 +138,7 @@ public class EventLoggingServiceIT {
 
                             final Event event = createBasicEvent("LOGIN", "LOGIN");
                             event.getEventDetail().setEventAction(authenticateEventAction);
-                            event.getEventTime().setTimeCreated(new Date());
+                            event.getEventTime().setTimeCreated(Instant.now());
                             eventLoggingService.log(event);
                             done.incrementAndGet();
                         }
@@ -158,7 +158,7 @@ public class EventLoggingServiceIT {
     }
 
     private Event createBasicEvent(final String typeId, final String description) {
-        final EventTime eventTime = EventLoggingUtil.createEventTime(new Date());
+        final EventTime eventTime = EventLoggingUtil.createEventTime(Instant.now());
         final Device device = DeviceUtil.createDevice(null, "123.123.123.123");
         final User user = EventLoggingUtil.createUser("someuser");
 
@@ -212,7 +212,7 @@ public class EventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -250,7 +250,7 @@ public class EventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -275,7 +275,7 @@ public class EventLoggingServiceIT {
 //        software.setName("Anti-virus");
 //
 //        final Signature signature = new Signature();
-//        signature.setUpdated(new Date());
+//        signature.setUpdated(Instant.now());
 //        signature.setVersion("1.5");
 //
 //        final AntiMalware value = new AntiMalware();
@@ -294,7 +294,7 @@ public class EventLoggingServiceIT {
 //        eventLoggingService.log(event);
 //
 //        for (int i = 0; i < NUM_OF_RECORDS; i++) {
-//            event.getEventTime().setTimeCreated(new Date());
+//            event.getEventTime().setTimeCreated(Instant.now());
 //            eventLoggingService.log(event);
 //
 //            Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -530,7 +530,7 @@ public class EventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);
@@ -568,7 +568,7 @@ public class EventLoggingServiceIT {
         eventLoggingService.log(event);
 
         for (int i = 0; i < NUM_OF_RECORDS; i++) {
-            event.getEventTime().setTimeCreated(new Date());
+            event.getEventTime().setTimeCreated(Instant.now());
             eventLoggingService.log(event);
 
             Thread.sleep(WAIT_BETWEEN_RECORDS);

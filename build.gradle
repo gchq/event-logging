@@ -13,7 +13,7 @@ buildscript {
 plugins {
     //plugin for downloading content from the 'net
     id "de.undercouch.download" version "3.4.3"
-    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
+    id "io.github.gradle-nexus.publish-plugin" version "1.2.0"
     //plugin for producing a tree of task dependencies, run task 'taskTree'
     id "com.dorongold.task-tree" version "1.5"
     id "signing"
@@ -67,7 +67,7 @@ ext.getMajorVersion = { versionStr ->
 
 // Set this to the desired release version of the event-logging XML schema on github
 // *****************************************************************************
-def eventLoggingSchemaVer = "v4.0.0"
+def eventLoggingSchemaVer = "v4.1.0"
 // *****************************************************************************
 
 // Set this to the last release of this repo on this branch, or earlier branches
@@ -246,7 +246,7 @@ subprojects {
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
-        reports.html.destination = file("${reporting.baseDir}/${name}")
+        reports.html.outputLocation = file("${reporting.baseDir}/${name}")
 
         //Use full logging for test exceptions so we can see where the failure occurred
         testLogging {
