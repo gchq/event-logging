@@ -27,18 +27,18 @@
             generateElementProperty="false" 
             localScoping="toplevel">
 
+            <!-- Define the class and adapter for date handling -->
             <jaxb:javaType 
-                name="java.util.Date" 
+                name="java.time.Instant" 
                 xmlType="xs:date" 
-                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
-                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+                parseMethod="event.logging.jaxb.InstantAdapter.parseDate" 
+                printMethod="event.logging.jaxb.InstantAdapter.printDate" />
             <jaxb:javaType 
-                name="java.util.Date" 
+                name="java.time.Instant" 
                 xmlType="evt:DateTime" 
-                parseMethod="event.logging.jaxb.DateAdaptor.parseDate" 
-                printMethod="event.logging.jaxb.DateAdaptor.printDate" />
+                parseMethod="event.logging.jaxb.InstantAdapter.parseDate" 
+                printMethod="event.logging.jaxb.InstantAdapter.printDate" />
         </jaxb:globalBindings>
-
 
         <!-- Make the property name plural -->
         <jaxb:bindings node="xs:complexType[@name='AccessControlGroups']/xs:sequence/xs:element[@name='AccessControlGroup']">
@@ -175,15 +175,6 @@
             <jaxb:property name="eventAction" >
                 <jaxb:baseType name="EventAction" />
             </jaxb:property>
-
-            <jaxb:bindings node="xs:element[@name='Unknown']">
-                <jaxb:bindings node="xs:complexType">
-                    <jaxb:factoryMethod name="UnknownEventAction"/>
-                    <jaxb:class name="UnknownEventAction" />
-                    <inheritance:implements>EventAction</inheritance:implements> 
-                </jaxb:bindings>
-            </jaxb:bindings>
-
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Authenticate']">
@@ -197,14 +188,12 @@
                     <jaxb:baseType name="AuthenticationEntity" />
                 </jaxb:property>
             </jaxb:bindings>
-
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Authorise']">
             <jaxb:factoryMethod name="AuthoriseEventAction"/>
             <jaxb:class name="AuthoriseEventAction" />
             <inheritance:implements>EventAction</inheritance:implements> 
-
         </jaxb:bindings>
 
         <jaxb:bindings node="xs:complexType[@name='Copy']">
@@ -315,6 +304,12 @@
         <jaxb:bindings node="xs:complexType[@name='Approval']">
             <jaxb:factoryMethod name="ApprovalEventAction"/>
             <jaxb:class name="ApprovalEventAction" />
+            <inheritance:implements>EventAction</inheritance:implements> 
+        </jaxb:bindings>
+
+        <jaxb:bindings node="xs:complexType[@name='Unknown']">
+            <jaxb:factoryMethod name="UnknownEventAction"/>
+            <jaxb:class name="UnknownEventAction" />
             <inheritance:implements>EventAction</inheritance:implements> 
         </jaxb:bindings>
 

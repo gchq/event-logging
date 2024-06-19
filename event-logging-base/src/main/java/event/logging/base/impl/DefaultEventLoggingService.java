@@ -83,7 +83,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
     public void log(final Event event) {
         final String data = eventSerializer.serialize(event);
         final String trimmed = data.trim();
-        if (trimmed.length() > 0) {
+        if (!trimmed.isEmpty()) {
             // Validate data here if the configuration option is set.
             if (checkValidating()) {
                 xmlValidator.validate(trimmed);
@@ -109,7 +109,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
         // If we aren't setting validate on .
         final String val = System.getProperty(VALIDATE);
-        return Boolean.valueOf(val);
+        return Boolean.parseBoolean(val);
     }
 
     /**

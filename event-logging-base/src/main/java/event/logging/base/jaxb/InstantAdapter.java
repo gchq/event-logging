@@ -20,26 +20,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
 
-public class DateAdaptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateAdaptor.class);
+public class InstantAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InstantAdapter.class);
 
-    public static Date parseDate(final String string) {
+    public static Instant parseDate(final String string) {
         try {
-            return new Date(DateUtil.parseDateTimeString(string));
+            final Long millis = DateUtil.parseDateTimeString(string);
+            return millis == null
+                    ? null
+                    : Instant.ofEpochMilli(millis);
         } catch (final ParseException e) {
             LOGGER.error(e.getMessage(), e);
         }
-
         return null;
     }
 
-    public static String printDate(final Date date) {
+    /**
+     * @param date
+     * @return The instant in the form "yyyy-MM-dd HH:mm:ss.SSS zzz"
+     */
+    public static String printDate(final Instant date) {
         if (date == null) {
             return null;
         }
 
-        return DateUtil.createNormalDateTimeString(date.getTime());
+        return DateUtil.createNormalDateTimeString(date.toEpochMilli());
     }
 }

@@ -3,29 +3,22 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'io.swagger.core.v3.swagger-gradle-plugin'
 
-ext.moduleName = 'event.logging.api'
+ext.moduleName = 'uk.gov.gchq.eventlogging'
 
 def schemaDir = project.file('schema')
 
 // We want a jar like event-logging-5.0-beta.16_schema-v4.0-beta.3.jar,
 // not event-logging-api-5.0-beta.16_schema-v4.0-beta.3.jar
-archivesBaseName = "event-logging"
+base.archivesName = "event-logging"
 
 dependencies {
-    implementation libs.jackson_annotations
-    implementation libs.jackson_databind
-    compileOnly libs.jakarta_servlet_api
-    implementation libs.jakarta_ws_rs_api
     implementation libs.jaxb_api
-    implementation libs.swagger_annotations
+    // The JAXB implementation required for event serialisation to XML
+    runtimeOnly libs.jaxb_impl
 
     // The production code uses the SLF4J logging API at compile time
     implementation libs.slf4j_api
 
-    // The JAXB implementation required for event serialisation to XML
-    runtimeOnly libs.jaxb_runtime
-
-    testImplementation libs.classgraph
     testImplementation(platform(libs.junit_bom))
     testImplementation libs.junit_jupiter_api
     testImplementation libs.junit_jupiter_params
@@ -68,6 +61,8 @@ jar {
         )
     }
     version versions.eventLogging
+    // We want a jar like event-logging-5.0-beta.16_schema-v4.0-beta.3.jar,
+    // not event-logging-api-5.0-beta.16_schema-v4.0-beta.3.jar
 }
 
 javadoc {
@@ -195,12 +190,13 @@ tasks.build.dependsOn diffAgainstLatest
 task runExampleAppBuild(type: GradleBuild) {
     dependsOn publishToMavenLocal
 
-    buildFile = '../example-logged-application/build.gradle'
+    // Defaults to build.gradle
+    dir = '../example-logged-application'
     tasks = ['clean', 'build']
     startParameter.projectProperties = [mavenVersion: projectVersionForMaven]
 
     doFirst {
-        println "Running separate example application build [$buildFile]"
+        println "Running separate example application build [$dir]"
     }
 }
 

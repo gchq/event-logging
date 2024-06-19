@@ -66,6 +66,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
         return description;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends EventAction> EventLoggerBuilder.WorkStep<T> withDefaultEventAction(
             final T defaultEventAction) {
@@ -73,9 +74,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
         // At this point we are moving from the builder having unknown type to it having a known
         // EventAction so type casts are unavoidable.
 
-        //noinspection unchecked
         this.eventAction = (T_EVENT_ACTION) defaultEventAction;
-        //noinspection unchecked
         return (EventLoggerBuilder.WorkStep<T>) this;
     }
 
@@ -374,7 +373,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
                     basicBuilder.description,
                     basicBuilder.purpose,
                     basicBuilder.eventAction,
-                    loggedAction::apply,
+                    loggedAction,
                     basicBuilder.exceptionHandler,
                     basicBuilder.isLogEventRequired);
         }

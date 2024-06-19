@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Class for generating the JAXB classes from a source schema. The schema is first
@@ -39,11 +40,6 @@ import java.util.stream.Collectors;
 public class GenClasses {
     private static final Charset UTF8 = StandardCharsets.UTF_8;
 
-    //private static final String PUBLIC_ABSTRACT_CLASS = "public abstract class ";
-
-    //private static final String PUBLIC_CLASS = "public class ";
-
-
     private static final String SOURCE_SCHEMA_REGEX = "event-logging-v.*\\.xsd";
     private static final Pattern SOURCE_SCHEMA_PATTERN = Pattern.compile(SOURCE_SCHEMA_REGEX);
     private static final String GENERATOR_PROJECT_NAME = "event-logging-generator";
@@ -52,6 +48,7 @@ public class GenClasses {
     private static final String SCHEMA_DIR_NAME = "schema";
     private static final String PACKAGE_NAME = "event.logging";
     private static final Pattern EVENT_LOGGING_BASE_PATTERN = Pattern.compile("event\\.logging\\.base");
+    private static final Pattern JAVAX_XML_PATTERN = Pattern.compile("javax\\.xml\\.");
     private static final Pattern COMPLEX_TYPE_PATTERN = Pattern.compile("ComplexType");
     private static final Pattern SIMPLE_TYPE_PATTERN = Pattern.compile("SimpleType");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("/\\*\\*");
@@ -85,26 +82,29 @@ public class GenClasses {
         final Path modXsd = schemaDir.resolve("schema.mod.xsd");
         final Path bindingFile = generatorProjectDir.resolve("simple-binding.xjb");
 
-        List<Path> sourceSchemas = Files.find(schemaDir, 1, (path, atts) ->
+        List<Path> sourceSchemas;
+        try (final Stream<Path> pathStream = Files.find(schemaDir, 1, (path, atts) ->
                 SOURCE_SCHEMA_PATTERN.matcher(path.getFileName().toString()).matches()
-        ).collect(Collectors.toList());
+        )) {
+            sourceSchemas = pathStream.collect(Collectors.toList());
+        }
 
         Path xsdFile = null;
-        if (sourceSchemas.size() == 0) {
+        if (sourceSchemas.isEmpty()) {
             System.out.printf("ERROR - No source schema found in %s matching '%s'%n",
-                    schemaDir.toAbsolutePath().toString(),
+                    schemaDir.toAbsolutePath(),
                     SOURCE_SCHEMA_REGEX);
             System.exit(1);
         } else if (sourceSchemas.size() > 1) {
             System.out.printf("ERROR - Too many source schemas found in %s matching '%s'%n",
-                    schemaDir.toAbsolutePath().toString(),
+                    schemaDir.toAbsolutePath(),
                     SOURCE_SCHEMA_REGEX);
             System.exit(1);
         } else {
             xsdFile = schemaDir.resolve(sourceSchemas.get(0).getFileName().toString());
         }
 
-        String xsd = new String(Files.readAllBytes(xsdFile), UTF8);
+        String xsd = Files.readString(xsdFile, UTF8);
         //Remove 'ComplexType' from the type names to make the class names cleaner
         xsd = COMPLEX_TYPE_PATTERN.matcher(xsd).replaceAll("");
         //Remove 'SimpleType' from the type names to make the class names cleaner
@@ -123,6 +123,10 @@ public class GenClasses {
         clean(srcDir.resolve("main/resources/event/logging"));
         clean(srcDir.resolve("test/java/event/logging"));
 
+        // -Xfluent-builder comes from the jaxb-rich-contract-plugin lib and give us the nice
+        //   fluent builder API.
+        // -Xinheritance comes from the jaxb-plugins lib and lets us make jaxb classes
+        //   implement an interface.
         final String[] xjcOptions = new String[]{
                 "-xmlschema",
                 "-extension",
@@ -316,7 +320,7 @@ public class GenClasses {
 
     private void modifyFile(final Path javaFile) {
         try {
-            String java = new String(Files.readAllBytes(javaFile), UTF8);
+            String java = Files.readString(javaFile, UTF8);
 
             // Remove top JAXB comments.
             java = removeComments(java);
@@ -331,6 +335,11 @@ public class GenClasses {
             if (javaFile.getFileName().toString().contains("ObjectFactory")) {
                 java = fixObjectFactory(java);
             }
+            // TODO remove this replaceAll once we uplift jaxb-rich-contract-plugin to
+            //  >= 4.2.0.0 which is using jakarta.xml
+            // Replace javax.xml. => jakarta.xml. so we can ship our lib with jaxb4 deps
+            java = JAVAX_XML_PATTERN.matcher(java)
+                    .replaceAll("jakarta.xml.");
 
             Files.write(javaFile, java.getBytes(UTF8));
         } catch (final IOException e) {
@@ -363,7 +372,7 @@ public class GenClasses {
                 }
             }
 
-            if (commentLines.size() > 0) {
+            if (!commentLines.isEmpty()) {
                 Collections.sort(commentLines);
                 for (int j = 0; j < commentLines.size(); j++) {
                     String line = commentLines.get(j);
