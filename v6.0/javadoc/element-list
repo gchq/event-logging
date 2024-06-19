@@ -1,0 +1,6 @@
+module:uk.gov.gchq.eventlogging
+event.logging
+event.logging.impl
+event.logging.jaxb
+event.logging.jaxb.fluent
+event.logging.util
