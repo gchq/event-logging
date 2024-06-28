@@ -1,1 +1,1 @@
-v6.0-beta.1_schema-v4.1.0
+v6.0-beta.2_schema-v4.1.0
