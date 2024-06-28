@@ -15,6 +15,11 @@
  */
 package event.logging.base.impl;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
@@ -27,43 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-
 public class XMLWriter implements ContentHandler {
-    public static enum XMLVersion {
-        VERSION_1_0("1.0"), VERSION_1_1("1.1");
-
-        private final String output;
-
-        private XMLVersion(final String output) {
-            this.output = output;
-        }
-
-        public String getOutput() {
-            return output;
-        }
-    }
-
-    private static class AttributeNameComparator implements Comparator<String>,
-            Serializable {
-        private static final long serialVersionUID = -9219753718768871842L;
-
-        @Override
-        public int compare(final String o1, final String o2) {
-            if (o1.startsWith("xsi:") && o2.startsWith("xsi:")) {
-                return o1.compareTo(o2);
-            } else if (o1.startsWith("xsi:")) {
-                return -1;
-            } else if (o2.startsWith("xsi:")) {
-                return 1;
-            }
-
-            return o1.compareTo(o2);
-        }
-    }
 
     public static final char SURROGATE1_MIN = 0xD800;
     public static final char SURROGATE1_MAX = 0xDBFF;
@@ -518,7 +487,7 @@ public class XMLWriter implements ContentHandler {
 
     /**
      * Test whether the given character is a high surrogate
-     * 
+     *
      * @param ch
      *            The character to test.
      * @return true if the character is the first character in a surrogate pair
@@ -580,5 +549,45 @@ public class XMLWriter implements ContentHandler {
 
     public void setNormalizeSpace(final boolean normalizeSpace) {
         this.normalizeSpace = normalizeSpace;
+    }
+
+
+    // --------------------------------------------------------------------------------
+
+
+    public enum XMLVersion {
+        VERSION_1_0("1.0"), VERSION_1_1("1.1");
+
+        private final String output;
+
+        private XMLVersion(final String output) {
+            this.output = output;
+        }
+
+        public String getOutput() {
+            return output;
+        }
+    }
+
+
+    // --------------------------------------------------------------------------------
+
+
+    private static class AttributeNameComparator implements Comparator<String>,
+            Serializable {
+        private static final long serialVersionUID = -9219753718768871842L;
+
+        @Override
+        public int compare(final String o1, final String o2) {
+            if (o1.startsWith("xsi:") && o2.startsWith("xsi:")) {
+                return o1.compareTo(o2);
+            } else if (o1.startsWith("xsi:")) {
+                return -1;
+            } else if (o2.startsWith("xsi:")) {
+                return 1;
+            }
+
+            return o1.compareTo(o2);
+        }
     }
 }

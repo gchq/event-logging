@@ -70,7 +70,8 @@ public class EventLoggingServiceIT {
     private static final int NUM_OF_RECORDS = 10;
 
     private EventLoggingService getEventLoggingService() {
-        return new DefaultEventLoggingService(new ExceptionAndLoggingErrorHandler(),
+        return new DefaultEventLoggingService(
+                ExceptionAndLoggingErrorHandler::new,
                 ValidationExceptionBehaviourMode.THROW);
     }
 

@@ -42,7 +42,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
     private boolean isLogEventRequired = true;
     private LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler;
 
-    EventLoggerBuilderImpl(final EventLoggingService eventLoggingService) {
+    public EventLoggerBuilderImpl(final EventLoggingService eventLoggingService) {
         this.eventLoggingService = eventLoggingService;
     }
 
@@ -160,7 +160,11 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
 
                 eventLoggingService.log(event);
                 result = complexLoggedOutcome.getResult();
-            } catch (Throwable e) {
+            } catch (final ValidationException e) {
+                // The event being logged is malformed, so there is no point trying to log a 'failed' outcome
+                // event.
+                throw e;
+            } catch (final Throwable e) {
                 T_EVENT_ACTION newEventAction = eventAction;
                 if (exceptionHandler != null) {
                     try {

@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 
+/**
+ *
+ */
 public class DefaultEventSerializer implements EventSerializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEventSerializer.class);
 

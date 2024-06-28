@@ -16,6 +16,7 @@ public class TestEventSerialisation {
 
     @Test
     void test() {
+        System.setProperty(EventLoggingService.PROP_KEY_VALIDATE, "true");
         EventLoggingService eventLoggingService = new DefaultEventLoggingService();
 
         final String userId = "bob";
@@ -37,4 +38,34 @@ public class TestEventSerialisation {
                 })
                 .runActionAndLog();
     }
+
+//    private static class MyEventLoggingService extends DefaultEventLoggingService {
+//
+//        @Override
+//        public Event createEvent(final String typeId, final String description, final Purpose purpose, final EventAction eventAction) {
+//            return Event.builder()
+//                    .withEventTime(EventTime.builder()
+//                            .withTimeCreated(Instant.now())
+//                            .build())
+//                    .withEventSource(EventSource.builder()
+//                            .withSystem(SystemDetail.builder()
+//                                    .withName("MY_SYSTEM")
+//                                    .withEnvironment("DEV")
+//                                    .withVersion("1.2.3")
+//                                    .build())
+//                            .withGenerator(GENERATOR)
+//                            .withDevice(device)
+//                            .withClient(client)
+//                            .withUser(getUser())
+//                            .withRunAs(getRunAsUser())
+//                            .build())
+//                    .withEventDetail(EventDetail.builder()
+//                            .withTypeId(typeId)
+//                            .withDescription(description)
+//                            .withPurpose(purpose)
+//                            .withEventAction(eventAction)
+//                            .build())
+//                    .build();
+//        }
+//    }
 }

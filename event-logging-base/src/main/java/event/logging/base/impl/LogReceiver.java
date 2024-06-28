@@ -16,16 +16,21 @@
 package event.logging.base.impl;
 
 /**
- * <p>Interface for classed used to receive serialised events.</p>
+ * <p>Interface for classes used to receive serialised events.</p>
  *
- * <p>Implementing classes can persist the serialised events and/or send them on to a
- * system like Stroom.</p>
+ * <p>Implementing classes can persist the serialised event and/or send it on to a
+ * system like Stroom. </p>
+ *
+ * By default {@link LoggerLogReceiver} will be used as the implementation.
+ * If you want to use an alternative {@link LogReceiver} implementation, set the system property
+ * {@code event.logging.logreceiver} to the fully qualified class name or your desired
+ * {@link LogReceiver} implementation (see {@link LogReceiverFactory}.
  */
 public interface LogReceiver {
 
     /**
      * Called for each event being logged.
-     * 
+     *
      * @param data
      *            The event in serialised form.
      */

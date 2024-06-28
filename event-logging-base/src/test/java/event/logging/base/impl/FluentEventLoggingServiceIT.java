@@ -85,7 +85,7 @@ class FluentEventLoggingServiceIT {
 
     private EventLoggingService getEventLoggingService() {
         return new DefaultEventLoggingService(
-                new ExceptionAndLoggingErrorHandler(),
+                ExceptionAndLoggingErrorHandler::new,
                 ValidationExceptionBehaviourMode.THROW);
     }
 

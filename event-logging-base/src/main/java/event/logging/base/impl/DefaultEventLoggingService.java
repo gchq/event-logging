@@ -21,7 +21,8 @@ import event.logging.base.EventLoggingService;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.ErrorHandler;
+
+import java.util.function.Supplier;
 
 /**
  * <p>This is the default implementation of {@link EventLoggingService} for logging events.
@@ -43,8 +44,6 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
     private static final String SCHEMA_LOCATION = SchemaLocator.getSchemaLocation();
 
-    private static final String VALIDATE = "event.logging.validate";
-
     private final EventSerializer eventSerializer = new DefaultEventSerializer();
     private final LogReceiverFactory logReceiverFactory = LogReceiverFactory.getInstance();
     private final XMLValidator xmlValidator;
@@ -54,28 +53,60 @@ public class DefaultEventLoggingService implements EventLoggingService {
      */
     private Boolean validate;
 
+    /**
+     * Uses {@link QuietErrorHandler} and {@link ValidationExceptionBehaviourMode#LOG} for validation (if enabled),
+     * i.e. it will attempt to validate as much of the event as possible, logging all validation messages in one
+     * ERROR/WARN SLF4J log message at the end of validation.
+     * <p>See {@link DefaultEventLoggingService#DefaultEventLoggingService(Supplier, ValidationExceptionBehaviourMode)}
+     * for more control of validation behaviour.</p>
+     */
     public DefaultEventLoggingService() {
-        xmlValidator = new event.logging.base.impl.DefaultXMLValidator(SCHEMA_LOCATION);
-    }
-
-    public DefaultEventLoggingService(ErrorHandler schemaValidationErrorHandler) {
-        xmlValidator = new event.logging.base.impl.DefaultXMLValidator(SCHEMA_LOCATION, schemaValidationErrorHandler);
+        xmlValidator = new DefaultXMLValidator(SCHEMA_LOCATION);
     }
 
     /**
-     * @param schemaValidationErrorHandler
-     * @param validationExceptionBehaviourMode Controls how the validator handles exceptions thrown by the schemaValidationExceptionHandler
+     * Uses the {@link ValidationErrorHandler} supplied by {@code validationErrorHandlerSupplier}
+     * and {@link ValidationExceptionBehaviourMode#LOG} for validation (if enabled),
+     * i.e. it will log all validation messages in one ERROR/WARN SLF4J log message at the end of validation.
+     * The implementation of the {@link ValidationErrorHandler} will determine whether only the first problem
+     * is logged or all are logged.
+     * <p>See {@link DefaultEventLoggingService#DefaultEventLoggingService(Supplier, ValidationExceptionBehaviourMode)}
+     * for more control of validation behaviour.</p>
+     *
+     * @param validationErrorHandlerSupplier Supplies a new instance of a {@link ValidationErrorHandler} to handle
+     *                                       validation warnings/errors.
      */
-    public DefaultEventLoggingService(ErrorHandler schemaValidationErrorHandler,
-                                      ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
+    public DefaultEventLoggingService(final Supplier<ValidationErrorHandler> validationErrorHandlerSupplier) {
+        xmlValidator = new DefaultXMLValidator(
+                SCHEMA_LOCATION,
+                validationErrorHandlerSupplier);
+    }
+
+    /**
+     * If you want this service to throw an exception if the event fails validation then we recommend passing
+     * a supplier of a {@link  QuietErrorHandler} and {@link ValidationExceptionBehaviourMode#THROW}.
+     * <p>
+     * If you want this service to simply log validation messages to a {@link Logger} then we recommend using
+     * the no-args constructor {@link DefaultEventLoggingService#DefaultEventLoggingService()}.
+     * </p>
+     * @param validationErrorHandlerSupplier Supplies a new instance of a {@link ValidationErrorHandler} to handle
+     *                                       validation warnings/errors.
+     * @param validationExceptionBehaviourMode Controls how the validator handles exceptions thrown by the
+     *                                         {@link ValidationErrorHandler} as supplied by
+     *                                         {@code validationErrorHandlerSupplier}.
+     */
+    public DefaultEventLoggingService(final Supplier<ValidationErrorHandler> validationErrorHandlerSupplier,
+                                      final ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
 
         LOGGER.info("Using schema location " + SCHEMA_LOCATION);
-        xmlValidator = new DefaultXMLValidator(SCHEMA_LOCATION, schemaValidationErrorHandler,
+        xmlValidator = new DefaultXMLValidator(
+                SCHEMA_LOCATION,
+                validationErrorHandlerSupplier,
                 validationExceptionBehaviourMode);
     }
 
     /**
-     * Logs an event to the log.
+     * Logs an event to the {@link LogReceiver}.
      *
      * @param event The event to log.
      */
@@ -85,7 +116,7 @@ public class DefaultEventLoggingService implements EventLoggingService {
         final String trimmed = data.trim();
         if (!trimmed.isEmpty()) {
             // Validate data here if the configuration option is set.
-            if (checkValidating()) {
+            if (isValidationRequired()) {
                 xmlValidator.validate(trimmed);
             }
 
@@ -101,14 +132,14 @@ public class DefaultEventLoggingService implements EventLoggingService {
         return new EventLoggerBuilderImpl(this);
     }
 
-    private boolean checkValidating() {
+    private boolean isValidationRequired() {
         // Check the programmatic flag first.
         if (validate != null) {
             return validate;
         }
 
         // If we aren't setting validate on .
-        final String val = System.getProperty(VALIDATE);
+        final String val = System.getProperty(EventLoggingService.PROP_KEY_VALIDATE);
         return Boolean.parseBoolean(val);
     }
 
@@ -128,11 +159,13 @@ public class DefaultEventLoggingService implements EventLoggingService {
 
     /**
      * Use to determine if the event logging service is set to validate data against the XML schema.
+     * Takes into account the value supplied by {@link DefaultEventLoggingService#setValidate(Boolean)}
+     * and the value of system property <code>event.logging.validate</code>.
      *
      * @return True if the validate flag is set.
      */
     @Override
     public boolean isValidate() {
-        return validate != null && validate;
+        return isValidationRequired();
     }
 }
