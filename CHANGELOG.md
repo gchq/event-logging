@@ -12,6 +12,17 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 ~~~
 
 
+## [v6.0-beta.2_schema-v4.1.0] - 2024-06-28
+
+* Add constants for system property keys to EventLoggingService.
+
+* Improve javadoc.
+
+* Add interface `ValidationErrorHandler` and change `ExceptionAndLoggingErrorHandler` and `LoggingErrorHandler` to implement it. Change constructors on `DefaultEventLoggingService` to take a `Supplier<ValidationErrorHandler>` instead of a `ErrorHandler`. Add `QuietErrorHandler` and make this the default. Default behaviour for no-args constructor on `DefaultEventLoggingService` is now to log a single `Logger` message containing all found validation messages at either `ERROR` or `WARN` level as appropriate. Previous behaviour was to log a stacktrace for the first validation failure in LOG mode. THROW mode previously only worked if `ExceptionAndLoggingErrorHandler` was used, now it can be used with `LoggingErrorHandler` or `QuietErrorHandler`, throwing when validation has done as much as it can.
+
+* Make constructor for `event.logging.base.impl.EventLoggerBuilderImpl` public.
+
+
 ## [v6.0-beta.1_schema-v4.1.0] - 2024-06-19
 
 * Change to JAXB 4 dependencies (`javax.xml` => `jakarta.xml`).
@@ -291,7 +302,8 @@ DO NOT ADD CHANGES HERE - ADD THEM USING log_change.sh
 * Revert to java 8
 
 
-[Unreleased]: https://github.com/gchq/event-logging/compare/v6.0-beta.1_schema-v4.1.0...HEAD
+[Unreleased]: https://github.com/gchq/event-logging/compare/v6.0-beta.2_schema-v4.1.0...HEAD
+[v6.0-beta.2_schema-v4.1.0]: https://github.com/gchq/event-logging/compare/v6.0-beta.1_schema-v4.1.0...v6.0-beta.2_schema-v4.1.0
 [v6.0-beta.1_schema-v4.1.0]: https://github.com/gchq/event-logging/compare/v5.0.3_schema-v4.0.0...v6.0-beta.1_schema-v4.1.0
 [v5.0.3_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.2_schema-v4.0.0...v5.0.3_schema-v4.0.0
 [v5.0.2_schema-v4.0.0]: https://github.com/gchq/event-logging/compare/v5.0.1_schema-v4.0.0...v5.0.2_schema-v4.0.0
