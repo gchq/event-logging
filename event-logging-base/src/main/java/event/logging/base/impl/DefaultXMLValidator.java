@@ -18,7 +18,6 @@ package event.logging.base.impl;
 import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -31,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public final class DefaultXMLValidator implements XMLValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultXMLValidator.class);
@@ -41,29 +42,35 @@ public final class DefaultXMLValidator implements XMLValidator {
     private static boolean xml11 = true;
 
     private final Schema schema;
-    private final ErrorHandler validationErrorHandler;
-    private static final ValidationExceptionBehaviourMode DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE = event.logging.base.impl.ValidationExceptionBehaviourMode.LOG;
+    private final Supplier<ValidationErrorHandler> validationErrorHandlerSupplier;
+    private static final ValidationExceptionBehaviourMode DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE =
+            event.logging.base.impl.ValidationExceptionBehaviourMode.LOG;
     private final ValidationExceptionBehaviourMode validationExceptionBehaviourMode;
 
     public DefaultXMLValidator(final String schemaLocation) {
         // use the default of logging all validation messages
-        this(schemaLocation, new LoggingErrorHandler(), DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
+        this(
+                schemaLocation,
+                QuietErrorHandler::new,
+                DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
 
     }
 
-    public DefaultXMLValidator(final String schemaLocation, final ErrorHandler validationErrorHandler) {
-        this(schemaLocation, validationErrorHandler, DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
+    public DefaultXMLValidator(final String schemaLocation,
+                               final Supplier<ValidationErrorHandler> validationErrorHandlerSupplier) {
+        this(schemaLocation, validationErrorHandlerSupplier, DEFAULT_VALIDATION_EXCEPTION_BEHAVIOUR_MODE);
     }
 
-    public DefaultXMLValidator(final String schemaLocation, final ErrorHandler validationErrorHandler,
+    public DefaultXMLValidator(final String schemaLocation,
+                               final Supplier<ValidationErrorHandler> validationErrorHandlerSupplier,
                                final ValidationExceptionBehaviourMode validationExceptionBehaviourMode) {
 
-        if (validationErrorHandler == null) {
+        if (validationErrorHandlerSupplier == null) {
             throw new RuntimeException("Null errorHandler supplied");
         }
 
         this.schema = loadSchema(schemaLocation);
-        this.validationErrorHandler = validationErrorHandler;
+        this.validationErrorHandlerSupplier = validationErrorHandlerSupplier;
         this.validationExceptionBehaviourMode = validationExceptionBehaviourMode;
 
     }
@@ -88,9 +95,7 @@ public final class DefaultXMLValidator implements XMLValidator {
             if (!errorHandler.isOk()) {
                 schema = null;
             }
-        } catch (final FileNotFoundException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (final SAXException e) {
+        } catch (final FileNotFoundException | SAXException e) {
             LOGGER.error(e.getMessage(), e);
         }
 
@@ -108,53 +113,129 @@ public final class DefaultXMLValidator implements XMLValidator {
     }
 
     private void validateAndThrow(final String xml) {
-
         // Only validate if we successfully loaded the schema.
         if (schema != null) {
             try {
-                doValidation(xml);
+                final ValidationErrorHandler validationErrorHandler = validationErrorHandlerSupplier != null
+                        ? validationErrorHandlerSupplier.get()
+                        : null;
+                doValidation(xml, validationErrorHandler);
+                if (validationErrorHandler != null) {
+                    final String msg = buildMessage(xml, validationErrorHandler);
+                    if (!validationErrorHandler.isOk()) {
+                        // errors and/or fatal errors so throw
+                        throw new RuntimeException(msg);
+                    } else if (validationErrorHandler.hasWarnings()) {
+                        // only warnings so log
+                        LOGGER.warn(msg);
+                    }
+                }
             } catch (final Exception e) {
                 // wrap the checked exception to conform to the public API
-                throw new RuntimeException("Error while validating against the schema", e);
+                throw new ValidationException("Error while validating against the schema", e);
             }
         } else {
-            throw new RuntimeException("Unable to validate.  Schema object is null");
+            throw new ValidationException("Unable to validate.  Schema object is null");
         }
     }
 
     private void validateAndLog(final String xml) {
-
         // Only validate if we successfully loaded the schema.
         if (schema != null) {
             try {
-                doValidation(xml);
+                final ValidationErrorHandler validationErrorHandler = validationErrorHandlerSupplier != null
+                        ? validationErrorHandlerSupplier.get()
+                        : null;
+                doValidation(xml, validationErrorHandler);
+                if (validationErrorHandler != null) {
+                    final String msg = buildMessage(xml, validationErrorHandler);
+
+                    if (!validationErrorHandler.isOk()) {
+                        LOGGER.error(msg);
+                    } else if (validationErrorHandler.hasWarnings()) {
+                        LOGGER.warn(msg);
+                    }
+                }
+
             } catch (final IOException | SAXException e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
-    private synchronized void doValidation(final String xml) throws SAXException, IOException {
+    private synchronized void doValidation(final String xml,
+                                           final ValidationErrorHandler validationErrorHandler)
+            throws SAXException, IOException {
 
-        // Only validate if we successfully loaded the schema.
-        if (schema != null) {
-            byte[] bytes = null;
+        final byte[] bytes;
 
-            /*
-             * If we want to treat the input as XML v1.1 then we need to add the XML declaration.
-             */
-            if (xml11) {
-                bytes = (XML11_PI + xml).getBytes(DEFAULT_CHARSET);
-            } else {
-                bytes = xml.getBytes(DEFAULT_CHARSET);
-            }
-            final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-            final Validator validator = schema.newValidator();
-
-            validator.setErrorHandler(validationErrorHandler);
-            StreamSource streamSource = new StreamSource(inputStream);
-            validator.validate(streamSource);
+        /*
+         * If we want to treat the input as XML v1.1 then we need to add the XML declaration.
+         */
+        if (xml11) {
+            bytes = (XML11_PI + xml).getBytes(DEFAULT_CHARSET);
+        } else {
+            bytes = xml.getBytes(DEFAULT_CHARSET);
         }
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
+        final Validator validator = schema.newValidator();
+
+        if (validationErrorHandler != null) {
+            validator.setErrorHandler(validationErrorHandler);
+        }
+
+        StreamSource streamSource = new StreamSource(inputStream);
+        validator.validate(streamSource);
     }
 
+    private static String buildMessage(final String xml,
+                                       final ValidationErrorHandler validationErrorHandler) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("The Event XML failed validation against the schema with ")
+                .append(validationErrorHandler.getFatalErrorCount())
+                .append(" fatal error(s), ")
+                .append(validationErrorHandler.getErrorCount())
+                .append(" error(s) and ")
+                .append(validationErrorHandler.getWarningCount())
+                .append(" warning(s):");
+
+        final String indent = "  ";
+
+        if (validationErrorHandler.hasFatalErrors()) {
+            sb.append("\n")
+                    .append(validationErrorHandler.getFatalErrors()
+                            .stream()
+                            .map(e -> indent + "Fatal: " + e.toString())
+                            .collect(Collectors.joining("\n")));
+        }
+
+        if (validationErrorHandler.hasErrors()) {
+            sb.append("\n")
+                    .append(validationErrorHandler.getErrors()
+                            .stream()
+                            .map(e -> indent + "Error: " + e.toString())
+                            .collect(Collectors.joining("\n")));
+        }
+
+        if (validationErrorHandler.hasWarnings()) {
+            sb.append("\n")
+                    .append(validationErrorHandler.getWarnings()
+                            .stream()
+                            .map(e -> indent + "Warning: " + e.toString())
+                            .collect(Collectors.joining("\n")));
+        }
+
+        // Append the actual XML, so it is easier to see where the problem is
+        if (xml != null && !xml.isBlank()) {
+            sb.append("\n")
+                    .append(indent)
+                    .append("XML:");
+            xml.lines().forEach(line ->
+                    sb.append("\n")
+                            .append(indent)
+                            .append(line));
+        }
+
+        return sb.toString();
+    }
 }

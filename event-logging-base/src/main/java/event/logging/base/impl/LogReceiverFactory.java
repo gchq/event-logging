@@ -15,6 +15,7 @@
  */
 package event.logging.base.impl;
 
+import event.logging.base.EventLoggingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 public final class LogReceiverFactory {
     private static final Logger LOGGER = LoggerFactory
             .getLogger(LogReceiverFactory.class);
-    private static final String PROP_LOG_RECEIVER = "event.logging.logreceiver";
     private static final String DEFAULT_LOG_RECEIVER = "event.logging.impl.LoggerLogReceiver";
 
     private static LogReceiverFactory instance;
@@ -49,15 +49,15 @@ public final class LogReceiverFactory {
 
     public synchronized event.logging.base.impl.LogReceiver getLogReceiver() {
         // See if a class name has been set to supply a log receiver.
-        String className = System.getProperty(PROP_LOG_RECEIVER);
+        String className = System.getProperty(EventLoggingService.PROP_KEY_LOG_RECEIVER_CLASS);
 
         // Trim the class name.
         if (className != null) {
             className = className.trim();
         }
 
-        // If no class name has been suppled then use the default.
-        if (className == null || className.length() == 0) {
+        // If no class name has been supplied then use the default.
+        if (className == null || className.isEmpty()) {
             className = DEFAULT_LOG_RECEIVER;
         }
 
@@ -71,7 +71,8 @@ public final class LogReceiverFactory {
                 if (event.logging.base.impl.LogReceiver.class.isAssignableFrom(clazz)) {
                     try {
                         logReceiver = (LogReceiver) clazz.getDeclaredConstructor(new Class<?>[0]).newInstance();
-                    } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    } catch (final InstantiationException | IllegalAccessException
+                                   | InvocationTargetException | NoSuchMethodException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
 

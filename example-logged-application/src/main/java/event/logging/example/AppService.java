@@ -40,7 +40,6 @@ public class AppService {
         this.userContext = userContext;
     }
 
-
     void showShutdownBanner() {
         // Use the log method when you want to manually deal with exceptions or the logged event outcome
         // is always success.

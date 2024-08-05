@@ -16,5 +16,19 @@
 package event.logging.base.impl;
 
 public enum ValidationExceptionBehaviourMode {
-    LOG, THROW
+    /**
+     * Validation warnings/errors will be logged to a {@link org.slf4j.Logger}.
+     * A single log message will be logged containing one or more validation messages.
+     * It will log to ERROR or WARN level depending on the validation messages encountered.
+     */
+    LOG,
+
+    /**
+     * Validation errors will result in a {@link ValidationException} being thrown at the end
+     * of validation if any errors or fatal errors are encounted.
+     * The exception will contain one or more validation messages.
+     * If only validation warnings are encountered, they will be logged as a single
+     * {@link org.slf4j.Logger} log message at WARN level and containing one or more validation warnings.
+     */
+    THROW
 }

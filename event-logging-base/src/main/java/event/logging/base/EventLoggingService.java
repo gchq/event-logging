@@ -21,20 +21,35 @@ import event.logging.EventDetail;
 import event.logging.EventTime;
 import event.logging.Purpose;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.function.Supplier;
 
 /**
  * A service for recording audit events.
+ * <p>The default implementation is {@link event.logging.base.impl.DefaultEventLoggingService}</p>
  */
 public interface EventLoggingService {
+
+    /**
+     * System property key for setting the {@link event.logging.base.impl.LogReceiver} implementation
+     * to use. If not set {@link event.logging.base.impl.LoggerLogReceiver} will be used.
+     */
+    String PROP_KEY_LOG_RECEIVER_CLASS = "event.logging.logreceiver";
+
+    /**
+     * System property key used by {@link event.logging.base.impl.DefaultEventLoggingService} to
+     * control whether the serialised {@link Event} XML is validated against the XML schema.
+     * A value of {@code true} for this property will enable validation.
+     * <p>See also {@link EventLoggingService#setValidate(Boolean)}</p>
+     */
+    String PROP_KEY_VALIDATE = "event.logging.validate";
 
     /**
      * Creates an event that may have some common values set by default depending on the particular EventLoggingService
      * implementation being used. If this method is not implemented it will return an empty event by default.
      *
      * Using {@link EventLoggingService#createEvent(String, String, EventAction)} should be preferred.
-     * 
+     *
      * @return An event that is ready to have additional properties set.
      */
 
@@ -77,7 +92,7 @@ public interface EventLoggingService {
                               final EventAction eventAction) {
         return Event.builder()
                 .withEventTime(EventTime.builder()
-                        .withTimeCreated(new Date())
+                        .withTimeCreated(Instant.now())
                         .build())
                 .withEventDetail(EventDetail.builder()
                         .withTypeId(typeId)
@@ -89,8 +104,8 @@ public interface EventLoggingService {
     }
 
     /**
-     * Logs an event.
-     * 
+     * Logs an event to the {@link event.logging.base.impl.LogReceiver}
+     *
      * @param event The event to log.
      */
     void log(Event event);
@@ -139,9 +154,9 @@ public interface EventLoggingService {
      * Set to true if the event logging service should validate the output XML against the schema. This option helps
      * identify areas of code that are producing invalid data. For performance reasons it is recommended that
      * validation is not performed in production.
-     * 
+     *
      * If validate is set to null then the system property shall be used to determine if validation is performed.
-     * 
+     *
      * @param validate
      *            The validation flag.
      */
@@ -149,7 +164,7 @@ public interface EventLoggingService {
 
     /**
      * Use to determine if the event logging service is set to validate output data against the XML schema.
-     * 
+     *
      * @return True if the validate flag is set.
      */
     boolean isValidate();

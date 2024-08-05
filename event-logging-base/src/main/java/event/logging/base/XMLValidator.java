@@ -17,15 +17,18 @@ package event.logging.base;
 
 /**
  * Should be implemented by classes providing a way to validate some XML.
+ * The default implementation is {@link event.logging.base.impl.DefaultXMLValidator}.
  */
 public interface XMLValidator {
 
     /**
      * Validates the <b>XML</b> and optionally writes the result to a file or
      * log.
-     * 
+     *
      * @param xml
      *            The XML to validate.
+     * @throws event.logging.base.impl.ValidationException if the implementation chooses
+     * to throw exceptions on validation failures.
      */
     void validate(String xml);
 }

@@ -18,7 +18,9 @@ package event.logging.base.impl;
 import event.logging.Event;
 
 /**
- * This interface is used to define a method that will turn an event into a String representation.
+ * This interface is used to define a method that will serialise an {@link Event} object tree
+ * into a {@link String} representation of the object.
+ * The default {@link EventSerializer} implementation is {@link DefaultEventSerializer}.
  */
 public interface EventSerializer {
     /**

@@ -42,7 +42,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
     private boolean isLogEventRequired = true;
     private LoggedWorkExceptionHandler<T_EVENT_ACTION> exceptionHandler;
 
-    EventLoggerBuilderImpl(final EventLoggingService eventLoggingService) {
+    public EventLoggerBuilderImpl(final EventLoggingService eventLoggingService) {
         this.eventLoggingService = eventLoggingService;
     }
 
@@ -66,6 +66,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
         return description;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends EventAction> EventLoggerBuilder.WorkStep<T> withDefaultEventAction(
             final T defaultEventAction) {
@@ -73,9 +74,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
         // At this point we are moving from the builder having unknown type to it having a known
         // EventAction so type casts are unavoidable.
 
-        //noinspection unchecked
         this.eventAction = (T_EVENT_ACTION) defaultEventAction;
-        //noinspection unchecked
         return (EventLoggerBuilder.WorkStep<T>) this;
     }
 
@@ -161,7 +160,11 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
 
                 eventLoggingService.log(event);
                 result = complexLoggedOutcome.getResult();
-            } catch (Throwable e) {
+            } catch (final ValidationException e) {
+                // The event being logged is malformed, so there is no point trying to log a 'failed' outcome
+                // event.
+                throw e;
+            } catch (final Throwable e) {
                 T_EVENT_ACTION newEventAction = eventAction;
                 if (exceptionHandler != null) {
                     try {
@@ -374,7 +377,7 @@ public class EventLoggerBuilderImpl<T_EVENT_ACTION extends EventAction> implemen
                     basicBuilder.description,
                     basicBuilder.purpose,
                     basicBuilder.eventAction,
-                    loggedAction::apply,
+                    loggedAction,
                     basicBuilder.exceptionHandler,
                     basicBuilder.isLogEventRequired);
         }

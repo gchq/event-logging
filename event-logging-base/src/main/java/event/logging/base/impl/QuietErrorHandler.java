@@ -25,13 +25,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Logs all {@link SAXParseException}s encountered during validation (fatal, error and warning) to a
- * {@link Logger}. Fatal and error are logged at ERROR and warnings are logged at WARN.
+ * Logs all {@link SAXParseException}s to a {@link Logger} at DEBUG level only.
  * All {@link SAXParseException}s are captured for later retrieval.
  * Not thread safe.
  */
-public class LoggingErrorHandler implements ValidationErrorHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingErrorHandler.class);
+public class QuietErrorHandler implements ValidationErrorHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuietErrorHandler.class);
     private boolean ok = true;
     private List<SAXParseException> warnings = null;
     private List<SAXParseException> errors = null;
@@ -40,9 +39,7 @@ public class LoggingErrorHandler implements ValidationErrorHandler {
     @Override
     public void warning(final SAXParseException exception) throws SAXException {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(exception.getMessage(), exception);
-        } else {
-            LOGGER.warn(exception.getMessage() + " (Enable DEBUG logging to see stacktrace)");
+            LOGGER.debug(exception.toString(), exception);
         }
 
         if (warnings == null) {
@@ -54,9 +51,7 @@ public class LoggingErrorHandler implements ValidationErrorHandler {
     @Override
     public void error(final SAXParseException exception) throws SAXException {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(exception.getMessage(), exception);
-        } else {
-            LOGGER.error(exception.getMessage() + " (Enable DEBUG logging to see stacktrace)");
+            LOGGER.debug(exception.toString(), exception);
         }
 
         if (errors == null) {
@@ -69,9 +64,7 @@ public class LoggingErrorHandler implements ValidationErrorHandler {
     @Override
     public void fatalError(final SAXParseException exception) throws SAXException {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(exception.getMessage(), exception);
-        } else {
-            LOGGER.error(exception.getMessage() + " (Enable DEBUG logging to see stacktrace)");
+            LOGGER.debug(exception.toString(), exception);
         }
 
         if (fatalErrors == null) {

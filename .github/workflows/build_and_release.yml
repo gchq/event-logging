@@ -25,14 +25,14 @@ jobs:
           # Set this so it gets the annotated commit, not the commit being tagged.
           # Which means we can get the release msg
           # See https://github.com/actions/runner/issues/712
-          ref: ${{ github.ref }} 
+          ref: ${{ github.ref }}
 
       - name: Setup Java
         id: setup_java
         uses: actions/setup-java@v2
         with:
-          distribution: 'zulu'
-          java-version: '8.0.312+7'
+          distribution: 'temurin'
+          java-version: '11.0.23+9'
           cache: 'gradle'
 
         # Make sure the wrapper jar has not been tampered with
@@ -40,7 +40,7 @@ jobs:
         id: validate_gradle_wrapper
         uses: gradle/wrapper-validation-action@v1
 
-        # Set variables in github's special env file which are then automatically 
+        # Set variables in github's special env file which are then automatically
         # read into env vars in each subsequent step
       - name: Set Environment Variables
         id: set_env_var

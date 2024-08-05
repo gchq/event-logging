@@ -49,7 +49,7 @@ public final class DateUtil {
 
     /**
      * Create a 'file' format date string.
-     * 
+     *
      * @param ms
      *            The date to create the string for.
      * @return string The date as a 'file' format date string.
@@ -67,7 +67,7 @@ public final class DateUtil {
 
     /**
      * Create a 'normal' format date string.
-     * 
+     *
      * @param ms
      *            The date to create the string for.
      * @return string The date as a 'normal' format date string.
@@ -85,7 +85,7 @@ public final class DateUtil {
 
     /**
      * Creates a string from a date given the appropriate time format and millisecond separator.
-     * 
+     *
      * @param ms
      *            The date to use.
      * @param timeFormat
@@ -122,7 +122,7 @@ public final class DateUtil {
      * @return A Date object set to the supplied date.
      */
     public static Long parseDateTimeString(final String date) throws ParseException {
-        if (NULL.equals(date) || date == null || date.length() == 0) {
+        if (NULL.equals(date) || date == null || date.isEmpty()) {
             return null;
         }
 
@@ -143,7 +143,7 @@ public final class DateUtil {
      * Utility method for padding a string to a certain number of characters. Characters are appended to the left hand
      * side of the string to make it the specified length. IF the string is already longer than the specified length is
      * is just returned and not truncated.
-     * 
+     *
      * @param str
      *            The string to pad.
      * @param size

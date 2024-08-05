@@ -13,7 +13,7 @@ buildscript {
 plugins {
     //plugin for downloading content from the 'net
     id "de.undercouch.download" version "3.4.3"
-    id "io.github.gradle-nexus.publish-plugin" version "1.0.0"
+    id "io.github.gradle-nexus.publish-plugin" version "1.2.0"
     //plugin for producing a tree of task dependencies, run task 'taskTree'
     id "com.dorongold.task-tree" version "1.5"
     id "signing"
@@ -36,7 +36,7 @@ ext.isPropertySet = { propName ->
     }
 }
 
-ext.ensurePropertyIsSet = { propName -> 
+ext.ensurePropertyIsSet = { propName ->
     if (!isPropertySet(propName)) {
         throw new GradleException(
             "Expecting project property [${propName}] or env var [ORG_GRADLE_PROJECT_${propName}] to be set.")
@@ -45,7 +45,7 @@ ext.ensurePropertyIsSet = { propName ->
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
-ext.getPropertyOrDefault = { propName, defaultValue -> 
+ext.getPropertyOrDefault = { propName, defaultValue ->
     def val;
     if (isPropertySet(propName)) {
         val = project.getProperty(propName)
@@ -67,7 +67,7 @@ ext.getMajorVersion = { versionStr ->
 
 // Set this to the desired release version of the event-logging XML schema on github
 // *****************************************************************************
-def eventLoggingSchemaVer = "v4.0.0"
+def eventLoggingSchemaVer = "v4.1.0"
 // *****************************************************************************
 
 // Set this to the last release of this repo on this branch, or earlier branches
@@ -75,7 +75,7 @@ def eventLoggingSchemaVer = "v4.0.0"
 // see if/how the java model has changed following schema changes or changes
 // to the jaxb code generation.
 // *****************************************************************************
-ext.previousReleaseVersion = "v5.0-beta.32_schema-v4.0-beta.10"
+ext.previousReleaseVersion = "v5.0.3_schema-v4.0.0"
 // *****************************************************************************
 
 
@@ -165,24 +165,20 @@ ext.versions = [
 ]
 
 // NOTE
-// Using beta versions of jaxb libs as they resolve the split pkg problem between jaxb-core and jaxb-runtime
-// for running on j9+
-// >= v2.3.2 of the jaxb bom pull in the jakarta.xml.bind deps where as the v2.4.0-b one & <v2.3.2 use the old
-// javax.xml.bind one.
+// XJC code gen is still being done using JAXB 2, but we find/replace javax.xml => jakarta.xml
+// so the published -api module can have JAXB 4 deps. Thus there is a mix of JAXB 2/4 deps
+// below. Once jaxb-rich-contract-plugin is fixed so we can use its v4.2.0.0+ we can switch
+// to all JAXB 4 deps (see https://github.com/mklemm/jaxb-rich-contract-plugin/issues/78)
 
 ext.libs = [
     assertj_core                   : "org.assertj:assertj-core:3.20.2",
-    classgraph                     : "io.github.classgraph:classgraph:4.8.146",
-    jackson_annotations            : "com.fasterxml.jackson.core:jackson-annotations:2.13.3",
-    jackson_databind               : "com.fasterxml.jackson.core:jackson-databind:2.13.3",
-    jakarta_servlet_api            : "jakarta.servlet:jakarta.servlet-api:4.0.4",
-    jakarta_ws_rs_api              : "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6",
-    jaxb_api                       : "javax.xml.bind:jaxb-api", // Version set by jaxb_bom
+    jaxb_api                       : "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2",
     jaxb_basics                    : "org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0",
     jaxb_rich_contract_plugin      : "net.codesup.util:jaxb2-rich-contract-plugin:2.1.0",
-    jaxb_runtime                   : "org.glassfish.jaxb:jaxb-runtime", // Version set by jaxb_bom
+    jaxb_runtime_2                 : "org.glassfish.jaxb:jaxb-runtime", // Version set by jaxb_bom
+    jaxb_impl                      : "com.sun.xml.bind:jaxb-impl:4.0.4",
     jaxb_xjc                       : "org.glassfish.jaxb:jaxb-xjc", // Version set by jaxb_bom
-    jaxb_bom                       : "org.glassfish.jaxb:jaxb-bom:2.4.0-b180830.0438",
+    jaxb_bom_2                     : "org.glassfish.jaxb:jaxb-bom:2.4.0-b180830.0438",
     junit_bom                      : "org.junit:junit-bom:5.10.0",
     junit_jupiter_api              : "org.junit.jupiter:junit-jupiter-api", // ver controlled by junit_bom
     junit_jupiter_engine           : "org.junit.jupiter:junit-jupiter-engine", // ver controlled by junit_bom
@@ -193,12 +189,11 @@ ext.libs = [
     mockito_core                   : "org.mockito:mockito-core:$versions.mockito",
     mockito_junit_jupiter          : "org.mockito:mockito-junit-jupiter:$versions.mockito",
     saxon_he                       : "net.sf.saxon:Saxon-HE:9.7.0-21",
-    slf4j_api                      : "org.slf4j:slf4j-api:1.7.30",
-    swagger_annotations            : "io.swagger.core.v3:swagger-annotations:$versions.swagger",
+    slf4j_api                      : "org.slf4j:slf4j-api:1.7.36",
 ]
 
 // NOTE
-// 
+//
 
 allprojects {
     group "uk.gov.gchq.eventlogging" // no spaces as java pkg name convention
@@ -217,13 +212,13 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(8)
+            languageVersion = JavaLanguageVersion.of(11)
             vendor = JvmVendorSpec.ADOPTIUM
         }
     }
 
     dependencies {
-        implementation platform(libs.jaxb_bom)
+        implementation platform(libs.jaxb_bom_2)
     }
 
     //configurations {
@@ -251,9 +246,9 @@ subprojects {
 
     // This means the reports from our integration tests won't over-write the reports from our unit tests.
     tasks.withType(Test) {
-        reports.html.destination = file("${reporting.baseDir}/${name}")
+        reports.html.outputLocation = file("${reporting.baseDir}/${name}")
 
-        //Use full logging for test exceptions so we can see where the failure occurred 
+        //Use full logging for test exceptions so we can see where the failure occurred
         testLogging {
             events "failed"
             exceptionFormat = 'full'

@@ -20,7 +20,7 @@ ext.isPropertySet = { propName ->
 
 //if the project has a value for the passed property (i.e from the cmd line via -PpropName=xxx)
 //use that, else use a default value
-ext.getPropertyOrDefault = { propName, defaultValue -> 
+ext.getPropertyOrDefault = { propName, defaultValue ->
     def val;
     if (isPropertySet(propName)) {
         val = project.getProperty(propName)
@@ -32,8 +32,8 @@ ext.getPropertyOrDefault = { propName, defaultValue ->
     return val;
 }
 
-def DEFAULT_EVENT_LOGGING_VERSION = '5.0-beta.29_schema-v4.0-beta.3'
-//def DEFAULT_EVENT_LOGGING_VERSION = 'schema-v4.0-beta.3-SNAPSHOT'
+//def DEFAULT_EVENT_LOGGING_VERSION = '5.0-beta.29_schema-v4.0-beta.3'
+def DEFAULT_EVENT_LOGGING_VERSION = 'schema-v4.1.0-SNAPSHOT'
 
 ext.versions = [
     eventLogging: getPropertyOrDefault('mavenVersion', DEFAULT_EVENT_LOGGING_VERSION),
@@ -42,7 +42,7 @@ ext.versions = [
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(11)
         vendor = JvmVendorSpec.ADOPTIUM
     }
 }
@@ -53,8 +53,11 @@ dependencies {
 
     // Used for logging in this example application's code
     // SLF4J is also a transitive runtime dependency of event-logging
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
+    //implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.2'
     implementation 'org.slf4j:slf4j-api:1.7.30'
+
+    // Required for the annotations on the Event model classes
+    implementation  "jakarta.xml.bind:jakarta.xml.bind-api:4.0.2"
 
     // Used by this example application at run time to log output to the console
     // Other SLF4J implementations can be used
@@ -75,7 +78,7 @@ application {
     mainClass = 'event.logging.example.App'
 }
 
-run{
+run {
     // Application is interactive so attach stdin
     standardInput = System.in
 }

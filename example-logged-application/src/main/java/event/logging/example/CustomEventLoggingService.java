@@ -17,7 +17,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * Sub class the {@link DefaultEventLoggingService} to set up common values in log events.
@@ -63,7 +63,7 @@ public class CustomEventLoggingService extends DefaultEventLoggingService {
         //  * Details of the client device, e.g. in a web app
         return Event.builder()
                 .withEventTime(EventTime.builder()
-                        .withTimeCreated(new Date())
+                        .withTimeCreated(Instant.now())
                         .build())
                 .withEventSource(EventSource.builder()
                         .withSystem(SystemDetail.builder()
