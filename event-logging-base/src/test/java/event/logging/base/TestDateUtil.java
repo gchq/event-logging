@@ -58,6 +58,19 @@ public class TestDateUtil {
         assertEquals("2010-04-03T13:54:23.078Z", normalString);
     }
 
+    @Test
+    public void testPreEpochFormatAndParse() throws Exception {
+        final Long ms = -1L;
+
+        final String normalString = DateUtil.createNormalDateTimeString(ms);
+        assertEquals("1969-12-31T23:59:59.999Z", normalString);
+        assertEquals(ms, DateUtil.parseDateTimeString(normalString));
+
+        final String fileString = DateUtil.createFileDateTimeString(ms);
+        assertEquals("1969-12-31T23#59#59,999Z", fileString);
+        assertEquals(ms, DateUtil.parseDateTimeString(fileString));
+    }
+
     /**
      * Tests that we can parse and construct 'file' dates.
      */
