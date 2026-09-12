@@ -95,8 +95,7 @@ public final class DateUtil {
      * @return A string representation of the supplied date.
      */
     private static String createDateTimeString(final long ms, final DateFormat timeFormat, final String milliSep) {
-        final long seconds = ms / MS_IN_SEC;
-        final long fraction = ms - seconds * MS_IN_SEC;
+        final long fraction = Math.floorMod(ms, MS_IN_SEC);
 
         String millis = Long.toString(fraction);
         millis = leftPad(millis, THREE, '0');
