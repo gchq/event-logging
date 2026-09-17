@@ -8,6 +8,7 @@ libs/
 jars/
 build/
 /event-logging-generator/schema
+build.properties
 
 
 # IntelliJ
