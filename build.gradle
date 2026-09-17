@@ -75,7 +75,7 @@ def eventLoggingSchemaVer = "v4.1.0"
 // see if/how the java model has changed following schema changes or changes
 // to the jaxb code generation.
 // *****************************************************************************
-ext.previousReleaseVersion = "v5.0.3_schema-v4.0.0"
+ext.previousReleaseVersion = "v6.0-beta.2_schema-v4.1.0"
 // *****************************************************************************
 
 
