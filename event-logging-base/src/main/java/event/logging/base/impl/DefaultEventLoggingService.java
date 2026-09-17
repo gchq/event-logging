@@ -22,6 +22,7 @@ import event.logging.base.XMLValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -112,6 +113,8 @@ public class DefaultEventLoggingService implements EventLoggingService {
      */
     @Override
     public void log(final Event event) {
+        Objects.requireNonNull(event);
+        addSchemaVersionToEvent(event);
         final String data = eventSerializer.serialize(event);
         final String trimmed = data.trim();
         if (!trimmed.isEmpty()) {
@@ -125,9 +128,22 @@ public class DefaultEventLoggingService implements EventLoggingService {
         }
     }
 
+    private void addSchemaVersionToEvent(final Event event) {
+        final String schemaVersion = BuildInfo.getSchemaVersion();
+        final String eventVersion = event.getVersion();
+        // Set the Version attr with the actual version of the schema shipped in this jar
+        if (eventVersion == null || eventVersion.isBlank()) {
+            event.setVersion(schemaVersion);
+        } else if (!Objects.equals(eventVersion, schemaVersion)) {
+            LOGGER.warn("Event version '{}' does not match schema version '{}'. " +
+                            "It will be overridden with '{}'",
+                    eventVersion, schemaVersion, schemaVersion);
+            event.setVersion(schemaVersion);
+        }
+    }
+
     @Override
     public EventLoggerBuilder.TypeIdStep loggedWorkBuilder() {
-
         // noinspection rawtypes - don't know the type yet
         return new EventLoggerBuilderImpl(this);
     }
