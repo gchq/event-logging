@@ -38,6 +38,8 @@ tasks.register('writeBuildProperties') {
     props.store(propertyFile.newWriter(), null)
 }
 
-tasks.compileJava.dependsOn writeBuildProperties
+// Ensure the build.properties file is present when the resources are
+// added to the jar
+tasks.processResources.dependsOn writeBuildProperties
 
 
