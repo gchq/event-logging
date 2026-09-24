@@ -16,6 +16,7 @@ jobs:
       # Fixed ssh-agent socket so multiple steps can use the same agent
       # if needs be
       SSH_AUTH_SOCK: "/tmp/ssh-agent-release-it.sock"
+      ACTIONS_STEP_DEBUG: true
     steps:
 
       - name: Checkout code
@@ -32,7 +33,8 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '11.0.32.1+1'
+          # setup-java can't cope with 11.0.32.1+1
+          java-version: '11.0.32'
           cache: 'gradle'
 
         # Make sure the wrapper jar has not been tampered with
