@@ -75,7 +75,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'event.logging.example.App'
+    mainClass = 'event.logging.example.AppMain'
 }
 
 run {

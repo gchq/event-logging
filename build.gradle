@@ -67,7 +67,7 @@ ext.getMajorVersion = { versionStr ->
 
 // Set this to the desired release version of the event-logging XML schema on github
 // *****************************************************************************
-def eventLoggingSchemaVer = "v4.1.0"
+ext.eventLoggingSchemaVer = "v4.1.0"
 // *****************************************************************************
 
 // Set this to the last release of this repo on this branch, or earlier branches
@@ -81,7 +81,7 @@ ext.previousReleaseVersion = "v6.0-beta.2_schema-v4.1.0"
 
 def VERSION_PATTERN = /^(?:v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?_)?schema-(v[0-9.]+(?:-(?:beta|alpha)[0-9.]+)?)(-SNAPSHOT)?$/
 def CHANGE_LOG_FILENAME = "CHANGELOG.md"
-def projectVersion = getPropertyOrDefault('version', "schema-${eventLoggingSchemaVer}-SNAPSHOT")
+ext.projectVersion = getPropertyOrDefault('version', "schema-${eventLoggingSchemaVer}-SNAPSHOT")
 def eventLoggingSchemaMajorVer = getMajorVersion(eventLoggingSchemaVer)
 
 ext.isReleaseBuild = !projectVersion.endsWith("SNAPSHOT")

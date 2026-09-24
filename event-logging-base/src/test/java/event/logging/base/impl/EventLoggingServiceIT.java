@@ -578,6 +578,31 @@ public class EventLoggingServiceIT {
         java.lang.System.out.println("Total time = " + (java.lang.System.currentTimeMillis() - time));
     }
 
+    /**
+     * Tests the creation of some events using paths.
+     *
+     * @throws Exception Could be thrown.
+     */
+    @Test
+    void testSchemaVersion() throws Exception {
+        final User user = new User();
+        user.setId("someuser");
+
+        final AuthenticateEventAction authenticateEventAction = new AuthenticateEventAction();
+        authenticateEventAction.setAction(AuthenticateAction.LOGON);
+        authenticateEventAction.setAuthenticationEntity(user);
+
+        final Event event = createBasicEvent("LOGIN", "LOGIN");
+        event.getEventDetail().setEventAction(authenticateEventAction);
+        // bad version
+        event.setVersion("foo");
+
+        final EventLoggingService eventLoggingService = getEventLoggingService();
+
+        eventLoggingService.log(event);
+
+    }
+
 //    private Node buildPayload() throws JAXBException, ParserConfigurationException {
 //
 //        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

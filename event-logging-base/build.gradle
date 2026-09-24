@@ -1,5 +1,8 @@
 ext.moduleName = 'event.logging.base'
 
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 // In this section you declare the dependencies for your production and test code
 dependencies {
     implementation project(':event-logging-api')
@@ -20,5 +23,23 @@ dependencies {
     testRuntimeOnly libs.logback_classic
     testRuntimeOnly libs.logback_core
 }
+
+// Write a build.properties file that will be gitignored and will go in the jar
+// for the BuildInfo class to read at runtime.
+tasks.register('writeBuildProperties') {
+    def propertyFile = file "${project.rootDir}/event-logging-base/src/main/resources/META-INF/build.properties"
+    propertyFile.parentFile.mkdirs()
+    def props = new Properties()
+
+    props.setProperty("schemaVersion", project.eventLoggingSchemaVer)
+    props.setProperty("buildVersion", project.projectVersion)
+    props.setProperty("buildDate", ZonedDateTime.now().format(DateTimeFormatter.ISO_INSTANT))
+
+    props.store(propertyFile.newWriter(), null)
+}
+
+// Ensure the build.properties file is present when the resources are
+// added to the jar
+tasks.processResources.dependsOn writeBuildProperties
 
 

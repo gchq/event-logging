@@ -9,7 +9,6 @@ jars/
 build/
 /event-logging-generator/schema
 
-
 # IntelliJ
 # Here we ignore everything and create exceptions for what we want to share.
 */out/
@@ -17,7 +16,6 @@ build/
 /.idea/*
 !/.idea/runConfigurations
 # END OF IntelliJ
-
 
 #Gradle stuff (from https://github.com/github/gitignore/blob/master/Gradle.gitignore)
 .gradle
