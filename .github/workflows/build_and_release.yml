@@ -16,7 +16,6 @@ jobs:
       # Fixed ssh-agent socket so multiple steps can use the same agent
       # if needs be
       SSH_AUTH_SOCK: "/tmp/ssh-agent-release-it.sock"
-      ACTIONS_STEP_DEBUG: true
     steps:
 
       - name: Checkout code
