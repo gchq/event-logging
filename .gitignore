@@ -8,8 +8,6 @@ libs/
 jars/
 build/
 /event-logging-generator/schema
-build.properties
-
 
 # IntelliJ
 # Here we ignore everything and create exceptions for what we want to share.
@@ -18,7 +16,6 @@ build.properties
 /.idea/*
 !/.idea/runConfigurations
 # END OF IntelliJ
-
 
 #Gradle stuff (from https://github.com/github/gitignore/blob/master/Gradle.gitignore)
 .gradle
