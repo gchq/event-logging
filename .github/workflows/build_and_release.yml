@@ -33,6 +33,7 @@ jobs:
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
+          # setup-java can't cope with 11.0.32.1+1
           java-version: '11.0.32'
           cache: 'gradle'
 
