@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-project:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-26.04
     env:
       # Static env vars
 
@@ -20,7 +20,7 @@ jobs:
 
       - name: Checkout code
         id: checkout_code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
         with:
           # Set this so it gets the annotated commit, not the commit being tagged.
           # Which means we can get the release msg
@@ -29,16 +29,16 @@ jobs:
 
       - name: Setup Java
         id: setup_java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '11.0.23+9'
+          java-version: '11.0.32.1+1'
           cache: 'gradle'
 
         # Make sure the wrapper jar has not been tampered with
       - name: Validate gradle wrapper jar
         id: validate_gradle_wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v6
 
         # Set variables in github's special env file which are then automatically
         # read into env vars in each subsequent step
@@ -81,7 +81,7 @@ jobs:
         run: |
           "${ACTIONS_SCRIPTS_DIR}/echo_variables.sh" \
             "docker version" "$(docker --version)" \
-            "docker-compose version" "$(docker-compose --version)" \
+            "docker compose version" "$(docker compose version)" \
             "git version" "$(git --version)" \
             "GITHUB_WORKSPACE" "$GITHUB_WORKSPACE" \
             "GITHUB_REF" "$GITHUB_REF" \
